@@ -142,25 +142,23 @@ public class ForgeCLI {
         }
         
         // Create forge.json configuration
-        String config = String.format("""
-            {
-              "name": "%s",
-              "version": "%s",
-              "sourceDirectory": "%s",
-              "outputDirectory": "%s",
-              "sourcePaths": ["src/main/java"],
-              "dependencies": {},
-              "plugins": {},
-              "buildSettings": {
-                "incremental": true,
-                "parallel": true,
-                "cacheEnabled": true,
-                "threads": %d,
-                "compiler": "javac",
-                "encoding": "UTF-8"
-              }
-            }
-            """, name, version, sourceDir, outputDir, 
+        String config = String.format("{\n" +
+            "  \"name\": \"%s\",\n" +
+            "  \"version\": \"%s\",\n" +
+            "  \"sourceDirectory\": \"%s\",\n" +
+            "  \"outputDirectory\": \"%s\",\n" +
+            "  \"sourcePaths\": [\"src/main/java\"],\n" +
+            "  \"dependencies\": {},\n" +
+            "  \"plugins\": {},\n" +
+            "  \"buildSettings\": {\n" +
+            "    \"incremental\": true,\n" +
+            "    \"parallel\": true,\n" +
+            "    \"cacheEnabled\": true,\n" +
+            "    \"threads\": %d,\n" +
+            "    \"compiler\": \"javac\",\n" +
+            "    \"encoding\": \"UTF-8\"\n" +
+            "  }\n" +
+            "}", name, version, sourceDir, outputDir, 
             Runtime.getRuntime().availableProcessors());
         
         try {
