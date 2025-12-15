@@ -1,6 +1,6 @@
-package com.forge.build.cache;
+package io.github.yasmramos.forge.cache;
 
-import com.forge.build.utils.Logger;
+import io.github.yasmramos.forge.utils.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

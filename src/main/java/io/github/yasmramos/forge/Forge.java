@@ -1,10 +1,10 @@
-package com.forge.build;
+package io.github.yasmramos.forge;
 
-import com.forge.build.cli.ForgeCLI;
-import com.forge.build.core.ForgeEngine;
-import com.forge.build.model.ProjectConfig;
-import com.forge.build.utils.ConfigReader;
-import com.forge.build.utils.Logger;
+import io.github.yasmramos.forge.cli.ForgeCLI;
+import io.github.yasmramos.forge.core.ForgeEngine;
+import io.github.yasmramos.forge.model.ProjectConfig;
+import io.github.yasmramos.forge.utils.ConfigReader;
+import io.github.yasmramos.forge.utils.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;

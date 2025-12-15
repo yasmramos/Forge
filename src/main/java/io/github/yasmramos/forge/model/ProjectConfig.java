@@ -1,4 +1,4 @@
-package com.forge.build.model;
+package io.github.yasmramos.forge.model;
 
 import java.util.List;
 import java.util.Map;

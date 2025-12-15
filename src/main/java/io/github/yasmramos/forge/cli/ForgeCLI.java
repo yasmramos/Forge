@@ -1,7 +1,7 @@
-package com.forge.build.cli;
+package io.github.yasmramos.forge.cli;
 
-import com.forge.build.core.ForgeEngine;
-import com.forge.build.utils.Logger;
+import io.github.yasmramos.forge.core.ForgeEngine;
+import io.github.yasmramos.forge.utils.Logger;
 import java.util.Scanner;
 
 /**

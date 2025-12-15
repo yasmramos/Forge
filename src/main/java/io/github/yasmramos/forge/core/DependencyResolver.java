@@ -1,6 +1,6 @@
-package com.forge.build.core;
+package io.github.yasmramos.forge.core;
 
-import com.forge.build.utils.Logger;
+import io.github.yasmramos.forge.utils.Logger;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;

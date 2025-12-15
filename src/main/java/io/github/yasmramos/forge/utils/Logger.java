@@ -1,4 +1,4 @@
-package com.forge.build.utils;
+package io.github.yasmramos.forge.utils;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
