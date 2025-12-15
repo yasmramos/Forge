@@ -1,5 +1,9 @@
 package io.github.yasmramos.forge.core;
 
+import io.github.yasmramos.forge.model.DependencyResolution;
+import io.github.yasmramos.forge.model.DependencyInfo;
+import io.github.yasmramos.forge.model.DependencyType;
+import io.github.yasmramos.forge.model.ProjectAnalysis;
 import io.github.yasmramos.forge.utils.Logger;
 import java.io.File;
 import java.nio.file.Path;
@@ -106,55 +110,5 @@ public class DependencyResolver {
         public boolean hasErrors() {
             return !errors.isEmpty();
         }
-    }
-    
-    public static class DependencyInfo {
-        private final String name;
-        private final String version;
-        private final DependencyType type;
-        private final Path localPath;
-        private final boolean resolved;
-        
-        public DependencyInfo(String name, String version, DependencyType type) {
-            this.name = name;
-            this.version = version;
-            this.type = type;
-            this.localPath = Paths.get(System.getProperty("user.home"), ".forge", "libs", name + "-" + version + ".jar");
-            this.resolved = true;
-        }
-        
-        public DependencyInfo(String name, String version, DependencyType type, Path localPath, boolean resolved) {
-            this.name = name;
-            this.version = version;
-            this.type = type;
-            this.localPath = localPath;
-            this.resolved = resolved;
-        }
-        
-        public String getName() { return name; }
-        public String getVersion() { return version; }
-        public DependencyType getType() { return type; }
-        public Path getLocalPath() { return localPath; }
-        public boolean isResolved() { return resolved; }
-        
-        public File getLocalFile() {
-            return localPath.toFile();
-        }
-        
-        @Override
-        public String toString() {
-            return name + ":" + version + " (" + type + ")";
-        }
-    }
-    
-    public enum DependencyType {
-        MAVEN,
-        GRADLE,
-        NPM,
-        PIP,
-        GO_MOD,
-        CARGO,
-        LOCAL,
-        SYSTEM
     }
 }

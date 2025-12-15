@@ -1,6 +1,7 @@
 package io.github.yasmramos.forge.core;
 
 import io.github.yasmramos.forge.model.ProjectConfig;
+import io.github.yasmramos.forge.model.ProjectAnalysis;
 import io.github.yasmramos.forge.utils.Logger;
 import java.io.File;
 import java.io.IOException;
@@ -277,10 +278,6 @@ public class BuildAnalyzer {
         
         public java.util.Map<String, Integer> getPackageMetrics() {
             return packageMetrics;
-        }
-        
-        public void addPackageMetric(String packageName, int fileCount) {
-            packageMetrics.put(packageName, fileCount);
         }
     }
 }

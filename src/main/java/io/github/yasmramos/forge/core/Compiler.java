@@ -1,5 +1,7 @@
 package io.github.yasmramos.forge.core;
 
+import io.github.yasmramos.forge.model.DependencyResolution;
+import io.github.yasmramos.forge.model.DependencyInfo;
 import io.github.yasmramos.forge.cache.ForgeCache;
 import io.github.yasmramos.forge.utils.Logger;
 import java.io.File;

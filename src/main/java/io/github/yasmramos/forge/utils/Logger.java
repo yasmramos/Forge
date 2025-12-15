@@ -1,10 +1,9 @@
 package io.github.yasmramos.forge.utils;
 
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 
 /**
- * Logger utility for Forge Build System
+ * Forge Logger utility - a simple wrapper around SLF4J
  */
 public class Logger {
     private final org.slf4j.Logger slf4jLogger;
@@ -23,6 +22,10 @@ public class Logger {
     
     public void debug(String message) {
         slf4jLogger.debug(message);
+    }
+    
+    public void debug(String message, Throwable throwable) {
+        slf4jLogger.debug(message, throwable);
     }
     
     public void warn(String message) {
