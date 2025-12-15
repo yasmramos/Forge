@@ -1,7 +1,8 @@
 package io.github.yasmramos.forge.cli;
 
 import io.github.yasmramos.forge.core.ForgeEngine;
-import io.github.yasmramos.forge.utils.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Scanner;
 
 /**
@@ -9,7 +10,7 @@ import java.util.Scanner;
  */
 public class ForgeCLI {
     
-    private final Logger logger = Logger.getLogger(ForgeCLI.class);
+    private final Logger logger = LoggerFactory.getLogger(ForgeCLI.class);
     private final String[] args;
     private Scanner scanner;
     

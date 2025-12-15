@@ -1,6 +1,7 @@
 package io.github.yasmramos.forge.cache;
 
-import io.github.yasmramos.forge.utils.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ForgeCache {
     
-    private final Logger logger = Logger.getLogger(ForgeCache.class);
+    private final Logger logger = LoggerFactory.getLogger(ForgeCache.class);
     private final Map<String, CacheEntry> cache;
     private final Path cacheDirectory;
     

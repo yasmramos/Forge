@@ -3,8 +3,11 @@ package io.github.yasmramos.forge.core;
 import io.github.yasmramos.forge.model.ProjectConfig;
 import io.github.yasmramos.forge.model.ProjectAnalysis;
 import io.github.yasmramos.forge.model.DependencyResolution;
+import io.github.yasmramos.forge.model.CompilationResult;
+import io.github.yasmramos.forge.model.PackageResult;
 import io.github.yasmramos.forge.cache.ForgeCache;
-import io.github.yasmramos.forge.utils.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ForgeEngine {
     
-    private final Logger logger = Logger.getLogger(ForgeEngine.class);
+    private final Logger logger = LoggerFactory.getLogger(ForgeEngine.class);
     private final ProjectConfig config;
     private final ForgeCache cache;
     private final ExecutorService executor;
@@ -105,7 +108,12 @@ public class ForgeEngine {
                 cache
             );
             
-            return new BuildResult(true, compilationResult, null);
+            PackageResult packageResult = new PackageResult(
+                compilationResult.isSuccess(), 
+                "incremental", 
+                compilationResult.getCompiledFiles()
+            );
+            return new BuildResult(true, packageResult, null);
             
         } catch (Exception e) {
             logger.error("Incremental build failed", e);
@@ -227,38 +235,7 @@ public class ForgeEngine {
         public PackageResult getPackageResult() { return packageResult; }
         public TestResult getTestResult() { return testResult; }
     }
-    
-    public static class CompilationResult {
-        private final boolean success;
-        private final int totalFiles;
-        private final int compiledFiles;
-        
-        public CompilationResult(boolean success, int totalFiles, int compiledFiles) {
-            this.success = success;
-            this.totalFiles = totalFiles;
-            this.compiledFiles = compiledFiles;
-        }
-        
-        public boolean isSuccess() { return success; }
-        public int getTotalFiles() { return totalFiles; }
-        public int getCompiledFiles() { return compiledFiles; }
-    }
-    
-    public static class PackageResult {
-        private final boolean success;
-        private final String type;
-        private final int artifacts;
-        
-        public PackageResult(boolean success, String type, int artifacts) {
-            this.success = success;
-            this.type = type;
-            this.artifacts = artifacts;
-        }
-        
-        public boolean isSuccess() { return success; }
-        public String getType() { return type; }
-        public int getArtifacts() { return artifacts; }
-    }
+
     
     public static class TestResult {
         private final boolean success;

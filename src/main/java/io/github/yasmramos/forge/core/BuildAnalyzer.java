@@ -2,7 +2,8 @@ package io.github.yasmramos.forge.core;
 
 import io.github.yasmramos.forge.model.ProjectConfig;
 import io.github.yasmramos.forge.model.ProjectAnalysis;
-import io.github.yasmramos.forge.utils.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,7 +20,7 @@ import java.util.stream.Stream;
  */
 public class BuildAnalyzer {
     
-    private final Logger logger = Logger.getLogger(BuildAnalyzer.class);
+    private final Logger logger = LoggerFactory.getLogger(BuildAnalyzer.class);
     
     public ProjectAnalysis analyzeProject(ProjectConfig config) {
         logger.info("📊 Analyzing project structure...");
@@ -204,80 +205,5 @@ public class BuildAnalyzer {
         // TODO: Implement actual last build time tracking
         // This would read from build metadata or cache timestamps
         return 0; // For now, assume no previous build
-    }
-    
-    public static class ProjectAnalysis {
-        private List<Path> sourceFiles;
-        private List<Path> testFiles;
-        private List<Path> resourceFiles;
-        private List<Path> changedSources;
-        private int totalLinesOfCode;
-        private double complexityScore;
-        private long estimatedBuildTime;
-        private java.util.Map<String, Integer> packageMetrics;
-        
-        public ProjectAnalysis() {
-            this.sourceFiles = new ArrayList<>();
-            this.testFiles = new ArrayList<>();
-            this.resourceFiles = new ArrayList<>();
-            this.changedSources = new ArrayList<>();
-            this.packageMetrics = new java.util.HashMap<>();
-        }
-        
-        public void addSourceFiles(List<Path> files) {
-            sourceFiles.addAll(files);
-        }
-        
-        public List<Path> getSourceFiles() {
-            return sourceFiles;
-        }
-        
-        public List<Path> getTestFiles() {
-            return testFiles;
-        }
-        
-        public List<Path> getResourceFiles() {
-            return resourceFiles;
-        }
-        
-        public List<Path> getChangedSources() {
-            return changedSources;
-        }
-        
-        public void setChangedSources(List<Path> changedSources) {
-            this.changedSources = changedSources;
-        }
-        
-        public boolean hasChanges() {
-            return !changedSources.isEmpty();
-        }
-        
-        public int getTotalLinesOfCode() {
-            return totalLinesOfCode;
-        }
-        
-        public void setTotalLinesOfCode(int totalLinesOfCode) {
-            this.totalLinesOfCode = totalLinesOfCode;
-        }
-        
-        public double getComplexityScore() {
-            return complexityScore;
-        }
-        
-        public void setComplexityScore(double complexityScore) {
-            this.complexityScore = complexityScore;
-        }
-        
-        public long getEstimatedBuildTime() {
-            return estimatedBuildTime;
-        }
-        
-        public void setEstimatedBuildTime(long estimatedBuildTime) {
-            this.estimatedBuildTime = estimatedBuildTime;
-        }
-        
-        public java.util.Map<String, Integer> getPackageMetrics() {
-            return packageMetrics;
-        }
     }
 }

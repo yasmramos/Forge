@@ -4,7 +4,8 @@ import io.github.yasmramos.forge.model.DependencyResolution;
 import io.github.yasmramos.forge.model.DependencyInfo;
 import io.github.yasmramos.forge.model.DependencyType;
 import io.github.yasmramos.forge.model.ProjectAnalysis;
-import io.github.yasmramos.forge.utils.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DependencyResolver {
     
-    private final Logger logger = Logger.getLogger(DependencyResolver.class);
+    private final Logger logger = LoggerFactory.getLogger(DependencyResolver.class);
     private final Map<String, DependencyInfo> resolvedDependencies;
     
     public DependencyResolver() {
@@ -72,43 +73,5 @@ public class DependencyResolver {
         }
         
         return null;
-    }
-    
-    public static class DependencyResolution {
-        private final java.util.List<DependencyInfo> dependencies;
-        private final java.util.Map<String, String> errors;
-        
-        public DependencyResolution() {
-            this.dependencies = new java.util.ArrayList<>();
-            this.errors = new ConcurrentHashMap<>();
-        }
-        
-        public void addDependency(DependencyInfo dependency) {
-            dependencies.add(dependency);
-        }
-        
-        public void addError(String dependency, String error) {
-            errors.put(dependency, error);
-        }
-        
-        public java.util.List<DependencyInfo> getDependencies() {
-            return dependencies;
-        }
-        
-        public java.util.Map<String, String> getErrors() {
-            return errors;
-        }
-        
-        public int getSuccessCount() {
-            return dependencies.size();
-        }
-        
-        public int getErrorCount() {
-            return errors.size();
-        }
-        
-        public boolean hasErrors() {
-            return !errors.isEmpty();
-        }
     }
 }

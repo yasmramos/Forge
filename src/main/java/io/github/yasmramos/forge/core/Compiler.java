@@ -2,8 +2,10 @@ package io.github.yasmramos.forge.core;
 
 import io.github.yasmramos.forge.model.DependencyResolution;
 import io.github.yasmramos.forge.model.DependencyInfo;
+import io.github.yasmramos.forge.model.CompilationResult;
 import io.github.yasmramos.forge.cache.ForgeCache;
-import io.github.yasmramos.forge.utils.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +24,7 @@ import java.util.concurrent.Executors;
  */
 public class Compiler {
     
-    private final Logger logger = Logger.getLogger(Compiler.class);
+    private final Logger logger = LoggerFactory.getLogger(Compiler.class);
     private final ExecutorService compilerExecutor;
     
     public Compiler() {
@@ -124,12 +126,12 @@ public class Compiler {
             Process process = processBuilder.start();
             
             // Read output and error streams
-            String output = new String(process.getInputStream().readAllBytes());
-            String error = new String(process.getErrorStream().readAllBytes());
+            byte[] outputBytes = process.getInputStream().readAllBytes();
+            byte[] errorBytes = process.getErrorStream().readAllBytes();
             
             int exitCode = process.waitFor();
             
-            return new ProcessResult(exitCode == 0, output.getBytes(), error);
+            return new ProcessResult(exitCode == 0, outputBytes, errorBytes);
             
         } catch (IOException | InterruptedException e) {
             return new ProcessResult(false, new byte[0], e.getMessage().getBytes());
@@ -144,7 +146,7 @@ public class Compiler {
         StringBuilder classpath = new StringBuilder();
         boolean first = true;
         
-        for (DependencyResolver.DependencyInfo dep : dependencyResolution.getDependencies()) {
+        for (io.github.yasmramos.forge.model.DependencyInfo dep : dependencyResolution.getDependencies()) {
             if (!first) {
                 classpath.append(File.pathSeparator);
             }
@@ -161,7 +163,7 @@ public class Compiler {
     private Map<String, Object> createDependencyMap(DependencyResolution dependencyResolution) {
         // Create a simple map representation for cache key generation
         java.util.Map<String, Object> depMap = new java.util.HashMap<>();
-        for (DependencyResolver.DependencyInfo dep : dependencyResolution.getDependencies()) {
+        for (io.github.yasmramos.forge.model.DependencyInfo dep : dependencyResolution.getDependencies()) {
             depMap.put(dep.getName(), dep.getVersion());
         }
         return depMap;
@@ -185,25 +187,5 @@ public class Compiler {
         public boolean isSuccess() { return success; }
         public byte[] getOutput() { return output; }
         public byte[] getError() { return error; }
-    }
-    
-    public static class CompilationResult {
-        private final boolean success;
-        private final int totalFiles;
-        private final int compiledFiles;
-        
-        public CompilationResult(boolean success, int totalFiles, int compiledFiles) {
-            this.success = success;
-            this.totalFiles = totalFiles;
-            this.compiledFiles = compiledFiles;
-        }
-        
-        public boolean isSuccess() { return success; }
-        public int getTotalFiles() { return totalFiles; }
-        public int getCompiledFiles() { return compiledFiles; }
-        
-        public double getSuccessRate() {
-            return totalFiles > 0 ? (double) compiledFiles / totalFiles : 0.0;
-        }
     }
 }

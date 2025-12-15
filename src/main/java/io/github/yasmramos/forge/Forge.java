@@ -4,7 +4,8 @@ import io.github.yasmramos.forge.cli.ForgeCLI;
 import io.github.yasmramos.forge.core.ForgeEngine;
 import io.github.yasmramos.forge.model.ProjectConfig;
 import io.github.yasmramos.forge.utils.ConfigReader;
-import io.github.yasmramos.forge.utils.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -19,7 +20,7 @@ import java.util.Optional;
  */
 public class Forge {
     
-    private static final Logger logger = Logger.getLogger(Forge.class);
+    private static final Logger logger = LoggerFactory.getLogger(Forge.class);
     private static ForgeEngine engine;
     private static ForgeCLI cli;
     
