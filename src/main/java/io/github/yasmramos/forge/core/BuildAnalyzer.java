@@ -148,18 +148,70 @@ public class BuildAnalyzer {
     }
     
     private void analyzePackageStructure(ProjectAnalysis analysis) {
-        // TODO: Implement package structure analysis
-        // This would parse package declarations and create dependency graphs
+        logger.debug("📦 Analyzing package structure...");
+        
+        Map<String, Integer> packageFileCount = new java.util.HashMap<>();
+        
+        for (Path sourceFile : analysis.getSourceFiles()) {
+            try {
+                String packageName = extractPackageName(sourceFile);
+                if (packageName != null) {
+                    packageFileCount.merge(packageName, 1, Integer::sum);
+                    analysis.addPackageMetric(packageName, 
+                        packageFileCount.get(packageName));
+                }
+            } catch (IOException e) {
+                logger.debug("Failed to analyze package for file: " + sourceFile, e);
+            }
+        }
+        
+        logger.debug("📦 Package structure analysis complete: " + 
+                    packageFileCount.size() + " packages found");
     }
     
     private void analyzeDependencies(ProjectAnalysis analysis) {
-        // TODO: Implement dependency analysis
-        // This would analyze import statements and create dependency graphs
+        logger.debug("🔗 Analyzing source file dependencies...");
+        
+        Map<String, java.util.Set<String>> fileDependencies = new java.util.HashMap<>();
+        
+        for (Path sourceFile : analysis.getSourceFiles()) {
+            try {
+                String fileName = sourceFile.getFileName().toString();
+                java.util.Set<String> imports = extractImports(sourceFile);
+                fileDependencies.put(fileName, imports);
+                
+                if (!imports.isEmpty()) {
+                    logger.debug("📋 File " + fileName + " imports: " + imports.size() + " dependencies");
+                }
+            } catch (IOException e) {
+                logger.debug("Failed to analyze dependencies for file: " + sourceFile, e);
+            }
+        }
+        
+        logger.debug("🔗 Dependency analysis complete: " + 
+                    fileDependencies.size() + " files analyzed");
     }
     
     private void analyzeTestFiles(ProjectAnalysis analysis) {
-        // TODO: Implement test file analysis
-        // This would identify test files and their relationships
+        logger.debug("🧪 Analyzing test files...");
+        
+        for (Path sourceFile : analysis.getSourceFiles()) {
+            String fileName = sourceFile.getFileName().toString().toLowerCase();
+            
+            // Check if it's a test file
+            boolean isTestFile = fileName.contains("test") || 
+                               fileName.contains("spec") ||
+                               sourceFile.getParent() != null && 
+                               sourceFile.getParent().toString().contains("test");
+            
+            if (isTestFile) {
+                analysis.getTestFiles().add(sourceFile);
+                logger.debug("🧪 Found test file: " + sourceFile);
+            }
+        }
+        
+        logger.debug("🧪 Test analysis complete: " + 
+                    analysis.getTestFiles().size() + " test files found");
     }
     
     private void calculateMetrics(ProjectAnalysis analysis) {
@@ -188,9 +240,91 @@ public class BuildAnalyzer {
     }
     
     private double calculateComplexityScore(List<Path> sourceFiles) {
-        // TODO: Implement actual complexity calculation
-        // This would analyze cyclomatic complexity, nesting depth, etc.
-        return sourceFiles.size() * 10.0; // Simple heuristic
+        logger.debug("📊 Calculating complexity score for " + sourceFiles.size() + " files...");
+        
+        double totalComplexity = 0.0;
+        
+        for (Path sourceFile : sourceFiles) {
+            try {
+                String content = Files.readString(sourceFile);
+                double fileComplexity = analyzeFileComplexity(content);
+                totalComplexity += fileComplexity;
+            } catch (IOException e) {
+                logger.debug("Failed to calculate complexity for: " + sourceFile, e);
+            }
+        }
+        
+        logger.debug("📊 Complexity calculation complete: " + totalComplexity);
+        return totalComplexity;
+    }
+    
+    private double analyzeFileComplexity(String content) {
+        // Simple complexity calculation based on various factors
+        int methodCount = countOccurrences(content, "public ") + 
+                         countOccurrences(content, "private ") + 
+                         countOccurrences(content, "protected ");
+        
+        int loopCount = countOccurrences(content, "for (") + 
+                       countOccurrences(content, "while (") + 
+                       countOccurrences(content, "do {");
+        
+        int ifCount = countOccurrences(content, "if (") + 
+                     countOccurrences(content, "else if (") + 
+                     countOccurrences(content, "switch (");
+        
+        int tryCount = countOccurrences(content, "try {");
+        
+        // Weighted complexity score
+        double complexity = methodCount * 2.0 + loopCount * 3.0 + ifCount * 2.0 + tryCount * 1.5;
+        return complexity;
+    }
+    
+    private String extractPackageName(Path sourceFile) throws IOException {
+        try {
+            String content = Files.readString(sourceFile);
+            String[] lines = content.split("\n");
+            
+            for (String line : lines) {
+                line = line.trim();
+                if (line.startsWith("package ")) {
+                    return line.substring(8, line.length() - 1).trim();
+                }
+            }
+        } catch (IOException e) {
+            logger.debug("Failed to extract package name from: " + sourceFile, e);
+        }
+        return null;
+    }
+    
+    private java.util.Set<String> extractImports(Path sourceFile) throws IOException {
+        java.util.Set<String> imports = new java.util.HashSet<>();
+        
+        try {
+            String content = Files.readString(sourceFile);
+            String[] lines = content.split("\n");
+            
+            for (String line : lines) {
+                line = line.trim();
+                if (line.startsWith("import ")) {
+                    String importStatement = line.substring(7, line.length() - 1).trim();
+                    imports.add(importStatement);
+                }
+            }
+        } catch (IOException e) {
+            logger.debug("Failed to extract imports from: " + sourceFile, e);
+        }
+        
+        return imports;
+    }
+    
+    private int countOccurrences(String text, String pattern) {
+        int count = 0;
+        int index = 0;
+        while ((index = text.indexOf(pattern, index)) != -1) {
+            count++;
+            index += pattern.length();
+        }
+        return count;
     }
     
     private long estimateBuildTime(ProjectAnalysis analysis) {
