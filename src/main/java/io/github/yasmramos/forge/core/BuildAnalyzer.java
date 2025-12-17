@@ -11,7 +11,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -150,7 +153,7 @@ public class BuildAnalyzer {
     private void analyzePackageStructure(ProjectAnalysis analysis) {
         logger.debug("📦 Analyzing package structure...");
         
-        Map<String, Integer> packageFileCount = new java.util.HashMap<>();
+        Map<String, Integer> packageFileCount = new HashMap<>();
         
         for (Path sourceFile : analysis.getSourceFiles()) {
             try {
@@ -172,12 +175,12 @@ public class BuildAnalyzer {
     private void analyzeDependencies(ProjectAnalysis analysis) {
         logger.debug("🔗 Analyzing source file dependencies...");
         
-        Map<String, java.util.Set<String>> fileDependencies = new java.util.HashMap<>();
+        Map<String, Set<String>> fileDependencies = new HashMap<>();
         
         for (Path sourceFile : analysis.getSourceFiles()) {
             try {
                 String fileName = sourceFile.getFileName().toString();
-                java.util.Set<String> imports = extractImports(sourceFile);
+                Set<String> imports = extractImports(sourceFile);
                 fileDependencies.put(fileName, imports);
                 
                 if (!imports.isEmpty()) {
@@ -296,8 +299,8 @@ public class BuildAnalyzer {
         return null;
     }
     
-    private java.util.Set<String> extractImports(Path sourceFile) throws IOException {
-        java.util.Set<String> imports = new java.util.HashSet<>();
+    private Set<String> extractImports(Path sourceFile) throws IOException {
+        Set<String> imports = new HashSet<>();
         
         try {
             String content = Files.readString(sourceFile);
