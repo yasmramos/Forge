@@ -1,0 +1,42 @@
+{
+  "project": {
+    "name": "demo-project",
+    "version": "1.0.0",
+    "group": "com.example",
+    "artifact": "demo-project",
+    "description": "Demo project for Forge Build System"
+  },
+  "sourceDirectories": [
+    "src/main/java"
+  ],
+  "testDirectories": [
+    "src/test/java"
+  ],
+  "resourceDirectories": [
+    "src/main/resources"
+  ],
+  "dependencies": {
+    "junit:junit": {
+      "version": "4.13.2",
+      "type": "maven"
+    },
+    "org.slf4j:slf4j-api": {
+      "version": "1.7.36",
+      "type": "maven"
+    },
+    "ch.qos.logback:logback-classic": {
+      "version": "1.2.12",
+      "type": "maven"
+    }
+  },
+  "compiler": {
+    "sourceVersion": "11",
+    "targetVersion": "11",
+    "encoding": "UTF-8"
+  },
+  "output": {
+    "classesDirectory": "target/classes",
+    "testClassesDirectory": "target/test-classes",
+    "jarDirectory": "target/forge-output"
+  }
+}
