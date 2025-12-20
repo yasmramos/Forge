@@ -1,0 +1,946 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< io.github.yasmramos:forge >----------------------
+[INFO] Building Forge Build System 1.0.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ forge ---
+[INFO] Deleting /workspace/Forge/target
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ forge ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /workspace/Forge/src/main/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:compile (default-compile) @ forge ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 15 source files with javac [debug target 15] to target/classes
+[WARNING] system modules path not set in conjunction with -source 15
+[INFO] /workspace/Forge/src/main/java/io/github/yasmramos/forge/core/Compiler.java: Some input files use unchecked or unsafe operations.
+[INFO] /workspace/Forge/src/main/java/io/github/yasmramos/forge/core/Compiler.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ forge ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /workspace/Forge/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:testCompile (default-testCompile) @ forge ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 7 source files with javac [debug target 15] to target/test-classes
+[WARNING] system modules path not set in conjunction with -source 15
+[INFO] 
+[INFO] --- maven-surefire-plugin:3.0.0:test (default-test) @ forge ---
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/maven-surefire-common/3.0.0/maven-surefire-common-3.0.0.pom
+Progress (1): 4.1 kBProgress (1): 5.9 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/maven-surefire-common/3.0.0/maven-surefire-common-3.0.0.pom (5.9 kB at 27 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-api/3.0.0/surefire-api-3.0.0.pom
+Progress (1): 3.4 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-api/3.0.0/surefire-api-3.0.0.pom (3.4 kB at 47 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-logger-api/3.0.0/surefire-logger-api-3.0.0.pom
+Progress (1): 3.2 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-logger-api/3.0.0/surefire-logger-api-3.0.0.pom (3.2 kB at 28 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-shared-utils/3.0.0/surefire-shared-utils-3.0.0.pom
+Progress (1): 4.1 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-shared-utils/3.0.0/surefire-shared-utils-3.0.0.pom (4.1 kB at 31 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-api/3.0.0/surefire-extensions-api-3.0.0.pom
+Progress (1): 3.2 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-api/3.0.0/surefire-extensions-api-3.0.0.pom (3.2 kB at 60 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-booter/3.0.0/surefire-booter-3.0.0.pom
+Progress (1): 4.1 kBProgress (1): 4.3 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-booter/3.0.0/surefire-booter-3.0.0.pom (4.3 kB at 62 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-spi/3.0.0/surefire-extensions-spi-3.0.0.pom
+Progress (1): 1.7 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-spi/3.0.0/surefire-extensions-spi-3.0.0.pom (1.7 kB at 27 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/eclipse/aether/aether-util/1.0.0.v20140518/aether-util-1.0.0.v20140518.pom
+Progress (1): 2.2 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/eclipse/aether/aether-util/1.0.0.v20140518/aether-util-1.0.0.v20140518.pom (2.2 kB at 28 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/eclipse/aether/aether/1.0.0.v20140518/aether-1.0.0.v20140518.pom
+Progress (1): 4.1 kBProgress (1): 8.2 kBProgress (1): 12 kB Progress (1): 16 kBProgress (1): 20 kBProgress (1): 25 kBProgress (1): 29 kBProgress (1): 30 kB                   Downloaded from central: https://repo.maven.apache.org/maven2/org/eclipse/aether/aether/1.0.0.v20140518/aether-1.0.0.v20140518.pom (30 kB at 529 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/eclipse/aether/aether-api/1.0.0.v20140518/aether-api-1.0.0.v20140518.pom
+Progress (1): 1.9 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/eclipse/aether/aether-api/1.0.0.v20140518/aether-api-1.0.0.v20140518.pom (1.9 kB at 29 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/shared/maven-common-artifact-filters/3.1.1/maven-common-artifact-filters-3.1.1.pom
+Progress (1): 4.1 kBProgress (1): 5.8 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/shared/maven-common-artifact-filters/3.1.1/maven-common-artifact-filters-3.1.1.pom (5.8 kB at 48 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-artifact/3.2.5/maven-artifact-3.2.5.pom
+Progress (1): 2.3 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-artifact/3.2.5/maven-artifact-3.2.5.pom (2.3 kB at 32 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven/3.2.5/maven-3.2.5.pom
+Progress (1): 4.1 kBProgress (1): 8.2 kBProgress (1): 12 kB Progress (1): 16 kBProgress (1): 20 kBProgress (1): 22 kB                   Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven/3.2.5/maven-3.2.5.pom (22 kB at 280 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-parent/25/maven-parent-25.pom
+Progress (1): 4.1 kBProgress (1): 8.2 kBProgress (1): 12 kB Progress (1): 16 kBProgress (1): 20 kBProgress (1): 25 kBProgress (1): 29 kBProgress (1): 33 kBProgress (1): 37 kBProgress (1): 37 kB                   Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-parent/25/maven-parent-25.pom (37 kB at 386 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/apache/15/apache-15.pom
+Progress (1): 4.1 kBProgress (1): 8.2 kBProgress (1): 12 kB Progress (1): 15 kB                   Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/apache/15/apache-15.pom (15 kB at 209 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-core/3.2.5/maven-core-3.2.5.pom
+Progress (1): 4.1 kBProgress (1): 8.1 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-core/3.2.5/maven-core-3.2.5.pom (8.1 kB at 90 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-settings/3.2.5/maven-settings-3.2.5.pom
+Progress (1): 2.2 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-settings/3.2.5/maven-settings-3.2.5.pom (2.2 kB at 19 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-settings-builder/3.2.5/maven-settings-builder-3.2.5.pom
+Progress (1): 2.6 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-settings-builder/3.2.5/maven-settings-builder-3.2.5.pom (2.6 kB at 25 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-interpolation/1.21/plexus-interpolation-1.21.pom
+Progress (1): 1.5 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-interpolation/1.21/plexus-interpolation-1.21.pom (1.5 kB at 18 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-components/1.3.1/plexus-components-1.3.1.pom
+Progress (1): 3.1 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-components/1.3.1/plexus-components-1.3.1.pom (3.1 kB at 58 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus/3.3.1/plexus-3.3.1.pom
+Progress (1): 4.1 kBProgress (1): 8.2 kBProgress (1): 12 kB Progress (1): 16 kBProgress (1): 20 kB                   Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus/3.3.1/plexus-3.3.1.pom (20 kB at 292 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/sonatype/spice/spice-parent/17/spice-parent-17.pom
+Progress (1): 4.1 kBProgress (1): 6.8 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/sonatype/spice/spice-parent/17/spice-parent-17.pom (6.8 kB at 113 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/sonatype/forge/forge-parent/10/forge-parent-10.pom
+Progress (1): 4.1 kBProgress (1): 8.2 kBProgress (1): 12 kB Progress (1): 14 kB                   Downloaded from central: https://repo.maven.apache.org/maven2/org/sonatype/forge/forge-parent/10/forge-parent-10.pom (14 kB at 226 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/sonatype/plexus/plexus-sec-dispatcher/1.3/plexus-sec-dispatcher-1.3.pom
+Progress (1): 3.0 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/sonatype/plexus/plexus-sec-dispatcher/1.3/plexus-sec-dispatcher-1.3.pom (3.0 kB at 35 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/sonatype/spice/spice-parent/12/spice-parent-12.pom
+Progress (1): 4.1 kBProgress (1): 6.8 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/sonatype/spice/spice-parent/12/spice-parent-12.pom (6.8 kB at 35 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/sonatype/forge/forge-parent/4/forge-parent-4.pom
+Progress (1): 4.1 kBProgress (1): 8.2 kBProgress (1): 8.4 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/sonatype/forge/forge-parent/4/forge-parent-4.pom (8.4 kB at 118 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/sonatype/plexus/plexus-cipher/1.4/plexus-cipher-1.4.pom
+Progress (1): 2.1 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/sonatype/plexus/plexus-cipher/1.4/plexus-cipher-1.4.pom (2.1 kB at 31 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-repository-metadata/3.2.5/maven-repository-metadata-3.2.5.pom
+Progress (1): 2.2 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-repository-metadata/3.2.5/maven-repository-metadata-3.2.5.pom (2.2 kB at 34 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-plugin-api/3.2.5/maven-plugin-api-3.2.5.pom
+Progress (1): 3.0 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-plugin-api/3.2.5/maven-plugin-api-3.2.5.pom (3.0 kB at 43 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/eclipse/sisu/org.eclipse.sisu.plexus/0.3.5/org.eclipse.sisu.plexus-0.3.5.pom
+Progress (1): 4.1 kBProgress (1): 4.3 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/eclipse/sisu/org.eclipse.sisu.plexus/0.3.5/org.eclipse.sisu.plexus-0.3.5.pom (4.3 kB at 70 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/eclipse/sisu/sisu-plexus/0.3.5/sisu-plexus-0.3.5.pom
+Progress (1): 4.1 kBProgress (1): 8.2 kBProgress (1): 12 kB Progress (1): 14 kB                   Downloaded from central: https://repo.maven.apache.org/maven2/org/eclipse/sisu/sisu-plexus/0.3.5/sisu-plexus-0.3.5.pom (14 kB at 280 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/javax/annotation/javax.annotation-api/1.2/javax.annotation-api-1.2.pom
+Progress (1): 4.1 kBProgress (1): 8.2 kBProgress (1): 12 kB Progress (1): 13 kB                   Downloaded from central: https://repo.maven.apache.org/maven2/javax/annotation/javax.annotation-api/1.2/javax.annotation-api-1.2.pom (13 kB at 158 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/net/java/jvnet-parent/3/jvnet-parent-3.pom
+Progress (1): 4.1 kBProgress (1): 4.8 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/net/java/jvnet-parent/3/jvnet-parent-3.pom (4.8 kB at 87 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/javax/enterprise/cdi-api/1.2/cdi-api-1.2.pom
+Progress (1): 4.1 kBProgress (1): 6.3 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/javax/enterprise/cdi-api/1.2/cdi-api-1.2.pom (6.3 kB at 97 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/jboss/weld/weld-parent/26/weld-parent-26.pom
+Progress (1): 4.1 kBProgress (1): 8.2 kBProgress (1): 12 kB Progress (1): 16 kBProgress (1): 20 kBProgress (1): 25 kBProgress (1): 29 kBProgress (1): 32 kB                   Downloaded from central: https://repo.maven.apache.org/maven2/org/jboss/weld/weld-parent/26/weld-parent-26.pom (32 kB at 425 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/javax/inject/javax.inject/1/javax.inject-1.pom
+Progress (1): 612 B                   Downloaded from central: https://repo.maven.apache.org/maven2/javax/inject/javax.inject/1/javax.inject-1.pom (612 B at 8.5 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/eclipse/sisu/org.eclipse.sisu.inject/0.3.5/org.eclipse.sisu.inject-0.3.5.pom
+Progress (1): 2.6 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/eclipse/sisu/org.eclipse.sisu.inject/0.3.5/org.eclipse.sisu.inject-0.3.5.pom (2.6 kB at 34 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/eclipse/sisu/sisu-inject/0.3.5/sisu-inject-0.3.5.pom
+Progress (1): 4.1 kBProgress (1): 8.2 kBProgress (1): 12 kB Progress (1): 14 kB                   Downloaded from central: https://repo.maven.apache.org/maven2/org/eclipse/sisu/sisu-inject/0.3.5/sisu-inject-0.3.5.pom (14 kB at 185 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-classworlds/2.5.2/plexus-classworlds-2.5.2.pom
+Progress (1): 4.1 kBProgress (1): 7.3 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-classworlds/2.5.2/plexus-classworlds-2.5.2.pom (7.3 kB at 73 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-model-builder/3.2.5/maven-model-builder-3.2.5.pom
+Progress (1): 3.0 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-model-builder/3.2.5/maven-model-builder-3.2.5.pom (3.0 kB at 31 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-aether-provider/3.2.5/maven-aether-provider-3.2.5.pom
+Progress (1): 4.1 kBProgress (1): 4.2 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-aether-provider/3.2.5/maven-aether-provider-3.2.5.pom (4.2 kB at 57 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/eclipse/aether/aether-spi/1.0.0.v20140518/aether-spi-1.0.0.v20140518.pom
+Progress (1): 2.1 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/eclipse/aether/aether-spi/1.0.0.v20140518/aether-spi-1.0.0.v20140518.pom (2.1 kB at 30 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/eclipse/aether/aether-impl/1.0.0.v20140518/aether-impl-1.0.0.v20140518.pom
+Progress (1): 3.5 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/eclipse/aether/aether-impl/1.0.0.v20140518/aether-impl-1.0.0.v20140518.pom (3.5 kB at 38 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/sonatype/sisu/sisu-guice/3.2.3/sisu-guice-3.2.3.pom
+Progress (1): 4.1 kBProgress (1): 8.2 kBProgress (1): 11 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/sonatype/sisu/sisu-guice/3.2.3/sisu-guice-3.2.3.pom (11 kB at 138 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/sonatype/sisu/inject/guice-parent/3.2.3/guice-parent-3.2.3.pom
+Progress (1): 4.1 kBProgress (1): 8.2 kBProgress (1): 12 kB Progress (1): 13 kB                   Downloaded from central: https://repo.maven.apache.org/maven2/org/sonatype/sisu/inject/guice-parent/3.2.3/guice-parent-3.2.3.pom (13 kB at 195 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/sonatype/forge/forge-parent/38/forge-parent-38.pom
+Progress (1): 4.1 kBProgress (1): 8.2 kBProgress (1): 12 kB Progress (1): 16 kBProgress (1): 19 kB                   Downloaded from central: https://repo.maven.apache.org/maven2/org/sonatype/forge/forge-parent/38/forge-parent-38.pom (19 kB at 268 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/aopalliance/aopalliance/1.0/aopalliance-1.0.pom
+Progress (1): 363 B                   Downloaded from central: https://repo.maven.apache.org/maven2/aopalliance/aopalliance/1.0/aopalliance-1.0.pom (363 B at 5.6 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/com/google/guava/guava/16.0.1/guava-16.0.1.pom
+Progress (1): 4.1 kBProgress (1): 6.1 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/com/google/guava/guava/16.0.1/guava-16.0.1.pom (6.1 kB at 55 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/com/google/guava/guava-parent/16.0.1/guava-parent-16.0.1.pom
+Progress (1): 4.1 kBProgress (1): 7.3 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/com/google/guava/guava-parent/16.0.1/guava-parent-16.0.1.pom (7.3 kB at 94 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/sonatype/oss/oss-parent/7/oss-parent-7.pom
+Progress (1): 4.1 kBProgress (1): 4.8 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/sonatype/oss/oss-parent/7/oss-parent-7.pom (4.8 kB at 37 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/maven-surefire-common/3.0.0/maven-surefire-common-3.0.0.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-api/3.0.0/surefire-api-3.0.0.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-logger-api/3.0.0/surefire-logger-api-3.0.0.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-api/3.0.0/surefire-extensions-api-3.0.0.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-booter/3.0.0/surefire-booter-3.0.0.jar
+Progress (1): 4.0/171 kBProgress (1): 8.1/171 kBProgress (1): 12/171 kB Progress (1): 16/171 kBProgress (1): 20/171 kBProgress (2): 20/171 kB | 2.3/26 kBProgress (2): 24/171 kB | 2.3/26 kBProgress (2): 29/171 kB | 2.3/26 kBProgress (2): 29/171 kB | 5.0/26 kBProgress (2): 33/171 kB | 5.0/26 kBProgress (2): 33/171 kB | 7.7/26 kBProgress (2): 37/171 kB | 7.7/26 kBProgress (2): 37/171 kB | 10/26 kB Progress (2): 37/171 kB | 13/26 kBProgress (2): 41/171 kB | 13/26 kBProgress (2): 45/171 kB | 13/26 kBProgress (2): 45/171 kB | 16/26 kBProgress (2): 49/171 kB | 16/26 kBProgress (2): 53/171 kB | 16/26 kBProgress (2): 53/171 kB | 19/26 kBProgress (2): 53/171 kB | 21/26 kBProgress (2): 57/171 kB | 21/26 kBProgress (2): 57/171 kB | 24/26 kBProgress (2): 61/171 kB | 24/26 kBProgress (2): 65/171 kB | 24/26 kBProgress (2): 65/171 kB | 26 kB   Progress (2): 69/171 kB | 26 kBProgress (2): 74/171 kB | 26 kBProgress (2): 78/171 kB | 26 kBProgress (2): 82/171 kB | 26 kBProgress (2): 86/171 kB | 26 kBProgress (2): 90/171 kB | 26 kBProgress (2): 94/171 kB | 26 kBProgress (2): 98/171 kB | 26 kBProgress (2): 102/171 kB | 26 kBProgress (2): 106/171 kB | 26 kBProgress (2): 110/171 kB | 26 kBProgress (2): 115/171 kB | 26 kBProgress (2): 119/171 kB | 26 kBProgress (2): 123/171 kB | 26 kBProgress (2): 127/171 kB | 26 kBProgress (2): 131/171 kB | 26 kBProgress (2): 135/171 kB | 26 kBProgress (2): 139/171 kB | 26 kBProgress (2): 143/171 kB | 26 kBProgress (2): 147/171 kB | 26 kBProgress (2): 151/171 kB | 26 kBProgress (2): 156/171 kB | 26 kBProgress (2): 160/171 kB | 26 kBProgress (2): 164/171 kB | 26 kBProgress (2): 168/171 kB | 26 kBProgress (2): 171 kB | 26 kB    Progress (3): 171 kB | 26 kB | 2.3/14 kBProgress (3): 171 kB | 26 kB | 5.0/14 kBProgress (3): 171 kB | 26 kB | 7.7/14 kBProgress (3): 171 kB | 26 kB | 10/14 kB Progress (3): 171 kB | 26 kB | 13/14 kBProgress (3): 171 kB | 26 kB | 14 kB                                       Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-api/3.0.0/surefire-api-3.0.0.jar (171 kB at 1.8 MB/s)
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-api/3.0.0/surefire-extensions-api-3.0.0.jar (26 kB at 272 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-spi/3.0.0/surefire-extensions-spi-3.0.0.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/eclipse/aether/aether-util/1.0.0.v20140518/aether-util-1.0.0.v20140518.jar
+Progress (2): 14 kB | 2.3/118 kBProgress (2): 14 kB | 5.0/118 kBProgress (2): 14 kB | 7.7/118 kBProgress (2): 14 kB | 10/118 kB Progress (2): 14 kB | 13/118 kBProgress (2): 14 kB | 16/118 kBProgress (2): 14 kB | 19/118 kBProgress (2): 14 kB | 22/118 kBProgress (2): 14 kB | 24/118 kBProgress (2): 14 kB | 27/118 kBProgress (2): 14 kB | 30/118 kBProgress (2): 14 kB | 33/118 kBProgress (2): 14 kB | 35/118 kBProgress (2): 14 kB | 38/118 kBProgress (2): 14 kB | 41/118 kBProgress (2): 14 kB | 44/118 kBProgress (2): 14 kB | 46/118 kBProgress (2): 14 kB | 49/118 kBProgress (2): 14 kB | 52/118 kBProgress (2): 14 kB | 55/118 kBProgress (2): 14 kB | 59/118 kBProgress (2): 14 kB | 63/118 kBProgress (2): 14 kB | 67/118 kBProgress (2): 14 kB | 71/118 kBProgress (2): 14 kB | 75/118 kBProgress (2): 14 kB | 79/118 kBProgress (2): 14 kB | 83/118 kBProgress (2): 14 kB | 87/118 kBProgress (2): 14 kB | 91/118 kBProgress (2): 14 kB | 96/118 kBProgress (2): 14 kB | 100/118 kBProgress (2): 14 kB | 104/118 kBProgress (2): 14 kB | 108/118 kBProgress (2): 14 kB | 112/118 kBProgress (2): 14 kB | 116/118 kBProgress (2): 14 kB | 118 kB    Progress (3): 14 kB | 118 kB | 2.3/308 kBProgress (3): 14 kB | 118 kB | 5.0/308 kBProgress (3): 14 kB | 118 kB | 7.7/308 kBProgress (3): 14 kB | 118 kB | 10/308 kB Progress (3): 14 kB | 118 kB | 13/308 kBProgress (3): 14 kB | 118 kB | 16/308 kBProgress (3): 14 kB | 118 kB | 19/308 kBProgress (3): 14 kB | 118 kB | 22/308 kBProgress (3): 14 kB | 118 kB | 24/308 kBProgress (3): 14 kB | 118 kB | 27/308 kBProgress (3): 14 kB | 118 kB | 30/308 kBProgress (3): 14 kB | 118 kB | 33/308 kBProgress (3): 14 kB | 118 kB | 35/308 kB                                        Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-logger-api/3.0.0/surefire-logger-api-3.0.0.jar (14 kB at 113 kB/s)
+Progress (2): 118 kB | 38/308 kB                                Downloading from central: https://repo.maven.apache.org/maven2/org/eclipse/aether/aether-api/1.0.0.v20140518/aether-api-1.0.0.v20140518.jar
+Progress (2): 118 kB | 41/308 kBProgress (2): 118 kB | 44/308 kBProgress (2): 118 kB | 46/308 kBProgress (2): 118 kB | 49/308 kBProgress (2): 118 kB | 52/308 kBProgress (2): 118 kB | 55/308 kBProgress (2): 118 kB | 59/308 kBProgress (2): 118 kB | 63/308 kBProgress (2): 118 kB | 67/308 kBProgress (2): 118 kB | 71/308 kBProgress (2): 118 kB | 75/308 kBProgress (2): 118 kB | 79/308 kBProgress (2): 118 kB | 83/308 kBProgress (2): 118 kB | 87/308 kBProgress (2): 118 kB | 91/308 kBProgress (2): 118 kB | 96/308 kBProgress (2): 118 kB | 100/308 kBProgress (2): 118 kB | 104/308 kBProgress (2): 118 kB | 108/308 kBProgress (2): 118 kB | 112/308 kBProgress (2): 118 kB | 116/308 kBProgress (2): 118 kB | 120/308 kBProgress (2): 118 kB | 122/308 kBProgress (2): 118 kB | 126/308 kBProgress (2): 118 kB | 130/308 kBProgress (2): 118 kB | 135/308 kBProgress (2): 118 kB | 139/308 kBProgress (2): 118 kB | 143/308 kBProgress (2): 118 kB | 147/308 kBProgress (2): 118 kB | 151/308 kBProgress (2): 118 kB | 155/308 kBProgress (2): 118 kB | 159/308 kBProgress (2): 118 kB | 163/308 kBProgress (2): 118 kB | 167/308 kBProgress (2): 118 kB | 171/308 kBProgress (2): 118 kB | 176/308 kBProgress (2): 118 kB | 180/308 kBProgress (2): 118 kB | 183/308 kBProgress (2): 118 kB | 188/308 kBProgress (2): 118 kB | 192/308 kBProgress (2): 118 kB | 196/308 kBProgress (2): 118 kB | 200/308 kBProgress (2): 118 kB | 204/308 kBProgress (2): 118 kB | 208/308 kBProgress (2): 118 kB | 212/308 kBProgress (2): 118 kB | 216/308 kBProgress (2): 118 kB | 220/308 kBProgress (2): 118 kB | 224/308 kBProgress (2): 118 kB | 228/308 kBProgress (2): 118 kB | 233/308 kBProgress (2): 118 kB | 237/308 kBProgress (2): 118 kB | 241/308 kBProgress (2): 118 kB | 245/308 kBProgress (2): 118 kB | 249/308 kBProgress (2): 118 kB | 253/308 kBProgress (2): 118 kB | 257/308 kBProgress (2): 118 kB | 261/308 kBProgress (2): 118 kB | 265/308 kBProgress (2): 118 kB | 269/308 kBProgress (2): 118 kB | 274/308 kBProgress (2): 118 kB | 278/308 kBProgress (2): 118 kB | 282/308 kBProgress (2): 118 kB | 286/308 kBProgress (2): 118 kB | 290/308 kBProgress (2): 118 kB | 293/308 kBProgress (2): 118 kB | 297/308 kBProgress (2): 118 kB | 301/308 kBProgress (2): 118 kB | 305/308 kBProgress (2): 118 kB | 308 kB                                 Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-booter/3.0.0/surefire-booter-3.0.0.jar (118 kB at 839 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/shared/maven-common-artifact-filters/3.1.1/maven-common-artifact-filters-3.1.1.jar
+Progress (2): 308 kB | 2.3/8.2 kBProgress (2): 308 kB | 5.0/8.2 kBProgress (2): 308 kB | 7.7/8.2 kBProgress (2): 308 kB | 8.2 kB    Progress (3): 308 kB | 8.2 kB | 2.3/136 kBProgress (3): 308 kB | 8.2 kB | 5.0/136 kBProgress (3): 308 kB | 8.2 kB | 7.7/136 kBProgress (3): 308 kB | 8.2 kB | 10/136 kB Progress (3): 308 kB | 8.2 kB | 13/136 kBProgress (3): 308 kB | 8.2 kB | 16/136 kBProgress (3): 308 kB | 8.2 kB | 19/136 kBProgress (3): 308 kB | 8.2 kB | 21/136 kBProgress (3): 308 kB | 8.2 kB | 24/136 kBProgress (3): 308 kB | 8.2 kB | 27/136 kBProgress (3): 308 kB | 8.2 kB | 30/136 kBProgress (3): 308 kB | 8.2 kB | 32/136 kBProgress (3): 308 kB | 8.2 kB | 35/136 kBProgress (3): 308 kB | 8.2 kB | 38/136 kBProgress (3): 308 kB | 8.2 kB | 42/136 kBProgress (3): 308 kB | 8.2 kB | 46/136 kBProgress (3): 308 kB | 8.2 kB | 50/136 kBProgress (3): 308 kB | 8.2 kB | 53/136 kBProgress (3): 308 kB | 8.2 kB | 57/136 kBProgress (3): 308 kB | 8.2 kB | 61/136 kBProgress (3): 308 kB | 8.2 kB | 65/136 kBProgress (3): 308 kB | 8.2 kB | 70/136 kBProgress (3): 308 kB | 8.2 kB | 74/136 kBProgress (3): 308 kB | 8.2 kB | 78/136 kBProgress (3): 308 kB | 8.2 kB | 82/136 kBProgress (3): 308 kB | 8.2 kB | 86/136 kBProgress (3): 308 kB | 8.2 kB | 90/136 kBProgress (3): 308 kB | 8.2 kB | 94/136 kBProgress (3): 308 kB | 8.2 kB | 98/136 kBProgress (3): 308 kB | 8.2 kB | 102/136 kBProgress (3): 308 kB | 8.2 kB | 106/136 kBProgress (3): 308 kB | 8.2 kB | 110/136 kBProgress (3): 308 kB | 8.2 kB | 115/136 kBProgress (3): 308 kB | 8.2 kB | 119/136 kBProgress (3): 308 kB | 8.2 kB | 121/136 kBProgress (4): 308 kB | 8.2 kB | 121/136 kB | 4.1/146 kBProgress (4): 308 kB | 8.2 kB | 125/136 kB | 4.1/146 kBProgress (4): 308 kB | 8.2 kB | 125/136 kB | 7.7/146 kBProgress (4): 308 kB | 8.2 kB | 125/136 kB | 12/146 kB Progress (4): 308 kB | 8.2 kB | 129/136 kB | 12/146 kBProgress (4): 308 kB | 8.2 kB | 129/136 kB | 16/146 kBProgress (4): 308 kB | 8.2 kB | 133/136 kB | 16/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 16/146 kB    Progress (4): 308 kB | 8.2 kB | 136 kB | 20/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 24/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 28/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 32/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 36/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 40/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 45/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 49/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 53/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 57/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 61/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 65/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 69/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 73/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 77/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 81/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 86/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 90/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 94/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 98/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 102/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 106/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 110/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 114/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 118/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 122/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 127/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 131/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 135/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 139/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 143/146 kBProgress (4): 308 kB | 8.2 kB | 136 kB | 146 kB                                                   Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/maven-surefire-common/3.0.0/maven-surefire-common-3.0.0.jar (308 kB at 1.8 MB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-shared-utils/3.0.0/surefire-shared-utils-3.0.0.jar
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-spi/3.0.0/surefire-extensions-spi-3.0.0.jar (8.2 kB at 47 kB/s)
+Progress (3): 136 kB | 146 kB | 3.8/61 kBProgress (3): 136 kB | 146 kB | 7.9/61 kBProgress (3): 136 kB | 146 kB | 12/61 kB Progress (3): 136 kB | 146 kB | 16/61 kBProgress (3): 136 kB | 146 kB | 20/61 kBProgress (3): 136 kB | 146 kB | 24/61 kBProgress (3): 136 kB | 146 kB | 28/61 kBProgress (3): 136 kB | 146 kB | 32/61 kBProgress (3): 136 kB | 146 kB | 37/61 kBProgress (3): 136 kB | 146 kB | 41/61 kBProgress (3): 136 kB | 146 kB | 45/61 kBProgress (3): 136 kB | 146 kB | 49/61 kBProgress (3): 136 kB | 146 kB | 53/61 kBProgress (3): 136 kB | 146 kB | 57/61 kBProgress (3): 136 kB | 146 kB | 61 kB                                        Downloaded from central: https://repo.maven.apache.org/maven2/org/eclipse/aether/aether-api/1.0.0.v20140518/aether-api-1.0.0.v20140518.jar (136 kB at 729 kB/s)
+Progress (3): 146 kB | 61 kB | 0/2.1 MB                                       Downloaded from central: https://repo.maven.apache.org/maven2/org/eclipse/aether/aether-util/1.0.0.v20140518/aether-util-1.0.0.v20140518.jar (146 kB at 678 kB/s)
+Progress (2): 61 kB | 0/2.1 MBProgress (2): 61 kB | 0/2.1 MBProgress (2): 61 kB | 0.1/2.1 MBProgress (2): 61 kB | 0.1/2.1 MBProgress (2): 61 kB | 0.1/2.1 MBProgress (2): 61 kB | 0.1/2.1 MBProgress (2): 61 kB | 0.1/2.1 MBProgress (2): 61 kB | 0.1/2.1 MBProgress (2): 61 kB | 0.2/2.1 MBProgress (2): 61 kB | 0.2/2.1 MBProgress (2): 61 kB | 0.2/2.1 MBProgress (2): 61 kB | 0.2/2.1 MBProgress (2): 61 kB | 0.2/2.1 MBProgress (2): 61 kB | 0.2/2.1 MBProgress (2): 61 kB | 0.3/2.1 MBProgress (2): 61 kB | 0.3/2.1 MBProgress (2): 61 kB | 0.3/2.1 MBProgress (2): 61 kB | 0.3/2.1 MBProgress (2): 61 kB | 0.3/2.1 MBProgress (2): 61 kB | 0.3/2.1 MBProgress (2): 61 kB | 0.4/2.1 MBProgress (2): 61 kB | 0.4/2.1 MBProgress (2): 61 kB | 0.4/2.1 MBProgress (2): 61 kB | 0.4/2.1 MBProgress (2): 61 kB | 0.4/2.1 MBProgress (2): 61 kB | 0.4/2.1 MBProgress (2): 61 kB | 0.4/2.1 MBProgress (2): 61 kB | 0.5/2.1 MBProgress (2): 61 kB | 0.5/2.1 MBProgress (2): 61 kB | 0.5/2.1 MBProgress (2): 61 kB | 0.5/2.1 MBProgress (2): 61 kB | 0.5/2.1 MBProgress (2): 61 kB | 0.5/2.1 MBProgress (2): 61 kB | 0.6/2.1 MBProgress (2): 61 kB | 0.6/2.1 MBProgress (2): 61 kB | 0.6/2.1 MBProgress (2): 61 kB | 0.6/2.1 MBProgress (2): 61 kB | 0.6/2.1 MB                                Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/shared/maven-common-artifact-filters/3.1.1/maven-common-artifact-filters-3.1.1.jar (61 kB at 258 kB/s)
+Progress (1): 0.6/2.1 MBProgress (1): 0.6/2.1 MBProgress (1): 0.7/2.1 MBProgress (1): 0.7/2.1 MBProgress (1): 0.7/2.1 MBProgress (1): 0.7/2.1 MBProgress (1): 0.7/2.1 MBProgress (1): 0.7/2.1 MBProgress (1): 0.8/2.1 MBProgress (1): 0.8/2.1 MBProgress (1): 0.8/2.1 MBProgress (1): 0.8/2.1 MBProgress (1): 0.8/2.1 MBProgress (1): 0.8/2.1 MBProgress (1): 0.9/2.1 MBProgress (1): 0.9/2.1 MBProgress (1): 0.9/2.1 MBProgress (1): 0.9/2.1 MBProgress (1): 0.9/2.1 MBProgress (1): 0.9/2.1 MBProgress (1): 0.9/2.1 MBProgress (1): 1.0/2.1 MBProgress (1): 1.0/2.1 MBProgress (1): 1.0/2.1 MBProgress (1): 1.0/2.1 MBProgress (1): 1.0/2.1 MBProgress (1): 1.0/2.1 MBProgress (1): 1.1/2.1 MBProgress (1): 1.1/2.1 MBProgress (1): 1.1/2.1 MBProgress (1): 1.1/2.1 MBProgress (1): 1.1/2.1 MBProgress (1): 1.1/2.1 MBProgress (1): 1.2/2.1 MBProgress (1): 1.2/2.1 MBProgress (1): 1.2/2.1 MBProgress (1): 1.2/2.1 MBProgress (1): 1.2/2.1 MBProgress (1): 1.2/2.1 MBProgress (1): 1.3/2.1 MBProgress (1): 1.3/2.1 MBProgress (1): 1.3/2.1 MBProgress (1): 1.3/2.1 MBProgress (1): 1.3/2.1 MBProgress (1): 1.3/2.1 MBProgress (1): 1.4/2.1 MBProgress (1): 1.4/2.1 MBProgress (1): 1.4/2.1 MBProgress (1): 1.4/2.1 MBProgress (1): 1.4/2.1 MBProgress (1): 1.4/2.1 MBProgress (1): 1.5/2.1 MBProgress (1): 1.5/2.1 MBProgress (1): 1.5/2.1 MBProgress (1): 1.5/2.1 MBProgress (1): 1.5/2.1 MBProgress (1): 1.5/2.1 MBProgress (1): 1.6/2.1 MBProgress (1): 1.6/2.1 MBProgress (1): 1.6/2.1 MBProgress (1): 1.6/2.1 MBProgress (1): 1.6/2.1 MBProgress (1): 1.6/2.1 MBProgress (1): 1.6/2.1 MBProgress (1): 1.7/2.1 MBProgress (1): 1.7/2.1 MBProgress (1): 1.7/2.1 MBProgress (1): 1.7/2.1 MBProgress (1): 1.7/2.1 MBProgress (1): 1.7/2.1 MBProgress (1): 1.8/2.1 MBProgress (1): 1.8/2.1 MBProgress (1): 1.8/2.1 MBProgress (1): 1.8/2.1 MBProgress (1): 1.8/2.1 MBProgress (1): 1.8/2.1 MBProgress (1): 1.9/2.1 MBProgress (1): 1.9/2.1 MBProgress (1): 1.9/2.1 MBProgress (1): 1.9/2.1 MBProgress (1): 1.9/2.1 MBProgress (1): 1.9/2.1 MBProgress (1): 2.0/2.1 MBProgress (1): 2.0/2.1 MBProgress (1): 2.0/2.1 MBProgress (1): 2.0/2.1 MBProgress (1): 2.0/2.1 MBProgress (1): 2.0/2.1 MBProgress (1): 2.1/2.1 MBProgress (1): 2.1/2.1 MBProgress (1): 2.1/2.1 MBProgress (1): 2.1/2.1 MBProgress (1): 2.1/2.1 MBProgress (1): 2.1/2.1 MBProgress (1): 2.1 MB                        Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-shared-utils/3.0.0/surefire-shared-utils-3.0.0.jar (2.1 MB at 6.9 MB/s)
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-junit-platform/3.0.0/surefire-junit-platform-3.0.0.pom
+Progress (1): 4.1 kBProgress (1): 4.5 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-junit-platform/3.0.0/surefire-junit-platform-3.0.0.pom (4.5 kB at 56 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-providers/3.0.0/surefire-providers-3.0.0.pom
+Progress (1): 2.5 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-providers/3.0.0/surefire-providers-3.0.0.pom (2.5 kB at 35 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/common-java5/3.0.0/common-java5-3.0.0.pom
+Progress (1): 2.7 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/common-java5/3.0.0/common-java5-3.0.0.pom (2.7 kB at 16 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.3.2/junit-platform-launcher-1.3.2.pom
+Progress (1): 2.2 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.3.2/junit-platform-launcher-1.3.2.pom (2.2 kB at 16 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.pom
+Progress (1): 1.2 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.pom (1.2 kB at 14 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.3.2/junit-platform-engine-1.3.2.pom
+Progress (1): 2.4 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.3.2/junit-platform-engine-1.3.2.pom (2.4 kB at 39 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.3.2/junit-platform-commons-1.3.2.pom
+Progress (1): 2.0 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.3.2/junit-platform-commons-1.3.2.pom (2.0 kB at 26 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/opentest4j/opentest4j/1.1.1/opentest4j-1.1.1.pom
+Progress (1): 1.7 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/opentest4j/opentest4j/1.1.1/opentest4j-1.1.1.pom (1.7 kB at 25 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-junit-platform/3.0.0/surefire-junit-platform-3.0.0.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/common-java5/3.0.0/common-java5-3.0.0.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.3.2/junit-platform-launcher-1.3.2.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.3.2/junit-platform-engine-1.3.2.jar
+Progress (1): 3.8/138 kBProgress (1): 7.9/138 kBProgress (1): 12/138 kB Progress (1): 16/138 kBProgress (1): 20/138 kBProgress (1): 24/138 kBProgress (1): 28/138 kBProgress (1): 32/138 kBProgress (1): 37/138 kBProgress (1): 41/138 kBProgress (1): 45/138 kBProgress (2): 45/138 kB | 3.8/18 kBProgress (2): 49/138 kB | 3.8/18 kBProgress (2): 53/138 kB | 3.8/18 kBProgress (2): 53/138 kB | 7.9/18 kBProgress (2): 57/138 kB | 7.9/18 kBProgress (3): 57/138 kB | 7.9/18 kB | 2.2 kBProgress (3): 57/138 kB | 12/18 kB | 2.2 kB Progress (3): 57/138 kB | 16/18 kB | 2.2 kBProgress (3): 57/138 kB | 18 kB | 2.2 kB   Progress (3): 61/138 kB | 18 kB | 2.2 kBProgress (3): 65/138 kB | 18 kB | 2.2 kBProgress (3): 69/138 kB | 18 kB | 2.2 kBProgress (3): 73/138 kB | 18 kB | 2.2 kBProgress (3): 77/138 kB | 18 kB | 2.2 kBProgress (3): 82/138 kB | 18 kB | 2.2 kBProgress (3): 86/138 kB | 18 kB | 2.2 kBProgress (3): 90/138 kB | 18 kB | 2.2 kBProgress (3): 94/138 kB | 18 kB | 2.2 kBProgress (3): 98/138 kB | 18 kB | 2.2 kBProgress (3): 102/138 kB | 18 kB | 2.2 kBProgress (3): 106/138 kB | 18 kB | 2.2 kBProgress (3): 110/138 kB | 18 kB | 2.2 kBProgress (3): 114/138 kB | 18 kB | 2.2 kBProgress (3): 118/138 kB | 18 kB | 2.2 kBProgress (3): 123/138 kB | 18 kB | 2.2 kBProgress (3): 127/138 kB | 18 kB | 2.2 kBProgress (3): 131/138 kB | 18 kB | 2.2 kBProgress (3): 135/138 kB | 18 kB | 2.2 kBProgress (3): 138 kB | 18 kB | 2.2 kB    Progress (4): 138 kB | 18 kB | 2.2 kB | 4.0/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 8.1/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 12/95 kB Progress (4): 138 kB | 18 kB | 2.2 kB | 16/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 20/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 24/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 29/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 33/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 37/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 41/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 45/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 49/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 53/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 57/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 61/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 65/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 70/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 74/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 78/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 82/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 86/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 90/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 94/95 kBProgress (4): 138 kB | 18 kB | 2.2 kB | 95 kB   Progress (5): 138 kB | 18 kB | 2.2 kB | 95 kB | 4.1/27 kBProgress (5): 138 kB | 18 kB | 2.2 kB | 95 kB | 7.7/27 kBProgress (5): 138 kB | 18 kB | 2.2 kB | 95 kB | 12/27 kB Progress (5): 138 kB | 18 kB | 2.2 kB | 95 kB | 16/27 kBProgress (5): 138 kB | 18 kB | 2.2 kB | 95 kB | 20/27 kBProgress (5): 138 kB | 18 kB | 2.2 kB | 95 kB | 24/27 kBProgress (5): 138 kB | 18 kB | 2.2 kB | 95 kB | 27 kB                                                        Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.3.2/junit-platform-engine-1.3.2.jar (138 kB at 2.2 MB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.3.2/junit-platform-commons-1.3.2.jar
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/common-java5/3.0.0/common-java5-3.0.0.jar (18 kB at 225 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/opentest4j/opentest4j/1.1.1/opentest4j-1.1.1.jar
+Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.3.2/junit-platform-launcher-1.3.2.jar (95 kB at 1.1 MB/s)
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-junit-platform/3.0.0/surefire-junit-platform-3.0.0.jar (27 kB at 306 kB/s)
+Progress (2): 2.2 kB | 4.1/78 kBProgress (2): 2.2 kB | 7.7/78 kBProgress (2): 2.2 kB | 12/78 kB Progress (2): 2.2 kB | 16/78 kBProgress (2): 2.2 kB | 20/78 kBProgress (2): 2.2 kB | 24/78 kBProgress (2): 2.2 kB | 28/78 kBProgress (2): 2.2 kB | 32/78 kBProgress (2): 2.2 kB | 36/78 kBProgress (2): 2.2 kB | 40/78 kBProgress (2): 2.2 kB | 45/78 kBProgress (2): 2.2 kB | 49/78 kBProgress (2): 2.2 kB | 53/78 kBProgress (2): 2.2 kB | 57/78 kBProgress (2): 2.2 kB | 61/78 kBProgress (2): 2.2 kB | 65/78 kBProgress (2): 2.2 kB | 69/78 kBProgress (2): 2.2 kB | 73/78 kBProgress (2): 2.2 kB | 77/78 kBProgress (2): 2.2 kB | 78 kB                               Downloaded from central: https://repo.maven.apache.org/maven2/org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar (2.2 kB at 21 kB/s)
+Progress (2): 78 kB | 2.3/7.1 kBProgress (2): 78 kB | 5.4/7.1 kBProgress (2): 78 kB | 7.1 kB                                Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.3.2/junit-platform-commons-1.3.2.jar (78 kB at 603 kB/s)
+Downloaded from central: https://repo.maven.apache.org/maven2/org/opentest4j/opentest4j/1.1.1/opentest4j-1.1.1.jar (7.1 kB at 41 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.9.2/junit-platform-launcher-1.9.2.pom
+Progress (1): 3.0 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.9.2/junit-platform-launcher-1.9.2.pom (3.0 kB at 46 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.9.2/junit-platform-launcher-1.9.2.jar
+Progress (1): 3.8/169 kBProgress (1): 7.9/169 kBProgress (1): 12/169 kB Progress (1): 16/169 kBProgress (1): 20/169 kBProgress (1): 24/169 kBProgress (1): 28/169 kBProgress (1): 32/169 kBProgress (1): 37/169 kBProgress (1): 41/169 kBProgress (1): 45/169 kBProgress (1): 49/169 kBProgress (1): 53/169 kBProgress (1): 57/169 kBProgress (1): 61/169 kBProgress (1): 65/169 kBProgress (1): 69/169 kBProgress (1): 73/169 kBProgress (1): 77/169 kBProgress (1): 80/169 kBProgress (1): 84/169 kBProgress (1): 88/169 kBProgress (1): 92/169 kBProgress (1): 96/169 kBProgress (1): 100/169 kBProgress (1): 104/169 kBProgress (1): 108/169 kBProgress (1): 112/169 kBProgress (1): 116/169 kBProgress (1): 121/169 kBProgress (1): 125/169 kBProgress (1): 129/169 kBProgress (1): 133/169 kBProgress (1): 137/169 kBProgress (1): 141/169 kBProgress (1): 145/169 kBProgress (1): 147/169 kBProgress (1): 151/169 kBProgress (1): 155/169 kBProgress (1): 160/169 kBProgress (1): 164/169 kBProgress (1): 168/169 kBProgress (1): 169 kB                        Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.9.2/junit-platform-launcher-1.9.2.jar (169 kB at 2.5 MB/s)
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running io.github.yasmramos.forge.cache.ForgeCacheTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.084 s - in io.github.yasmramos.forge.cache.ForgeCacheTest
+[INFO] Running io.github.yasmramos.forge.core.BuildAnalyzerTest
+20:55:41.792 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Analyzing project structure...
+20:55:41.799 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📁 Found 1 source files in: /tmp/junit4761769814181247904
+20:55:41.800 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📦 Analyzing package structure...
+20:55:41.801 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📦 Package structure analysis complete: 1 packages found
+20:55:41.801 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🔗 Analyzing source file dependencies...
+20:55:41.801 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🔗 Dependency analysis complete: 1 files analyzed
+20:55:41.801 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Analyzing test files...
+20:55:41.801 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: /tmp/junit4761769814181247904/TestClass.java
+20:55:41.802 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Test analysis complete: 1 test files found
+20:55:41.803 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Calculating complexity score for 1 files...
+20:55:41.803 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Complexity calculation complete: 7.0
+20:55:41.806 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Analyzing project structure...
+20:55:41.812 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📁 Found 15 source files in: src/main/java
+20:55:41.819 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📁 Found 7 source files in: src/test/java
+20:55:41.819 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📦 Analyzing package structure...
+20:55:41.833 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📦 Package structure analysis complete: 9 packages found
+20:55:41.833 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🔗 Analyzing source file dependencies...
+20:55:41.835 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File Forge.java imports: 10 dependencies
+20:55:41.836 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCache.java imports: 10 dependencies
+20:55:41.837 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCLI.java imports: 4 dependencies
+20:55:41.838 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File BuildAnalyzer.java imports: 17 dependencies
+20:55:41.839 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File Compiler.java imports: 17 dependencies
+20:55:41.839 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolver.java imports: 17 dependencies
+20:55:41.840 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeEngine.java imports: 19 dependencies
+20:55:41.841 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyInfo.java imports: 3 dependencies
+20:55:41.842 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolution.java imports: 4 dependencies
+20:55:41.844 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ProjectAnalysis.java imports: 5 dependencies
+20:55:41.845 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ProjectConfig.java imports: 3 dependencies
+20:55:41.845 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ConfigReader.java imports: 9 dependencies
+20:55:41.846 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCacheTest.java imports: 5 dependencies
+20:55:41.847 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File BuildAnalyzerTest.java imports: 10 dependencies
+20:55:41.847 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolverTest.java imports: 7 dependencies
+20:55:41.848 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeEngineTest.java imports: 6 dependencies
+20:55:41.849 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeBuildSystemIntegrationTest.java imports: 6 dependencies
+20:55:41.849 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgePerformanceTest.java imports: 6 dependencies
+20:55:41.850 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeDemoProjectValidationTest.java imports: 5 dependencies
+20:55:41.850 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🔗 Dependency analysis complete: 22 files analyzed
+20:55:41.850 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Analyzing test files...
+20:55:41.850 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+20:55:41.850 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+20:55:41.850 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+20:55:41.850 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+20:55:41.850 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+20:55:41.851 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+20:55:41.851 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+20:55:41.851 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Test analysis complete: 7 test files found
+20:55:41.871 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Calculating complexity score for 22 files...
+20:55:41.892 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Complexity calculation complete: 854.5
+[ERROR] Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.145 s <<< FAILURE! - in io.github.yasmramos.forge.core.BuildAnalyzerTest
+[ERROR] io.github.yasmramos.forge.core.BuildAnalyzerTest.testAnalyzeEmptyProject  Time elapsed: 0.088 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:31)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:180)
+	at io.github.yasmramos.forge.core.BuildAnalyzerTest.testAnalyzeEmptyProject(BuildAnalyzerTest.java:36)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+[INFO] Running io.github.yasmramos.forge.core.DependencyResolverTest
+20:55:41.903 [main] INFO io.github.yasmramos.forge.core.DependencyResolver -- 🔗 Resolving 0 dependencies...
+20:55:41.906 [main] INFO io.github.yasmramos.forge.core.DependencyResolver -- 🔗 Dependency resolution completed: 0 successful, 0 failed
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s - in io.github.yasmramos.forge.core.DependencyResolverTest
+[INFO] Running io.github.yasmramos.forge.core.ForgeEngineTest
+20:55:41.915 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 🧹 Cleaning build artifacts...
+20:55:41.915 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- ✅ Clean completed
+20:55:41.916 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 🔄 Starting incremental build...
+20:55:41.916 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- 🔍 Analyzing project changes...
+20:55:41.923 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- 🔄 Found 15 changed files
+20:55:41.929 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- 🔄 Found 7 changed files
+20:55:41.929 [main] INFO io.github.yasmramos.forge.core.Compiler -- 🔄 Incremental compilation of 7 changed files
+20:55:41.933 [pool-5-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+20:55:41.933 [pool-5-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+20:55:41.934 [pool-5-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+20:55:41.934 [pool-5-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+20:55:41.935 [pool-5-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+20:55:41.935 [pool-5-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+20:55:41.935 [pool-5-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+20:55:41.941 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 🔨 Starting Forge build for project: test-project
+20:55:41.941 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 📊 Analyzing project structure...
+20:55:41.941 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Analyzing project structure...
+20:55:41.952 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📁 Found 15 source files in: src/main/java
+20:55:41.959 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📁 Found 7 source files in: src/test/java
+20:55:41.959 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📦 Analyzing package structure...
+20:55:41.971 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📦 Package structure analysis complete: 9 packages found
+20:55:41.971 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🔗 Analyzing source file dependencies...
+20:55:41.972 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File Forge.java imports: 10 dependencies
+20:55:41.973 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCache.java imports: 10 dependencies
+20:55:41.974 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCLI.java imports: 4 dependencies
+20:55:41.975 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File BuildAnalyzer.java imports: 17 dependencies
+20:55:41.975 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File Compiler.java imports: 17 dependencies
+20:55:41.976 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolver.java imports: 17 dependencies
+20:55:41.977 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeEngine.java imports: 19 dependencies
+20:55:41.978 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyInfo.java imports: 3 dependencies
+20:55:41.979 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolution.java imports: 4 dependencies
+20:55:41.981 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ProjectAnalysis.java imports: 5 dependencies
+20:55:41.982 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ProjectConfig.java imports: 3 dependencies
+20:55:41.982 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ConfigReader.java imports: 9 dependencies
+20:55:41.983 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCacheTest.java imports: 5 dependencies
+20:55:41.983 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File BuildAnalyzerTest.java imports: 10 dependencies
+20:55:41.984 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolverTest.java imports: 7 dependencies
+20:55:41.984 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeEngineTest.java imports: 6 dependencies
+20:55:41.985 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeBuildSystemIntegrationTest.java imports: 6 dependencies
+20:55:41.986 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgePerformanceTest.java imports: 6 dependencies
+20:55:41.987 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeDemoProjectValidationTest.java imports: 5 dependencies
+20:55:41.987 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🔗 Dependency analysis complete: 22 files analyzed
+20:55:41.987 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Analyzing test files...
+20:55:41.987 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+20:55:41.987 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+20:55:41.987 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+20:55:41.987 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+20:55:41.987 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+20:55:41.987 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+20:55:41.987 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+20:55:41.987 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Test analysis complete: 7 test files found
+20:55:42.016 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Calculating complexity score for 22 files...
+20:55:42.029 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Complexity calculation complete: 854.5
+20:55:42.029 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 🔗 Resolving dependencies...
+20:55:42.029 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Build failed
+java.lang.NullPointerException: Cannot invoke "java.util.Map.size()" because "dependencies" is null
+	at io.github.yasmramos.forge.core.DependencyResolver.resolve(DependencyResolver.java:35)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:61)
+	at io.github.yasmramos.forge.core.ForgeEngineTest.testBuildMethodExists(ForgeEngineTest.java:34)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.121 s - in io.github.yasmramos.forge.core.ForgeEngineTest
+[INFO] Running io.github.yasmramos.forge.integration.ForgeBuildSystemIntegrationTest
+20:55:42.033 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 🔨 Starting Forge build for project: integration-test
+20:55:42.033 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 📊 Analyzing project structure...
+20:55:42.033 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Analyzing project structure...
+20:55:42.044 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📁 Found 15 source files in: src/main/java
+20:55:42.050 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📁 Found 7 source files in: src/test/java
+20:55:42.050 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📦 Analyzing package structure...
+20:55:42.063 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📦 Package structure analysis complete: 9 packages found
+20:55:42.063 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🔗 Analyzing source file dependencies...
+20:55:42.063 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File Forge.java imports: 10 dependencies
+20:55:42.064 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCache.java imports: 10 dependencies
+20:55:42.064 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCLI.java imports: 4 dependencies
+20:55:42.065 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File BuildAnalyzer.java imports: 17 dependencies
+20:55:42.066 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File Compiler.java imports: 17 dependencies
+20:55:42.066 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolver.java imports: 17 dependencies
+20:55:42.067 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeEngine.java imports: 19 dependencies
+20:55:42.068 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyInfo.java imports: 3 dependencies
+20:55:42.068 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolution.java imports: 4 dependencies
+20:55:42.070 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ProjectAnalysis.java imports: 5 dependencies
+20:55:42.070 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ProjectConfig.java imports: 3 dependencies
+20:55:42.071 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ConfigReader.java imports: 9 dependencies
+20:55:42.071 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCacheTest.java imports: 5 dependencies
+20:55:42.072 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File BuildAnalyzerTest.java imports: 10 dependencies
+20:55:42.072 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolverTest.java imports: 7 dependencies
+20:55:42.073 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeEngineTest.java imports: 6 dependencies
+20:55:42.074 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeBuildSystemIntegrationTest.java imports: 6 dependencies
+20:55:42.074 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgePerformanceTest.java imports: 6 dependencies
+20:55:42.075 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeDemoProjectValidationTest.java imports: 5 dependencies
+20:55:42.075 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🔗 Dependency analysis complete: 22 files analyzed
+20:55:42.075 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Analyzing test files...
+20:55:42.075 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+20:55:42.075 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+20:55:42.075 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+20:55:42.075 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+20:55:42.075 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+20:55:42.075 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+20:55:42.075 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+20:55:42.075 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Test analysis complete: 7 test files found
+20:55:42.091 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Calculating complexity score for 22 files...
+20:55:42.103 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Complexity calculation complete: 854.5
+20:55:42.103 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 🔗 Resolving dependencies...
+20:55:42.103 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Build failed
+java.lang.NullPointerException: Cannot invoke "java.util.Map.size()" because "dependencies" is null
+	at io.github.yasmramos.forge.core.DependencyResolver.resolve(DependencyResolver.java:35)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:61)
+	at io.github.yasmramos.forge.integration.ForgeBuildSystemIntegrationTest.testCompleteBuildWorkflow(ForgeBuildSystemIntegrationTest.java:32)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+20:55:42.103 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 🔄 Starting incremental build...
+20:55:42.103 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- 🔍 Analyzing project changes...
+20:55:42.114 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- 🔄 Found 15 changed files
+20:55:42.119 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- 🔄 Found 7 changed files
+20:55:42.119 [main] INFO io.github.yasmramos.forge.core.Compiler -- 🔄 Incremental compilation of 7 changed files
+20:55:42.120 [pool-11-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+20:55:42.120 [pool-11-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+20:55:42.120 [pool-11-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+20:55:42.120 [pool-11-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+20:55:42.120 [pool-11-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+20:55:42.120 [pool-11-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+20:55:42.120 [pool-11-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.089 s - in io.github.yasmramos.forge.integration.ForgeBuildSystemIntegrationTest
+[INFO] Running io.github.yasmramos.forge.performance.ForgePerformanceTest
+20:55:42.122 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 🔨 Starting Forge build for project: performance-test
+20:55:42.122 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 📊 Analyzing project structure...
+20:55:42.122 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Analyzing project structure...
+20:55:42.128 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📁 Found 15 source files in: src/main/java
+20:55:42.135 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📁 Found 7 source files in: src/test/java
+20:55:42.135 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📦 Analyzing package structure...
+20:55:42.146 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📦 Package structure analysis complete: 9 packages found
+20:55:42.146 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🔗 Analyzing source file dependencies...
+20:55:42.147 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File Forge.java imports: 10 dependencies
+20:55:42.147 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCache.java imports: 10 dependencies
+20:55:42.148 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCLI.java imports: 4 dependencies
+20:55:42.148 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File BuildAnalyzer.java imports: 17 dependencies
+20:55:42.149 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File Compiler.java imports: 17 dependencies
+20:55:42.153 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolver.java imports: 17 dependencies
+20:55:42.153 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeEngine.java imports: 19 dependencies
+20:55:42.154 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyInfo.java imports: 3 dependencies
+20:55:42.155 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolution.java imports: 4 dependencies
+20:55:42.157 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ProjectAnalysis.java imports: 5 dependencies
+20:55:42.157 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ProjectConfig.java imports: 3 dependencies
+20:55:42.158 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ConfigReader.java imports: 9 dependencies
+20:55:42.159 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCacheTest.java imports: 5 dependencies
+20:55:42.159 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File BuildAnalyzerTest.java imports: 10 dependencies
+20:55:42.160 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolverTest.java imports: 7 dependencies
+20:55:42.160 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeEngineTest.java imports: 6 dependencies
+20:55:42.161 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeBuildSystemIntegrationTest.java imports: 6 dependencies
+20:55:42.161 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgePerformanceTest.java imports: 6 dependencies
+20:55:42.162 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeDemoProjectValidationTest.java imports: 5 dependencies
+20:55:42.162 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🔗 Dependency analysis complete: 22 files analyzed
+20:55:42.162 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Analyzing test files...
+20:55:42.162 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+20:55:42.162 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+20:55:42.162 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+20:55:42.162 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+20:55:42.162 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+20:55:42.162 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+20:55:42.162 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+20:55:42.162 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Test analysis complete: 7 test files found
+20:55:42.173 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Calculating complexity score for 22 files...
+20:55:42.183 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Complexity calculation complete: 854.5
+20:55:42.183 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 🔗 Resolving dependencies...
+20:55:42.183 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Build failed
+java.lang.NullPointerException: Cannot invoke "java.util.Map.size()" because "dependencies" is null
+	at io.github.yasmramos.forge.core.DependencyResolver.resolve(DependencyResolver.java:35)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:61)
+	at io.github.yasmramos.forge.performance.ForgePerformanceTest.testBasicBuildPerformance(ForgePerformanceTest.java:31)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.064 s - in io.github.yasmramos.forge.performance.ForgePerformanceTest
+[INFO] Running io.github.yasmramos.forge.validation.ForgeDemoProjectValidationTest
+20:55:42.186 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 🔨 Starting Forge build for project: validation-test
+20:55:42.186 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 📊 Analyzing project structure...
+20:55:42.186 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Analyzing project structure...
+20:55:42.193 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📁 Found 15 source files in: src/main/java
+20:55:42.199 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📁 Found 7 source files in: src/test/java
+20:55:42.199 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📦 Analyzing package structure...
+20:55:42.209 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📦 Package structure analysis complete: 9 packages found
+20:55:42.209 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🔗 Analyzing source file dependencies...
+20:55:42.210 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File Forge.java imports: 10 dependencies
+20:55:42.210 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCache.java imports: 10 dependencies
+20:55:42.211 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCLI.java imports: 4 dependencies
+20:55:42.211 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File BuildAnalyzer.java imports: 17 dependencies
+20:55:42.212 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File Compiler.java imports: 17 dependencies
+20:55:42.212 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolver.java imports: 17 dependencies
+20:55:42.213 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeEngine.java imports: 19 dependencies
+20:55:42.214 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyInfo.java imports: 3 dependencies
+20:55:42.214 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolution.java imports: 4 dependencies
+20:55:42.216 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ProjectAnalysis.java imports: 5 dependencies
+20:55:42.217 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ProjectConfig.java imports: 3 dependencies
+20:55:42.217 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ConfigReader.java imports: 9 dependencies
+20:55:42.218 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeCacheTest.java imports: 5 dependencies
+20:55:42.218 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File BuildAnalyzerTest.java imports: 10 dependencies
+20:55:42.219 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File DependencyResolverTest.java imports: 7 dependencies
+20:55:42.219 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeEngineTest.java imports: 6 dependencies
+20:55:42.220 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeBuildSystemIntegrationTest.java imports: 6 dependencies
+20:55:42.220 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgePerformanceTest.java imports: 6 dependencies
+20:55:42.221 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📋 File ForgeDemoProjectValidationTest.java imports: 5 dependencies
+20:55:42.221 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🔗 Dependency analysis complete: 22 files analyzed
+20:55:42.221 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Analyzing test files...
+20:55:42.221 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+20:55:42.221 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+20:55:42.221 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+20:55:42.221 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+20:55:42.221 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+20:55:42.221 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+20:55:42.221 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Found test file: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+20:55:42.221 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 🧪 Test analysis complete: 7 test files found
+20:55:42.232 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Calculating complexity score for 22 files...
+20:55:42.242 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- 📊 Complexity calculation complete: 854.5
+20:55:42.242 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- 🔗 Resolving dependencies...
+20:55:42.242 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Build failed
+java.lang.NullPointerException: Cannot invoke "java.util.Map.size()" because "dependencies" is null
+	at io.github.yasmramos.forge.core.DependencyResolver.resolve(DependencyResolver.java:35)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:61)
+	at io.github.yasmramos.forge.validation.ForgeDemoProjectValidationTest.testBasicValidation(ForgeDemoProjectValidationTest.java:25)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.056 s - in io.github.yasmramos.forge.validation.ForgeDemoProjectValidationTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   BuildAnalyzerTest.testAnalyzeEmptyProject:36 expected: <true> but was: <false>
+[INFO] 
+[ERROR] Tests run: 14, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  8.770 s
+[INFO] Finished at: 2025-12-19T20:55:42Z
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.0.0:test (default-test) on project forge: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /workspace/Forge/target/surefire-reports for the individual test results.
+[ERROR] Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
