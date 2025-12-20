@@ -32,6 +32,12 @@ public class DependencyResolver {
     }
     
     public DependencyResolution resolve(Map<String, Object> dependencies, ProjectAnalysis analysis) {
+        // Check if dependencies map is null
+        if (dependencies == null) {
+            logger.warn("⚠️ Dependencies map is null, returning empty resolution");
+            return new DependencyResolution();
+        }
+        
         logger.info("🔗 Resolving " + dependencies.size() + " dependencies...");
         
         DependencyResolution resolution = new DependencyResolution();
