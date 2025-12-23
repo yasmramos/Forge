@@ -49,30 +49,30 @@ public class ForgeEngine {
      * Execute full build process
      */
     public BuildResult build() {
-        logger.info("🔨 Starting Forge build for project: " + config.getName());
+        logger.info("Starting Forge build for project: " + config.getName());
         
         try {
             // Phase 1: Analyze project structure
-            logger.info("📊 Analyzing project structure...");
+            logger.info("Analyzing project structure...");
             ProjectAnalysis analysis = analyzer.analyzeProject(config);
             
             // Phase 2: Resolve dependencies
-            logger.info("🔗 Resolving dependencies...");
+            logger.info("Resolving dependencies...");
             DependencyResolution dependencyResult = dependencyResolver.resolve(
                 config.getDependencies(), analysis
             );
             
             // Phase 3: Compile sources
-            logger.info("⚡ Compiling sources...");
+            logger.info("Compiling sources...");
             CompilationResult compilationResult = compileSources(analysis, dependencyResult);
             
             // Phase 4: Package artifacts
-            logger.info("📦 Packaging artifacts...");
+            logger.info("Packaging artifacts...");
             PackageResult packageResult = packageArtifacts(compilationResult);
             
             // Phase 5: Run tests if enabled
             if (config.getBuildSettings().isParallel()) {
-                logger.info("🧪 Running tests...");
+                logger.info("Running tests...");
                 TestResult testResult = runTests(packageResult);
                 
                 return new BuildResult(true, packageResult, testResult);
@@ -92,14 +92,14 @@ public class ForgeEngine {
      * Execute incremental build
      */
     public BuildResult buildIncremental() {
-        logger.info("🔄 Starting incremental build...");
+        logger.info("Starting incremental build...");
         
         try {
             // Analyze changed files
             ProjectAnalysis analysis = analyzer.analyzeChanges(config);
             
             if (!analysis.hasChanges()) {
-                logger.info("✅ No changes detected, build skipped");
+                logger.info("No changes detected, build skipped");
                 return new BuildResult(true, null, null);
             }
             
@@ -126,7 +126,7 @@ public class ForgeEngine {
      * Clean build artifacts
      */
     public void clean() {
-        logger.info("🧹 Cleaning build artifacts...");
+        logger.info("Cleaning build artifacts...");
         
         try {
             if (config.getOutputDirectory() != null) {
@@ -145,7 +145,7 @@ public class ForgeEngine {
             }
             
             cache.clear();
-            logger.info("✅ Clean completed");
+            logger.info("Clean completed");
             
         } catch (Exception e) {
             logger.error("Clean failed", e);
@@ -199,7 +199,7 @@ public class ForgeEngine {
     }
     
     private PackageResult packageArtifacts(CompilationResult compilationResult) {
-        logger.info("📦 Packaging compiled artifacts...");
+        logger.info("Packaging compiled artifacts...");
         
         try {
             // Create output directory
@@ -212,17 +212,17 @@ public class ForgeEngine {
             Path mainJar = packageMainJar(outputDir);
             if (mainJar != null) {
                 artifactCount++;
-                logger.info("✅ Main JAR packaged: " + mainJar);
+                logger.info("Main JAR packaged: " + mainJar);
             }
             
             // Package additional artifacts (sources, javadoc, etc.)
             artifactCount += packageAdditionalArtifacts(outputDir);
             
-            logger.info("📦 Packaging complete: " + artifactCount + " artifacts created");
+            logger.info("Packaging complete: " + artifactCount + " artifacts created");
             return new PackageResult(true, "jar", artifactCount);
             
         } catch (Exception e) {
-            logger.error("❌ Packaging failed", e);
+            logger.error("Packaging failed", e);
             return new PackageResult(false, "jar", 0);
         }
     }
@@ -231,7 +231,7 @@ public class ForgeEngine {
         try {
             Path classesDir = Paths.get("target", "classes");
             if (!Files.exists(classesDir)) {
-                logger.warn("⚠️  No classes directory found for JAR packaging");
+                logger.warn("No classes directory found for JAR packaging");
                 return null;
             }
             
@@ -246,15 +246,15 @@ public class ForgeEngine {
             int exitCode = process.waitFor();
             
             if (exitCode == 0) {
-                logger.info("📦 Main JAR created successfully");
+                logger.info("Main JAR created successfully");
                 return jarFile;
             } else {
-                logger.error("❌ Failed to create JAR, exit code: " + exitCode);
+                logger.error("Failed to create JAR, exit code: " + exitCode);
                 return null;
             }
             
         } catch (Exception e) {
-            logger.error("❌ Error creating main JAR", e);
+            logger.error("Error creating main JAR", e);
             return null;
         }
     }
@@ -278,7 +278,7 @@ public class ForgeEngine {
             }
             
         } catch (Exception e) {
-            logger.error("❌ Error creating additional artifacts", e);
+            logger.error("Error creating additional artifacts", e);
         }
         
         return count;
@@ -295,7 +295,7 @@ public class ForgeEngine {
             
             return exitCode == 0;
         } catch (Exception e) {
-            logger.error("❌ Error creating sources JAR", e);
+            logger.error("Error creating sources JAR", e);
             return false;
         }
     }
@@ -335,20 +335,20 @@ public class ForgeEngine {
             
             return false;
         } catch (Exception e) {
-            logger.error("❌ Error generating javadoc", e);
+            logger.error("Error generating javadoc", e);
             return false;
         }
     }
     
     private TestResult runTests(PackageResult packageResult) {
-        logger.info("🧪 Running tests...");
+        logger.info("Running tests...");
         
         try {
             // Find test files
             List<Path> testFiles = findTestFiles();
             
             if (testFiles.isEmpty()) {
-                logger.info("🧪 No test files found, skipping test execution");
+                logger.info("No test files found, skipping test execution");
                 return new TestResult(true, 0, 0);
             }
             
@@ -362,15 +362,15 @@ public class ForgeEngine {
                         passedTests++;
                     }
                 } catch (Exception e) {
-                    logger.error("❌ Test failed: " + testFile, e);
+                    logger.error("Test failed: " + testFile, e);
                 }
             }
             
-            logger.info("🧪 Test execution complete: " + passedTests + "/" + totalTests + " passed");
+            logger.info("Test execution complete: " + passedTests + "/" + totalTests + " passed");
             return new TestResult(passedTests == totalTests, totalTests, passedTests);
             
         } catch (Exception e) {
-            logger.error("❌ Test execution failed", e);
+            logger.error("Test execution failed", e);
             return new TestResult(false, 0, 0);
         }
     }
@@ -399,7 +399,7 @@ public class ForgeEngine {
             }
             
         } catch (IOException e) {
-            logger.error("❌ Error finding test files", e);
+            logger.error("Error finding test files", e);
         }
         
         return testFiles;
@@ -411,12 +411,12 @@ public class ForgeEngine {
             String fileName = testFile.getFileName().toString();
             String className = fileName.substring(0, fileName.length() - 5); // Remove .java
             
-            logger.debug("🧪 Running test: " + className);
+            logger.debug("Running test: " + className);
             
             // Check if test has a main method
             String content = Files.readString(testFile);
             if (!content.contains("public static void main")) {
-                logger.debug("🧪 Skipping test (no main method): " + className);
+                logger.debug("Skipping test (no main method): " + className);
                 return true; // Skip tests without main method
             }
             
@@ -430,7 +430,7 @@ public class ForgeEngine {
             int compileExit = compileProcess.waitFor();
             
             if (compileExit != 0) {
-                logger.error("❌ Test compilation failed: " + className);
+                logger.error("Test compilation failed: " + className);
                 return false;
             }
             
@@ -446,7 +446,7 @@ public class ForgeEngine {
             return runExit == 0;
             
         } catch (Exception e) {
-            logger.error("❌ Error running test: " + testFile, e);
+            logger.error("Error running test: " + testFile, e);
             return false;
         }
     }

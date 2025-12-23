@@ -50,7 +50,7 @@ public class ForgeCLI {
     }
     
     public void interactiveMode() {
-        logger.info("🎮 Welcome to Forge Build System Interactive Mode");
+        logger.info("Welcome to Forge Build System Interactive Mode");
         logger.info("Type 'help' for available commands or 'exit' to quit");
         
         while (true) {
@@ -58,7 +58,7 @@ public class ForgeCLI {
             String input = scanner.nextLine().trim();
             
             if (input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("quit")) {
-                logger.info("👋 Goodbye!");
+                logger.info("Goodbye!");
                 break;
             }
             
@@ -76,11 +76,11 @@ public class ForgeCLI {
         
         switch (command) {
             case "build":
-                System.out.println("🔨 Building project...");
+                System.out.println("Building project...");
                 // In a real implementation, you'd have the engine here
                 break;
             case "clean":
-                System.out.println("🧹 Cleaning project...");
+                System.out.println("Cleaning project...");
                 break;
             case "init":
                 initializeProject();
@@ -92,7 +92,7 @@ public class ForgeCLI {
                 showHelp();
                 break;
             default:
-                System.out.println("❌ Unknown command. Type 'help' for available commands.");
+                System.out.println("Unknown command. Type 'help' for available commands.");
         }
     }
     
@@ -101,11 +101,11 @@ public class ForgeCLI {
             String buildType = args[1].toLowerCase();
             switch (buildType) {
                 case "incremental":
-                    System.out.println("🔄 Running incremental build...");
+                    System.out.println("Running incremental build...");
                     engine.buildIncremental();
                     break;
                 case "full":
-                    System.out.println("🔨 Running full build...");
+                    System.out.println("Running full build...");
                     engine.build();
                     break;
                 default:
@@ -113,13 +113,13 @@ public class ForgeCLI {
                     showHelp();
             }
         } else {
-            System.out.println("🔨 Running build...");
+            System.out.println("Running build...");
             engine.build();
         }
     }
     
     private void initializeProject() {
-        System.out.println("🚀 Initializing new Forge project...");
+        System.out.println("Initializing new Forge project...");
         
         System.out.print("Project name: ");
         String name = scanner.nextLine().trim();
@@ -167,17 +167,17 @@ public class ForgeCLI {
                 java.nio.file.Paths.get("forge.json"), 
                 config.getBytes()
             );
-            System.out.println("✅ Project initialized successfully!");
-            System.out.println("📄 Created forge.json configuration file");
-            System.out.println("📁 Create your source files in: " + sourceDir);
+            System.out.println("Project initialized successfully!");
+            System.out.println("Created forge.json configuration file");
+            System.out.println("Create your source files in: " + sourceDir);
             
         } catch (Exception e) {
-            System.err.println("❌ Failed to initialize project: " + e.getMessage());
+            System.err.println("Failed to initialize project: " + e.getMessage());
         }
     }
     
     private void showInfo() {
-        System.out.println("📊 Forge Build System Information:");
+        System.out.println("Forge Build System Information:");
         System.out.println("  Version: 1.0.0-SNAPSHOT");
         System.out.println("  Java Version: " + System.getProperty("java.version"));
         System.out.println("  OS: " + System.getProperty("os.name"));
@@ -185,7 +185,7 @@ public class ForgeCLI {
     }
     
     private void showHelp() {
-        System.out.println("🔧 Forge Build System Help");
+        System.out.println("Forge Build System Help");
         System.out.println();
         System.out.println("Available Commands:");
         System.out.println("  build [incremental|full]  - Build the project");

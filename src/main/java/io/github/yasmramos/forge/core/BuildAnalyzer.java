@@ -27,7 +27,7 @@ public class BuildAnalyzer {
     private final Logger logger = LoggerFactory.getLogger(BuildAnalyzer.class);
     
     public ProjectAnalysis analyzeProject(ProjectConfig config) {
-        logger.info("📊 Analyzing project structure...");
+        logger.info("Analyzing project structure...");
         
         ProjectAnalysis analysis = new ProjectAnalysis();
         
@@ -40,9 +40,9 @@ public class BuildAnalyzer {
                     List<Path> sourceFiles = findJavaSourceFiles(sourceDir);
                     analysis.addSourceFiles(sourceFiles);
                     
-                    logger.debug("📁 Found " + sourceFiles.size() + " source files in: " + sourceDir);
+                    logger.debug("Found " + sourceFiles.size() + " source files in: " + sourceDir);
                 } else {
-                    logger.warn("⚠️  Source directory not found: " + sourceDir);
+                    logger.warn("Source directory not found: " + sourceDir);
                 }
             }
             
@@ -60,7 +60,7 @@ public class BuildAnalyzer {
     }
     
     public ProjectAnalysis analyzeChanges(ProjectConfig config) {
-        logger.info("🔍 Analyzing project changes...");
+        logger.info("Analyzing project changes...");
         
         ProjectAnalysis analysis = new ProjectAnalysis();
         
@@ -77,7 +77,7 @@ public class BuildAnalyzer {
                     analysis.setChangedSources(changedFiles);
                     
                     if (!changedFiles.isEmpty()) {
-                        logger.info("🔄 Found " + changedFiles.size() + " changed files");
+                        logger.info("Found " + changedFiles.size() + " changed files");
                     }
                 }
             }
@@ -152,7 +152,7 @@ public class BuildAnalyzer {
     }
     
     private void analyzePackageStructure(ProjectAnalysis analysis) {
-        logger.debug("📦 Analyzing package structure...");
+        logger.debug("Analyzing package structure...");
         
         Map<String, Integer> packageFileCount = new HashMap<>();
         
@@ -169,12 +169,12 @@ public class BuildAnalyzer {
             }
         }
         
-        logger.debug("📦 Package structure analysis complete: " + 
+        logger.debug("Package structure analysis complete: " + 
                     packageFileCount.size() + " packages found");
     }
     
     private void analyzeDependencies(ProjectAnalysis analysis) {
-        logger.debug("🔗 Analyzing source file dependencies...");
+        logger.debug("Analyzing source file dependencies...");
         
         Map<String, Set<String>> fileDependencies = new HashMap<>();
         
@@ -185,19 +185,19 @@ public class BuildAnalyzer {
                 fileDependencies.put(fileName, imports);
                 
                 if (!imports.isEmpty()) {
-                    logger.debug("📋 File " + fileName + " imports: " + imports.size() + " dependencies");
+                    logger.debug("File " + fileName + " imports: " + imports.size() + " dependencies");
                 }
             } catch (IOException e) {
                 logger.debug("Failed to analyze dependencies for file: " + sourceFile, e);
             }
         }
         
-        logger.debug("🔗 Dependency analysis complete: " + 
+        logger.debug("Dependency analysis complete: " + 
                     fileDependencies.size() + " files analyzed");
     }
     
     private void analyzeTestFiles(ProjectAnalysis analysis) {
-        logger.debug("🧪 Analyzing test files...");
+        logger.debug("Analyzing test files...");
         
         for (Path sourceFile : analysis.getSourceFiles()) {
             String fileName = sourceFile.getFileName().toString().toLowerCase();
@@ -210,11 +210,11 @@ public class BuildAnalyzer {
             
             if (isTestFile) {
                 analysis.getTestFiles().add(sourceFile);
-                logger.debug("🧪 Found test file: " + sourceFile);
+                logger.debug("Found test file: " + sourceFile);
             }
         }
         
-        logger.debug("🧪 Test analysis complete: " + 
+        logger.debug("Test analysis complete: " + 
                     analysis.getTestFiles().size() + " test files found");
     }
     
@@ -244,7 +244,7 @@ public class BuildAnalyzer {
     }
     
     private double calculateComplexityScore(List<Path> sourceFiles) {
-        logger.debug("📊 Calculating complexity score for " + sourceFiles.size() + " files...");
+        logger.debug("Calculating complexity score for " + sourceFiles.size() + " files...");
         
         double totalComplexity = 0.0;
         
@@ -258,7 +258,7 @@ public class BuildAnalyzer {
             }
         }
         
-        logger.debug("📊 Complexity calculation complete: " + totalComplexity);
+        logger.debug("Complexity calculation complete: " + totalComplexity);
         return totalComplexity;
     }
     

@@ -40,12 +40,12 @@ public class Compiler {
         
         // Check cache first
         if (cache.isValid(cacheKey, sourceFile.toFile())) {
-            logger.debug("📦 Using cached compilation for: " + sourceFile);
+            logger.debug("Using cached compilation for: " + sourceFile);
             return new CompilationResult(true, 1, 1);
         }
         
         try {
-            logger.debug("🔨 Compiling: " + sourceFile);
+            logger.debug("Compiling: " + sourceFile);
             
             // Perform actual compilation
             ProcessResult result = executeJavac(sourceFile, dependencyResolution);
@@ -60,19 +60,19 @@ public class Compiler {
                 
                 return new CompilationResult(true, 1, 1);
             } else {
-                logger.error("❌ Compilation failed for: " + sourceFile);
+                logger.error("Compilation failed for: " + sourceFile);
                 logger.error("Error: " + result.getError());
                 return new CompilationResult(false, 1, 0);
             }
             
         } catch (Exception e) {
-            logger.error("❌ Exception during compilation: " + sourceFile, e);
+            logger.error("Exception during compilation: " + sourceFile, e);
             return new CompilationResult(false, 1, 0);
         }
     }
     
     public CompilationResult compileIncremental(List<Path> changedSources, ForgeCache cache) {
-        logger.info("🔄 Incremental compilation of " + changedSources.size() + " changed files");
+        logger.info("Incremental compilation of " + changedSources.size() + " changed files");
         
         CompletableFuture<CompilationResult>[] tasks = changedSources.stream()
             .map(sourceFile -> CompletableFuture.supplyAsync(() -> {

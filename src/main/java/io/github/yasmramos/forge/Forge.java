@@ -26,7 +26,7 @@ public class Forge {
     
     public static void main(String[] args) {
         try {
-            logger.info("🚀 Starting Forge Build System v1.0.0");
+            logger.info("Starting Forge Build System v1.0.0");
             
             // Initialize CLI
             cli = new ForgeCLI(args);
@@ -57,10 +57,10 @@ public class Forge {
             File configFile = Paths.get(currentDir, "forge.json").toFile();
             
             if (configFile.exists()) {
-                logger.info("📄 Loading Forge configuration from: " + configFile.getAbsolutePath());
+                logger.info("Loading Forge configuration from: " + configFile.getAbsolutePath());
                 return Optional.of(ConfigReader.loadConfig(configFile));
             } else {
-                logger.info("ℹ️  No forge.json found, running in standalone mode");
+                logger.info("No forge.json found, running in standalone mode");
                 return Optional.empty();
             }
         } catch (IOException e) {

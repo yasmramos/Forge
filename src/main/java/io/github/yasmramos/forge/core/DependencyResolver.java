@@ -34,11 +34,11 @@ public class DependencyResolver {
     public DependencyResolution resolve(Map<String, Object> dependencies, ProjectAnalysis analysis) {
         // Check if dependencies map is null
         if (dependencies == null) {
-            logger.warn("⚠️ Dependencies map is null, returning empty resolution");
+            logger.warn("Dependencies map is null, returning empty resolution");
             return new DependencyResolution();
         }
         
-        logger.info("🔗 Resolving " + dependencies.size() + " dependencies...");
+        logger.info("Resolving " + dependencies.size() + " dependencies...");
         
         DependencyResolution resolution = new DependencyResolution();
         
@@ -51,15 +51,15 @@ public class DependencyResolver {
                 if (dependencyInfo != null) {
                     resolvedDependencies.put(depName, dependencyInfo);
                     resolution.addDependency(dependencyInfo);
-                    logger.debug("✅ Resolved dependency: " + depName);
+                    logger.debug("Resolved dependency: " + depName);
                 }
             } catch (Exception e) {
-                logger.error("❌ Failed to resolve dependency: " + depName, e);
+                logger.error("Failed to resolve dependency: " + depName, e);
                 resolution.addError(depName, e.getMessage());
             }
         }
         
-        logger.info("🔗 Dependency resolution completed: " + 
+        logger.info("Dependency resolution completed: " + 
                    resolution.getSuccessCount() + " successful, " + 
                    resolution.getErrorCount() + " failed");
         
@@ -101,7 +101,7 @@ public class DependencyResolver {
     }
     
     private DependencyInfo resolveMavenDependency(String groupId, String version) throws IOException {
-        logger.info("📦 Resolving Maven dependency: " + groupId + ":" + version);
+        logger.info("Resolving Maven dependency: " + groupId + ":" + version);
         
         // Determine the latest version if "latest" is specified
         if ("latest".equals(version)) {
@@ -127,7 +127,7 @@ public class DependencyResolver {
         
         // Download if not already cached
         if (!Files.exists(localJarPath)) {
-            logger.info("📥 Downloading: " + jarUrl);
+            logger.info("Downloading: " + jarUrl);
             downloadDependency(jarUrl, localJarPath);
         }
         
@@ -136,7 +136,7 @@ public class DependencyResolver {
                        artifactId + "-" + version + ".pom";
         downloadPomIfAvailable(pomUrl, localCacheDir);
         
-        logger.info("✅ Maven dependency resolved: " + groupId + ":" + version);
+        logger.info("Maven dependency resolved: " + groupId + ":" + version);
         return new DependencyInfo(groupId, version, DependencyType.MAVEN, localJarPath, true);
     }
     
@@ -167,7 +167,7 @@ public class DependencyResolver {
             try (FileOutputStream out = new FileOutputStream(localPath.toFile())) {
                 url.openStream().transferTo(out);
             }
-            logger.info("📦 Downloaded: " + localPath);
+            logger.info("Downloaded: " + localPath);
         } catch (Exception e) {
             // Clean up failed download
             if (Files.exists(localPath)) {
@@ -184,7 +184,7 @@ public class DependencyResolver {
                 URL pom = new URL(pomUrl);
                 try {
                     Files.copy(pom.openStream(), pomPath, StandardCopyOption.REPLACE_EXISTING);
-                    logger.debug("📋 Downloaded POM: " + pomPath);
+                    logger.debug("Downloaded POM: " + pomPath);
                 } catch (Exception e) {
                     // POM not available, this is okay
                     logger.debug("POM not available: " + pomUrl);
