@@ -41,7 +41,13 @@ class ForgePerformanceTest {
         ProjectConfig config = new ProjectConfig();
         config.setName("performance-test");
         config.setVersion("1.0.0");
-        config.setSourcePaths(new ArrayList<>());
+        
+        // Use non-existent paths to avoid scanning actual project files
+        java.util.List<String> sourcePaths = new ArrayList<>();
+        sourcePaths.add("/non/existent/path");
+        sourcePaths.add("/another/non/existent/path");
+        config.setSourcePaths(sourcePaths);
+        
         return config;
     }
 }
