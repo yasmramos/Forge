@@ -1,0 +1,1712 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< io.github.yasmramos:forge >----------------------
+[INFO] Building Forge Build System 1.0.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ forge ---
+[INFO] Deleting /workspace/Forge/target
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ forge ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /workspace/Forge/src/main/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:compile (default-compile) @ forge ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 15 source files with javac [debug target 11] to target/classes
+[WARNING] system modules path not set in conjunction with -source 11
+[INFO] /workspace/Forge/src/main/java/io/github/yasmramos/forge/core/Compiler.java: Some input files use unchecked or unsafe operations.
+[INFO] /workspace/Forge/src/main/java/io/github/yasmramos/forge/core/Compiler.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ forge ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /workspace/Forge/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:testCompile (default-testCompile) @ forge ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 7 source files with javac [debug target 11] to target/test-classes
+[WARNING] system modules path not set in conjunction with -source 11
+[INFO] 
+[INFO] --- maven-surefire-plugin:3.0.0:test (default-test) @ forge ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running io.github.yasmramos.forge.cache.ForgeCacheTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.087 s - in io.github.yasmramos.forge.cache.ForgeCacheTest
+[INFO] Running io.github.yasmramos.forge.core.BuildAnalyzerTest
+13:04:04.388 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing project structure...
+13:04:04.394 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found 1 source files in: /tmp/junit5958612124699981015
+13:04:04.394 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing package structure...
+13:04:04.395 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Package structure analysis complete: 1 packages found
+13:04:04.395 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing source file dependencies...
+13:04:04.395 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Dependency analysis complete: 1 files analyzed
+13:04:04.395 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing test files...
+13:04:04.396 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: /tmp/junit5958612124699981015/TestClass.java
+13:04:04.396 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Test analysis complete: 1 test files found
+13:04:04.397 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Calculating complexity score for 1 files...
+13:04:04.397 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Complexity calculation complete: 7.0
+13:04:04.400 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing project structure...
+13:04:04.400 [main] WARN io.github.yasmramos.forge.core.BuildAnalyzer -- Source directory not found: /non/existent/path
+13:04:04.400 [main] WARN io.github.yasmramos.forge.core.BuildAnalyzer -- Source directory not found: /another/non/existent/path
+13:04:04.400 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing package structure...
+13:04:04.400 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Package structure analysis complete: 0 packages found
+13:04:04.400 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing source file dependencies...
+13:04:04.400 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Dependency analysis complete: 0 files analyzed
+13:04:04.400 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing test files...
+13:04:04.400 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Test analysis complete: 0 test files found
+13:04:04.401 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Calculating complexity score for 0 files...
+13:04:04.401 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Complexity calculation complete: 0.0
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.063 s - in io.github.yasmramos.forge.core.BuildAnalyzerTest
+[INFO] Running io.github.yasmramos.forge.core.DependencyResolverTest
+13:04:04.406 [main] INFO io.github.yasmramos.forge.core.DependencyResolver -- Resolving 0 dependencies...
+13:04:04.408 [main] INFO io.github.yasmramos.forge.core.DependencyResolver -- Dependency resolution completed: 0 successful, 0 failed
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s - in io.github.yasmramos.forge.core.DependencyResolverTest
+[INFO] Running io.github.yasmramos.forge.core.ForgeEngineTest
+13:04:04.415 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Cleaning build artifacts...
+13:04:04.415 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Clean completed
+13:04:04.416 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Starting incremental build...
+13:04:04.416 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing project changes...
+13:04:04.424 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- Found 15 changed files
+13:04:04.430 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- Found 7 changed files
+13:04:04.430 [main] INFO io.github.yasmramos.forge.core.Compiler -- Incremental compilation of 7 changed files
+13:04:04.434 [pool-5-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+13:04:04.434 [pool-5-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+13:04:04.435 [pool-5-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+13:04:04.435 [pool-5-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+13:04:04.436 [pool-5-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+13:04:04.436 [pool-5-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+13:04:04.436 [pool-5-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+13:04:04.441 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Starting Forge build for project: test-project
+13:04:04.441 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Analyzing project structure...
+13:04:04.441 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing project structure...
+13:04:04.486 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found 15 source files in: src/main/java
+13:04:04.492 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found 7 source files in: src/test/java
+13:04:04.492 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing package structure...
+13:04:04.504 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Package structure analysis complete: 9 packages found
+13:04:04.504 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing source file dependencies...
+13:04:04.506 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File Forge.java imports: 10 dependencies
+13:04:04.507 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeCache.java imports: 10 dependencies
+13:04:04.508 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeCLI.java imports: 4 dependencies
+13:04:04.508 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File BuildAnalyzer.java imports: 17 dependencies
+13:04:04.509 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File Compiler.java imports: 17 dependencies
+13:04:04.510 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File DependencyResolver.java imports: 17 dependencies
+13:04:04.510 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeEngine.java imports: 19 dependencies
+13:04:04.512 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File DependencyInfo.java imports: 3 dependencies
+13:04:04.513 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File DependencyResolution.java imports: 4 dependencies
+13:04:04.514 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ProjectAnalysis.java imports: 5 dependencies
+13:04:04.515 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ProjectConfig.java imports: 3 dependencies
+13:04:04.516 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ConfigReader.java imports: 9 dependencies
+13:04:04.516 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeCacheTest.java imports: 5 dependencies
+13:04:04.517 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File BuildAnalyzerTest.java imports: 10 dependencies
+13:04:04.517 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File DependencyResolverTest.java imports: 7 dependencies
+13:04:04.518 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeEngineTest.java imports: 6 dependencies
+13:04:04.518 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeBuildSystemIntegrationTest.java imports: 6 dependencies
+13:04:04.519 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgePerformanceTest.java imports: 6 dependencies
+13:04:04.519 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeDemoProjectValidationTest.java imports: 5 dependencies
+13:04:04.519 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Dependency analysis complete: 22 files analyzed
+13:04:04.519 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing test files...
+13:04:04.520 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+13:04:04.520 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+13:04:04.520 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+13:04:04.520 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+13:04:04.520 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+13:04:04.520 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+13:04:04.520 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+13:04:04.520 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Test analysis complete: 7 test files found
+13:04:04.532 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Calculating complexity score for 22 files...
+13:04:04.543 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Complexity calculation complete: 856.5
+13:04:04.543 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Resolving dependencies...
+13:04:04.543 [main] WARN io.github.yasmramos.forge.core.DependencyResolver -- Dependencies map is null, returning empty resolution
+13:04:04.543 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Compiling sources...
+13:04:04.546 [pool-6-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/Forge.java
+13:04:04.546 [pool-6-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/cache/ForgeCache.java
+13:04:04.562 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/Forge.java
+13:04:04.562 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/cache/ForgeCache.java
+13:04:04.562 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@7cd5ff40
+13:04:04.562 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@4306d26
+13:04:04.563 [pool-6-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/cli/ForgeCLI.java
+13:04:04.563 [pool-6-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/core/BuildAnalyzer.java
+13:04:04.564 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/cli/ForgeCLI.java
+13:04:04.564 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@a1f4b4
+13:04:04.564 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/core/BuildAnalyzer.java
+13:04:04.564 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@636e5a56
+13:04:04.564 [pool-6-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/core/Compiler.java
+13:04:04.564 [pool-6-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/core/DependencyResolver.java
+13:04:04.565 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/core/Compiler.java
+13:04:04.565 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@224e8261
+13:04:04.565 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/core/DependencyResolver.java
+13:04:04.565 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@4e5ef297
+13:04:04.565 [pool-6-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/core/ForgeEngine.java
+13:04:04.565 [pool-6-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/CompilationResult.java
+13:04:04.566 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/core/ForgeEngine.java
+13:04:04.566 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@569902ec
+13:04:04.566 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/CompilationResult.java
+13:04:04.566 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@249a7bd8
+13:04:04.566 [pool-6-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/DependencyInfo.java
+13:04:04.566 [pool-6-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/DependencyResolution.java
+13:04:04.567 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/DependencyInfo.java
+13:04:04.567 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@5e5c880
+13:04:04.567 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/DependencyResolution.java
+13:04:04.567 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@23c47b30
+13:04:04.567 [pool-6-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/DependencyType.java
+13:04:04.567 [pool-6-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/PackageResult.java
+13:04:04.568 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/PackageResult.java
+13:04:04.568 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/DependencyType.java
+13:04:04.568 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@326929f4
+13:04:04.568 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@aee88dc
+13:04:04.569 [pool-6-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/ProjectConfig.java
+13:04:04.569 [pool-6-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/ProjectAnalysis.java
+13:04:04.569 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/ProjectConfig.java
+13:04:04.569 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/ProjectAnalysis.java
+13:04:04.569 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@5c654e6a
+13:04:04.569 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@b9aaf64
+13:04:04.570 [pool-6-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/utils/ConfigReader.java
+13:04:04.570 [pool-6-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+13:04:04.570 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/utils/ConfigReader.java
+13:04:04.570 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@42f5a968
+13:04:04.571 [pool-6-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+13:04:04.584 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+13:04:04.584 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+13:04:04.584 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@69ffc87e
+13:04:04.584 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@76918c1
+13:04:04.584 [pool-6-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+13:04:04.584 [pool-6-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+13:04:04.585 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+13:04:04.585 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@17a915f5
+13:04:04.585 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+13:04:04.585 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@595666c7
+13:04:04.585 [pool-6-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+13:04:04.585 [pool-6-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+13:04:04.586 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+13:04:04.586 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@61c91f74
+13:04:04.586 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+13:04:04.586 [pool-6-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@6f423e68
+13:04:04.586 [pool-6-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+13:04:04.587 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+13:04:04.587 [pool-6-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@e9844cc
+13:04:04.587 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Packaging artifacts...
+13:04:04.587 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Packaging compiled artifacts...
+13:04:04.592 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Error creating main JAR
+java.io.IOException: Cannot run program "jar": error=13, Permission denied
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageMainJar(ForgeEngine.java:245)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageArtifacts(ForgeEngine.java:212)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:71)
+	at io.github.yasmramos.forge.core.ForgeEngineTest.testBuildMethodExists(ForgeEngineTest.java:34)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: java.io.IOException: error=13, Permission denied
+	at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)
+	at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)
+	at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)
+	... 76 common frames omitted
+13:04:04.593 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Error creating sources JAR
+java.io.IOException: Cannot run program "jar": error=13, Permission denied
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)
+	at io.github.yasmramos.forge.core.ForgeEngine.createSourcesJar(ForgeEngine.java:293)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageAdditionalArtifacts(ForgeEngine.java:270)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageArtifacts(ForgeEngine.java:219)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:71)
+	at io.github.yasmramos.forge.core.ForgeEngineTest.testBuildMethodExists(ForgeEngineTest.java:34)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: java.io.IOException: error=13, Permission denied
+	at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)
+	at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)
+	at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)
+	... 77 common frames omitted
+13:04:04.598 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Error generating javadoc
+java.io.IOException: Cannot run program "javadoc": error=13, Permission denied
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)
+	at io.github.yasmramos.forge.core.ForgeEngine.generateJavadoc(ForgeEngine.java:320)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageAdditionalArtifacts(ForgeEngine.java:276)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageArtifacts(ForgeEngine.java:219)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:71)
+	at io.github.yasmramos.forge.core.ForgeEngineTest.testBuildMethodExists(ForgeEngineTest.java:34)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: java.io.IOException: error=13, Permission denied
+	at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)
+	at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)
+	at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)
+	... 77 common frames omitted
+13:04:04.598 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Packaging complete: 0 artifacts created
+13:04:04.598 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Running tests...
+13:04:04.598 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Running tests...
+13:04:04.611 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeCacheTest
+13:04:04.612 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeCacheTest
+13:04:04.612 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: BuildAnalyzerTest
+13:04:04.612 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): BuildAnalyzerTest
+13:04:04.613 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: DependencyResolverTest
+13:04:04.613 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): DependencyResolverTest
+13:04:04.613 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeEngineTest
+13:04:04.614 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeEngineTest
+13:04:04.614 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeBuildSystemIntegrationTest
+13:04:04.614 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeBuildSystemIntegrationTest
+13:04:04.614 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgePerformanceTest
+13:04:04.615 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgePerformanceTest
+13:04:04.615 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeDemoProjectValidationTest
+13:04:04.615 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeDemoProjectValidationTest
+13:04:04.615 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeCacheTest
+13:04:04.616 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeCacheTest
+13:04:04.616 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: BuildAnalyzerTest
+13:04:04.616 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): BuildAnalyzerTest
+13:04:04.616 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: DependencyResolverTest
+13:04:04.617 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): DependencyResolverTest
+13:04:04.617 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeEngineTest
+13:04:04.617 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeEngineTest
+13:04:04.617 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeBuildSystemIntegrationTest
+13:04:04.618 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeBuildSystemIntegrationTest
+13:04:04.618 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgePerformanceTest
+13:04:04.618 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgePerformanceTest
+13:04:04.618 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeDemoProjectValidationTest
+13:04:04.620 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeDemoProjectValidationTest
+13:04:04.620 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Test execution complete: 14/14 passed
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.211 s - in io.github.yasmramos.forge.core.ForgeEngineTest
+[INFO] Running io.github.yasmramos.forge.integration.ForgeBuildSystemIntegrationTest
+13:04:04.625 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Starting Forge build for project: integration-test
+13:04:04.625 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Analyzing project structure...
+13:04:04.625 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing project structure...
+13:04:04.633 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found 15 source files in: src/main/java
+13:04:04.639 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found 7 source files in: src/test/java
+13:04:04.639 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing package structure...
+13:04:04.652 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Package structure analysis complete: 9 packages found
+13:04:04.652 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing source file dependencies...
+13:04:04.653 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File Forge.java imports: 10 dependencies
+13:04:04.653 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeCache.java imports: 10 dependencies
+13:04:04.654 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeCLI.java imports: 4 dependencies
+13:04:04.655 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File BuildAnalyzer.java imports: 17 dependencies
+13:04:04.655 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File Compiler.java imports: 17 dependencies
+13:04:04.656 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File DependencyResolver.java imports: 17 dependencies
+13:04:04.657 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeEngine.java imports: 19 dependencies
+13:04:04.658 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File DependencyInfo.java imports: 3 dependencies
+13:04:04.659 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File DependencyResolution.java imports: 4 dependencies
+13:04:04.660 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ProjectAnalysis.java imports: 5 dependencies
+13:04:04.661 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ProjectConfig.java imports: 3 dependencies
+13:04:04.662 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ConfigReader.java imports: 9 dependencies
+13:04:04.662 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeCacheTest.java imports: 5 dependencies
+13:04:04.663 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File BuildAnalyzerTest.java imports: 10 dependencies
+13:04:04.663 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File DependencyResolverTest.java imports: 7 dependencies
+13:04:04.664 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeEngineTest.java imports: 6 dependencies
+13:04:04.665 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeBuildSystemIntegrationTest.java imports: 6 dependencies
+13:04:04.665 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgePerformanceTest.java imports: 6 dependencies
+13:04:04.666 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeDemoProjectValidationTest.java imports: 5 dependencies
+13:04:04.666 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Dependency analysis complete: 22 files analyzed
+13:04:04.666 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing test files...
+13:04:04.666 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+13:04:04.666 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+13:04:04.666 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+13:04:04.666 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+13:04:04.666 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+13:04:04.666 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+13:04:04.666 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+13:04:04.666 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Test analysis complete: 7 test files found
+13:04:04.678 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Calculating complexity score for 22 files...
+13:04:04.690 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Complexity calculation complete: 856.5
+13:04:04.690 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Resolving dependencies...
+13:04:04.690 [main] WARN io.github.yasmramos.forge.core.DependencyResolver -- Dependencies map is null, returning empty resolution
+13:04:04.690 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Compiling sources...
+13:04:04.690 [pool-10-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/Forge.java
+13:04:04.690 [pool-10-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/cache/ForgeCache.java
+13:04:04.691 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/Forge.java
+13:04:04.691 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@67cfcbd6
+13:04:04.691 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/cache/ForgeCache.java
+13:04:04.691 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@636796de
+13:04:04.692 [pool-10-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/core/BuildAnalyzer.java
+13:04:04.692 [pool-10-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/cli/ForgeCLI.java
+13:04:04.693 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/core/BuildAnalyzer.java
+13:04:04.693 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@6da064c2
+13:04:04.693 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/cli/ForgeCLI.java
+13:04:04.693 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@6908395f
+13:04:04.693 [pool-10-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/core/Compiler.java
+13:04:04.693 [pool-10-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/core/DependencyResolver.java
+13:04:04.694 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/core/Compiler.java
+13:04:04.694 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@699ffdae
+13:04:04.694 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/core/DependencyResolver.java
+13:04:04.694 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@6d37a0a6
+13:04:04.694 [pool-10-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/core/ForgeEngine.java
+13:04:04.694 [pool-10-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/CompilationResult.java
+13:04:04.694 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/core/ForgeEngine.java
+13:04:04.695 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@2c9d6ef9
+13:04:04.695 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/CompilationResult.java
+13:04:04.695 [pool-10-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/DependencyInfo.java
+13:04:04.695 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@28353364
+13:04:04.695 [pool-10-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/DependencyResolution.java
+13:04:04.695 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/DependencyInfo.java
+13:04:04.696 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@7313ccd2
+13:04:04.696 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/DependencyResolution.java
+13:04:04.696 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@31bdcccf
+13:04:04.696 [pool-10-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/DependencyType.java
+13:04:04.696 [pool-10-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/PackageResult.java
+13:04:04.697 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/PackageResult.java
+13:04:04.697 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@19d7d966
+13:04:04.697 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/DependencyType.java
+13:04:04.697 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@1d7b2006
+13:04:04.697 [pool-10-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/ProjectAnalysis.java
+13:04:04.697 [pool-10-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/ProjectConfig.java
+13:04:04.697 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/ProjectAnalysis.java
+13:04:04.698 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@49b5786a
+13:04:04.698 [pool-10-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/utils/ConfigReader.java
+13:04:04.698 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/ProjectConfig.java
+13:04:04.698 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@b1fdc8a
+13:04:04.698 [pool-10-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+13:04:04.698 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/utils/ConfigReader.java
+13:04:04.698 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@481acc2b
+13:04:04.699 [pool-10-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+13:04:04.699 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+13:04:04.699 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@4cb291b6
+13:04:04.699 [pool-10-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+13:04:04.699 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+13:04:04.699 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@179eaa53
+13:04:04.699 [pool-10-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+13:04:04.700 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+13:04:04.700 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@21aab1ae
+13:04:04.700 [pool-10-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+13:04:04.700 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+13:04:04.700 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@30255d2f
+13:04:04.700 [pool-10-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+13:04:04.701 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+13:04:04.701 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@6515de8d
+13:04:04.701 [pool-10-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+13:04:04.701 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+13:04:04.701 [pool-10-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@52b11569
+13:04:04.701 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+13:04:04.701 [pool-10-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@101bb529
+13:04:04.702 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Packaging artifacts...
+13:04:04.702 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Packaging compiled artifacts...
+13:04:04.703 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Error creating main JAR
+java.io.IOException: Cannot run program "jar": error=13, Permission denied
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageMainJar(ForgeEngine.java:245)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageArtifacts(ForgeEngine.java:212)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:71)
+	at io.github.yasmramos.forge.integration.ForgeBuildSystemIntegrationTest.testCompleteBuildWorkflow(ForgeBuildSystemIntegrationTest.java:32)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: java.io.IOException: error=13, Permission denied
+	at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)
+	at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)
+	at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)
+	... 76 common frames omitted
+13:04:04.704 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Error creating sources JAR
+java.io.IOException: Cannot run program "jar": error=13, Permission denied
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)
+	at io.github.yasmramos.forge.core.ForgeEngine.createSourcesJar(ForgeEngine.java:293)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageAdditionalArtifacts(ForgeEngine.java:270)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageArtifacts(ForgeEngine.java:219)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:71)
+	at io.github.yasmramos.forge.integration.ForgeBuildSystemIntegrationTest.testCompleteBuildWorkflow(ForgeBuildSystemIntegrationTest.java:32)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: java.io.IOException: error=13, Permission denied
+	at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)
+	at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)
+	at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)
+	... 77 common frames omitted
+13:04:04.706 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Error generating javadoc
+java.io.IOException: Cannot run program "javadoc": error=13, Permission denied
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)
+	at io.github.yasmramos.forge.core.ForgeEngine.generateJavadoc(ForgeEngine.java:320)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageAdditionalArtifacts(ForgeEngine.java:276)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageArtifacts(ForgeEngine.java:219)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:71)
+	at io.github.yasmramos.forge.integration.ForgeBuildSystemIntegrationTest.testCompleteBuildWorkflow(ForgeBuildSystemIntegrationTest.java:32)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: java.io.IOException: error=13, Permission denied
+	at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)
+	at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)
+	at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)
+	... 77 common frames omitted
+13:04:04.706 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Packaging complete: 0 artifacts created
+13:04:04.706 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Running tests...
+13:04:04.706 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Running tests...
+13:04:04.718 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeCacheTest
+13:04:04.719 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeCacheTest
+13:04:04.719 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: BuildAnalyzerTest
+13:04:04.719 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): BuildAnalyzerTest
+13:04:04.719 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: DependencyResolverTest
+13:04:04.720 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): DependencyResolverTest
+13:04:04.720 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeEngineTest
+13:04:04.720 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeEngineTest
+13:04:04.720 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeBuildSystemIntegrationTest
+13:04:04.721 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeBuildSystemIntegrationTest
+13:04:04.721 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgePerformanceTest
+13:04:04.721 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgePerformanceTest
+13:04:04.721 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeDemoProjectValidationTest
+13:04:04.722 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeDemoProjectValidationTest
+13:04:04.722 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeCacheTest
+13:04:04.722 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeCacheTest
+13:04:04.723 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: BuildAnalyzerTest
+13:04:04.723 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): BuildAnalyzerTest
+13:04:04.723 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: DependencyResolverTest
+13:04:04.724 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): DependencyResolverTest
+13:04:04.724 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeEngineTest
+13:04:04.724 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeEngineTest
+13:04:04.724 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeBuildSystemIntegrationTest
+13:04:04.724 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeBuildSystemIntegrationTest
+13:04:04.725 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgePerformanceTest
+13:04:04.725 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgePerformanceTest
+13:04:04.725 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeDemoProjectValidationTest
+13:04:04.725 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeDemoProjectValidationTest
+13:04:04.726 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Test execution complete: 14/14 passed
+13:04:04.726 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Starting incremental build...
+13:04:04.726 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing project changes...
+13:04:04.731 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- Found 15 changed files
+13:04:04.737 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- Found 7 changed files
+13:04:04.737 [main] INFO io.github.yasmramos.forge.core.Compiler -- Incremental compilation of 7 changed files
+13:04:04.737 [pool-11-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+13:04:04.737 [pool-11-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+13:04:04.737 [pool-11-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+13:04:04.737 [pool-11-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+13:04:04.737 [pool-11-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+13:04:04.737 [pool-11-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+13:04:04.737 [pool-11-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Failed incremental compile: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+java.lang.NullPointerException: Cannot invoke "io.github.yasmramos.forge.model.DependencyResolution.getDependencies()" because "dependencyResolution" is null
+	at io.github.yasmramos.forge.core.Compiler.compile(Compiler.java:38)
+	at io.github.yasmramos.forge.core.Compiler.lambda$compileIncremental$0(Compiler.java:80)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.114 s - in io.github.yasmramos.forge.integration.ForgeBuildSystemIntegrationTest
+[INFO] Running io.github.yasmramos.forge.performance.ForgePerformanceTest
+13:04:04.739 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Starting Forge build for project: performance-test
+13:04:04.739 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Analyzing project structure...
+13:04:04.739 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing project structure...
+13:04:04.739 [main] WARN io.github.yasmramos.forge.core.BuildAnalyzer -- Source directory not found: /non/existent/path
+13:04:04.739 [main] WARN io.github.yasmramos.forge.core.BuildAnalyzer -- Source directory not found: /another/non/existent/path
+13:04:04.739 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing package structure...
+13:04:04.739 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Package structure analysis complete: 0 packages found
+13:04:04.739 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing source file dependencies...
+13:04:04.739 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Dependency analysis complete: 0 files analyzed
+13:04:04.739 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing test files...
+13:04:04.739 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Test analysis complete: 0 test files found
+13:04:04.739 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Calculating complexity score for 0 files...
+13:04:04.739 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Complexity calculation complete: 0.0
+13:04:04.739 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Resolving dependencies...
+13:04:04.739 [main] WARN io.github.yasmramos.forge.core.DependencyResolver -- Dependencies map is null, returning empty resolution
+13:04:04.739 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Compiling sources...
+13:04:04.739 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Packaging artifacts...
+13:04:04.739 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Packaging compiled artifacts...
+13:04:04.741 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Error creating main JAR
+java.io.IOException: Cannot run program "jar": error=13, Permission denied
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageMainJar(ForgeEngine.java:245)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageArtifacts(ForgeEngine.java:212)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:71)
+	at io.github.yasmramos.forge.performance.ForgePerformanceTest.testBasicBuildPerformance(ForgePerformanceTest.java:31)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: java.io.IOException: error=13, Permission denied
+	at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)
+	at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)
+	at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)
+	... 76 common frames omitted
+13:04:04.742 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Error creating sources JAR
+java.io.IOException: Cannot run program "jar": error=13, Permission denied
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)
+	at io.github.yasmramos.forge.core.ForgeEngine.createSourcesJar(ForgeEngine.java:293)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageAdditionalArtifacts(ForgeEngine.java:270)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageArtifacts(ForgeEngine.java:219)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:71)
+	at io.github.yasmramos.forge.performance.ForgePerformanceTest.testBasicBuildPerformance(ForgePerformanceTest.java:31)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: java.io.IOException: error=13, Permission denied
+	at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)
+	at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)
+	at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)
+	... 77 common frames omitted
+13:04:04.743 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Error generating javadoc
+java.io.IOException: Cannot run program "javadoc": error=13, Permission denied
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)
+	at io.github.yasmramos.forge.core.ForgeEngine.generateJavadoc(ForgeEngine.java:320)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageAdditionalArtifacts(ForgeEngine.java:276)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageArtifacts(ForgeEngine.java:219)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:71)
+	at io.github.yasmramos.forge.performance.ForgePerformanceTest.testBasicBuildPerformance(ForgePerformanceTest.java:31)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: java.io.IOException: error=13, Permission denied
+	at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)
+	at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)
+	at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)
+	... 77 common frames omitted
+13:04:04.743 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Packaging complete: 0 artifacts created
+13:04:04.743 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Running tests...
+13:04:04.743 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Running tests...
+13:04:04.760 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeCacheTest
+13:04:04.761 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeCacheTest
+13:04:04.761 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: BuildAnalyzerTest
+13:04:04.762 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): BuildAnalyzerTest
+13:04:04.762 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: DependencyResolverTest
+13:04:04.763 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): DependencyResolverTest
+13:04:04.763 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeEngineTest
+13:04:04.763 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeEngineTest
+13:04:04.763 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeBuildSystemIntegrationTest
+13:04:04.764 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeBuildSystemIntegrationTest
+13:04:04.764 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgePerformanceTest
+13:04:04.764 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgePerformanceTest
+13:04:04.764 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeDemoProjectValidationTest
+13:04:04.766 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeDemoProjectValidationTest
+13:04:04.766 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeCacheTest
+13:04:04.767 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeCacheTest
+13:04:04.767 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: BuildAnalyzerTest
+13:04:04.769 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): BuildAnalyzerTest
+13:04:04.769 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: DependencyResolverTest
+13:04:04.770 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): DependencyResolverTest
+13:04:04.770 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeEngineTest
+13:04:04.770 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeEngineTest
+13:04:04.770 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeBuildSystemIntegrationTest
+13:04:04.771 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeBuildSystemIntegrationTest
+13:04:04.771 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgePerformanceTest
+13:04:04.771 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgePerformanceTest
+13:04:04.771 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeDemoProjectValidationTest
+13:04:04.772 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeDemoProjectValidationTest
+13:04:04.773 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Test execution complete: 14/14 passed
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.036 s - in io.github.yasmramos.forge.performance.ForgePerformanceTest
+[INFO] Running io.github.yasmramos.forge.validation.ForgeDemoProjectValidationTest
+13:04:04.775 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Starting Forge build for project: validation-test
+13:04:04.775 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Analyzing project structure...
+13:04:04.775 [main] INFO io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing project structure...
+13:04:04.783 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found 15 source files in: src/main/java
+13:04:04.789 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found 7 source files in: src/test/java
+13:04:04.789 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing package structure...
+13:04:04.802 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Package structure analysis complete: 9 packages found
+13:04:04.802 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing source file dependencies...
+13:04:04.802 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File Forge.java imports: 10 dependencies
+13:04:04.803 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeCache.java imports: 10 dependencies
+13:04:04.803 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeCLI.java imports: 4 dependencies
+13:04:04.804 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File BuildAnalyzer.java imports: 17 dependencies
+13:04:04.805 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File Compiler.java imports: 17 dependencies
+13:04:04.805 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File DependencyResolver.java imports: 17 dependencies
+13:04:04.806 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeEngine.java imports: 19 dependencies
+13:04:04.807 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File DependencyInfo.java imports: 3 dependencies
+13:04:04.807 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File DependencyResolution.java imports: 4 dependencies
+13:04:04.809 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ProjectAnalysis.java imports: 5 dependencies
+13:04:04.810 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ProjectConfig.java imports: 3 dependencies
+13:04:04.810 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ConfigReader.java imports: 9 dependencies
+13:04:04.811 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeCacheTest.java imports: 5 dependencies
+13:04:04.811 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File BuildAnalyzerTest.java imports: 10 dependencies
+13:04:04.812 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File DependencyResolverTest.java imports: 7 dependencies
+13:04:04.812 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeEngineTest.java imports: 6 dependencies
+13:04:04.813 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeBuildSystemIntegrationTest.java imports: 6 dependencies
+13:04:04.813 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgePerformanceTest.java imports: 6 dependencies
+13:04:04.814 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- File ForgeDemoProjectValidationTest.java imports: 5 dependencies
+13:04:04.814 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Dependency analysis complete: 22 files analyzed
+13:04:04.814 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Analyzing test files...
+13:04:04.814 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+13:04:04.814 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+13:04:04.814 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+13:04:04.814 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+13:04:04.814 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+13:04:04.814 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+13:04:04.814 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Found test file: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+13:04:04.814 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Test analysis complete: 7 test files found
+13:04:04.825 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Calculating complexity score for 22 files...
+13:04:04.839 [main] DEBUG io.github.yasmramos.forge.core.BuildAnalyzer -- Complexity calculation complete: 856.5
+13:04:04.839 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Resolving dependencies...
+13:04:04.839 [main] WARN io.github.yasmramos.forge.core.DependencyResolver -- Dependencies map is null, returning empty resolution
+13:04:04.839 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Compiling sources...
+13:04:04.840 [pool-14-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/Forge.java
+13:04:04.840 [pool-14-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/cache/ForgeCache.java
+13:04:04.841 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/Forge.java
+13:04:04.841 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@53d2e820
+13:04:04.841 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/cache/ForgeCache.java
+13:04:04.841 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@50edf8d3
+13:04:04.841 [pool-14-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/cli/ForgeCLI.java
+13:04:04.841 [pool-14-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/core/BuildAnalyzer.java
+13:04:04.842 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/cli/ForgeCLI.java
+13:04:04.842 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@5d150c2a
+13:04:04.842 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/core/BuildAnalyzer.java
+13:04:04.842 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@5e2a0cbe
+13:04:04.842 [pool-14-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/core/Compiler.java
+13:04:04.842 [pool-14-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/core/DependencyResolver.java
+13:04:04.842 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/core/Compiler.java
+13:04:04.842 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@592a8350
+13:04:04.842 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/core/DependencyResolver.java
+13:04:04.842 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@5a1593a3
+13:04:04.842 [pool-14-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/core/ForgeEngine.java
+13:04:04.842 [pool-14-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/CompilationResult.java
+13:04:04.843 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/core/ForgeEngine.java
+13:04:04.843 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@1c280611
+13:04:04.843 [pool-14-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/DependencyInfo.java
+13:04:04.843 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/CompilationResult.java
+13:04:04.843 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@1f170685
+13:04:04.843 [pool-14-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/DependencyResolution.java
+13:04:04.844 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/DependencyInfo.java
+13:04:04.844 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@58ff7e5c
+13:04:04.844 [pool-14-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/DependencyType.java
+13:04:04.844 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/DependencyResolution.java
+13:04:04.844 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@20035ed4
+13:04:04.844 [pool-14-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/PackageResult.java
+13:04:04.845 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/DependencyType.java
+13:04:04.845 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@2d7e5d35
+13:04:04.845 [pool-14-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/ProjectAnalysis.java
+13:04:04.845 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/PackageResult.java
+13:04:04.845 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@2ec2f996
+13:04:04.845 [pool-14-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/model/ProjectConfig.java
+13:04:04.845 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/ProjectAnalysis.java
+13:04:04.845 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@20437bc9
+13:04:04.846 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/model/ProjectConfig.java
+13:04:04.846 [pool-14-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/main/java/io/github/yasmramos/forge/utils/ConfigReader.java
+13:04:04.846 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@583cff66
+13:04:04.846 [pool-14-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+13:04:04.846 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/main/java/io/github/yasmramos/forge/utils/ConfigReader.java
+13:04:04.846 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@7c07f95e
+13:04:04.846 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/cache/ForgeCacheTest.java
+13:04:04.846 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@7f38f9ca
+13:04:04.846 [pool-14-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+13:04:04.846 [pool-14-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+13:04:04.847 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/core/BuildAnalyzerTest.java
+13:04:04.847 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/core/DependencyResolverTest.java
+13:04:04.847 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@5fa9751c
+13:04:04.847 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@4577fd07
+13:04:04.847 [pool-14-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+13:04:04.847 [pool-14-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+13:04:04.848 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/integration/ForgeBuildSystemIntegrationTest.java
+13:04:04.848 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@7c40a276
+13:04:04.848 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/core/ForgeEngineTest.java
+13:04:04.848 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@611c29
+13:04:04.848 [pool-14-thread-2] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+13:04:04.848 [pool-14-thread-1] DEBUG io.github.yasmramos.forge.core.Compiler -- Compiling: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+13:04:04.849 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/performance/ForgePerformanceTest.java
+13:04:04.849 [pool-14-thread-2] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@4338b557
+13:04:04.849 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Compilation failed for: src/test/java/io/github/yasmramos/forge/validation/ForgeDemoProjectValidationTest.java
+13:04:04.849 [pool-14-thread-1] ERROR io.github.yasmramos.forge.core.Compiler -- Error: [B@3b47b2df
+13:04:04.849 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Packaging artifacts...
+13:04:04.849 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Packaging compiled artifacts...
+13:04:04.850 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Error creating main JAR
+java.io.IOException: Cannot run program "jar": error=13, Permission denied
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageMainJar(ForgeEngine.java:245)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageArtifacts(ForgeEngine.java:212)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:71)
+	at io.github.yasmramos.forge.validation.ForgeDemoProjectValidationTest.testBasicValidation(ForgeDemoProjectValidationTest.java:25)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: java.io.IOException: error=13, Permission denied
+	at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)
+	at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)
+	at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)
+	... 76 common frames omitted
+13:04:04.851 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Error creating sources JAR
+java.io.IOException: Cannot run program "jar": error=13, Permission denied
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)
+	at io.github.yasmramos.forge.core.ForgeEngine.createSourcesJar(ForgeEngine.java:293)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageAdditionalArtifacts(ForgeEngine.java:270)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageArtifacts(ForgeEngine.java:219)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:71)
+	at io.github.yasmramos.forge.validation.ForgeDemoProjectValidationTest.testBasicValidation(ForgeDemoProjectValidationTest.java:25)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: java.io.IOException: error=13, Permission denied
+	at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)
+	at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)
+	at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)
+	... 77 common frames omitted
+13:04:04.852 [main] ERROR io.github.yasmramos.forge.core.ForgeEngine -- Error generating javadoc
+java.io.IOException: Cannot run program "javadoc": error=13, Permission denied
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)
+	at io.github.yasmramos.forge.core.ForgeEngine.generateJavadoc(ForgeEngine.java:320)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageAdditionalArtifacts(ForgeEngine.java:276)
+	at io.github.yasmramos.forge.core.ForgeEngine.packageArtifacts(ForgeEngine.java:219)
+	at io.github.yasmramos.forge.core.ForgeEngine.build(ForgeEngine.java:71)
+	at io.github.yasmramos.forge.validation.ForgeDemoProjectValidationTest.testBasicValidation(ForgeDemoProjectValidationTest.java:25)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: java.io.IOException: error=13, Permission denied
+	at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)
+	at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)
+	at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)
+	... 77 common frames omitted
+13:04:04.853 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Packaging complete: 0 artifacts created
+13:04:04.853 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Running tests...
+13:04:04.853 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Running tests...
+13:04:04.866 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeCacheTest
+13:04:04.866 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeCacheTest
+13:04:04.866 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: BuildAnalyzerTest
+13:04:04.867 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): BuildAnalyzerTest
+13:04:04.867 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: DependencyResolverTest
+13:04:04.868 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): DependencyResolverTest
+13:04:04.868 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeEngineTest
+13:04:04.868 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeEngineTest
+13:04:04.868 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeBuildSystemIntegrationTest
+13:04:04.868 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeBuildSystemIntegrationTest
+13:04:04.868 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgePerformanceTest
+13:04:04.869 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgePerformanceTest
+13:04:04.869 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeDemoProjectValidationTest
+13:04:04.869 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeDemoProjectValidationTest
+13:04:04.869 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeCacheTest
+13:04:04.870 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeCacheTest
+13:04:04.870 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: BuildAnalyzerTest
+13:04:04.870 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): BuildAnalyzerTest
+13:04:04.870 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: DependencyResolverTest
+13:04:04.871 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): DependencyResolverTest
+13:04:04.871 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeEngineTest
+13:04:04.871 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeEngineTest
+13:04:04.871 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeBuildSystemIntegrationTest
+13:04:04.872 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeBuildSystemIntegrationTest
+13:04:04.872 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgePerformanceTest
+13:04:04.872 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgePerformanceTest
+13:04:04.872 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Running test: ForgeDemoProjectValidationTest
+13:04:04.883 [main] DEBUG io.github.yasmramos.forge.core.ForgeEngine -- Skipping test (no main method): ForgeDemoProjectValidationTest
+13:04:04.883 [main] INFO io.github.yasmramos.forge.core.ForgeEngine -- Test execution complete: 14/14 passed
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.109 s - in io.github.yasmramos.forge.validation.ForgeDemoProjectValidationTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.032 s
+[INFO] Finished at: 2025-12-23T13:04:04Z
+[INFO] ------------------------------------------------------------------------
