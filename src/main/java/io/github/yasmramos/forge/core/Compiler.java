@@ -1,28 +1,45 @@
 package io.github.yasmramos.forge.core;
 
 import io.github.yasmramos.forge.model.DependencyResolution;
-import io.github.yasmramos.forge.model.DependencyInfo;
 import io.github.yasmramos.forge.model.CompilationResult;
 import io.github.yasmramos.forge.cache.ForgeCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.StandardLocation;
+import javax.tools.ToolProvider;
 import java.io.File;
-import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 /**
  * High-Performance Compiler for Forge Build System.
- * Compiles sources in a single batch javac invocation with incremental
- * cache support.
+ *
+ * <p>Compiles sources in a single batch using the in-process JSR-199 Java
+ * compiler API ({@link javax.tools.JavaCompiler}) with incremental cache
+ * support. Running javac in-process avoids spawning one JVM per build and
+ * provides structured diagnostics instead of parsed console output.</p>
+ *
+ * <p>If the tool provider is unavailable (e.g. running on a JRE without the
+ * JDK compiler module), the compiler falls back to launching the external
+ * {@code javac} executable as before.</p>
  */
 public class Compiler {
-    
+
     private final Logger logger = LoggerFactory.getLogger(Compiler.class);
+    /** In-process Java compiler (JSR-199); null when only an external javac exists. */
+    private final JavaCompiler toolCompiler;
     /** Extra classpath entries (e.g. third-party libraries) injected externally. */
     private String classpath = "";
 
@@ -33,10 +50,23 @@ public class Compiler {
      * calling thread, so an unused executor would only leak threads.</p>
      */
     public Compiler() {
+        this.toolCompiler = ToolProvider.getSystemJavaCompiler();
+        if (this.toolCompiler == null) {
+            logger.warn("No in-process Java compiler available; falling back to external javac process");
+        }
     }
 
     /**
-     * Set additional classpath entries used when invoking javac.
+     * Whether this compiler can run javac in-process via the JSR-199 API.
+     *
+     * @return true when a system Java compiler is available
+     */
+    public boolean isInProcessCompilationAvailable() {
+        return toolCompiler != null;
+    }
+
+    /**
+     * Set additional classpath entries used during compilation.
      *
      * @param classpath platform-separated list of jars/directories
      */
@@ -58,12 +88,14 @@ public class Compiler {
     }
 
     /**
-     * Compile all sources in a single javac invocation.
+     * Compile all sources in a single batch.
      *
      * <p>Batch compilation is required because Java sources reference each other:
      * compiling one file at a time fails with unresolved symbols unless every
-     * sibling source is passed on the command line. A single invocation also
-     * avoids spawning one JVM per file.</p>
+     * sibling source is passed together. The preferred path is the in-process
+     * JSR-199 compiler API, which avoids spawning an external JVM per build;
+     * only when no system compiler is available does it fall back to launching
+     * the {@code javac} executable.</p>
      *
      * @param sourceFiles          all source files to compile together
      * @param dependencyResolution resolved external dependencies (may be null)
@@ -102,20 +134,22 @@ public class Compiler {
 
         try {
             Files.createDirectories(Paths.get(outputDir));
-        } catch (IOException e) {
+        } catch (java.io.IOException e) {
             logger.error("Could not create output directory: " + outputDir, e);
             return new CompilationResult(false, sourceFiles.size(), cachedCount, cachedCount);
         }
 
-        ProcessResult result = executeJavac(staleFiles, dependencyResolution, outputDir);
+        CompileOutcome outcome = toolCompiler != null
+            ? executeInProcess(staleFiles, dependencyResolution, outputDir)
+            : executeJavac(staleFiles, dependencyResolution, outputDir);
 
-        if (result.isSuccess()) {
+        if (outcome.success) {
             // Cache each successfully compiled file
             for (Path sourceFile : staleFiles) {
                 String cacheKey = ForgeCache.generateKey(sourceFile.toFile(), depMap);
                 ForgeCache.CacheEntry cacheEntry = new ForgeCache.CacheEntry(
                     sourceFile.toFile().lastModified(),
-                    result.getOutput()
+                    outcome.output.getBytes(StandardCharsets.UTF_8)
                 );
                 if (cache != null) {
                     cache.put(cacheKey, cacheEntry);
@@ -125,7 +159,7 @@ public class Compiler {
             return new CompilationResult(true, sourceFiles.size(), compiled, cachedCount);
         } else {
             logger.error("Batch compilation failed for " + staleFiles.size() + " file(s)");
-            logger.error("javac output:\n" + result.getErrorString());
+            logger.error("compiler output:\n" + outcome.error);
             return new CompilationResult(false, sourceFiles.size(), cachedCount, cachedCount);
         }
     }
@@ -136,7 +170,63 @@ public class Compiler {
         return compileBatch(changedSources, null, cache, "target/classes");
     }
 
-    private ProcessResult executeJavac(List<Path> sourceFiles, DependencyResolution dependencyResolution, String outputDir) {
+    /**
+     * Run the JSR-199 in-process compiler over the given sources.
+     *
+     * @return structured outcome with success flag and human-readable messages
+     */
+    private CompileOutcome executeInProcess(List<Path> sourceFiles, DependencyResolution dependencyResolution, String outputDir) {
+        DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
+        try (StandardJavaFileManager fileManager =
+                 toolCompiler.getStandardFileManager(diagnostics, null, StandardCharsets.UTF_8)) {
+
+            fileManager.setLocation(StandardLocation.CLASS_OUTPUT,
+                    Arrays.asList(new File(outputDir)));
+
+            String classpath = buildClasspath(dependencyResolution);
+            if (!classpath.isEmpty()) {
+                List<File> cpFiles = new ArrayList<>();
+                for (String entry : classpath.split(File.pathSeparator)) {
+                    if (!entry.isEmpty()) {
+                        cpFiles.add(new File(entry));
+                    }
+                }
+                fileManager.setLocation(StandardLocation.CLASS_PATH, cpFiles);
+            }
+
+            Iterable<? extends JavaFileObject> compilationUnits =
+                    fileManager.getJavaFileObjectsFromFiles(toFileList(sourceFiles));
+
+            List<String> options = Arrays.asList("-encoding", "UTF-8", "-proc:none");
+
+            JavaCompiler.CompilationTask task = toolCompiler.getTask(
+                    null, fileManager, diagnostics, options, null, compilationUnits);
+            boolean success = task.call();
+
+            StringBuilder errors = new StringBuilder();
+            StringBuilder notes = new StringBuilder();
+            for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+                String message = diagnostic.toString() + System.lineSeparator();
+                if (diagnostic.getKind() == Diagnostic.Kind.ERROR) {
+                    errors.append(message);
+                } else {
+                    notes.append(message);
+                }
+            }
+            return new CompileOutcome(success, notes.toString(), errors.toString());
+
+        } catch (Exception e) {
+            String message = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+            return new CompileOutcome(false, "", message);
+        }
+    }
+
+    /**
+     * Fallback path: launch the external {@code javac} executable in one process.
+     *
+     * <p>Only used when no in-process system compiler is available.</p>
+     */
+    private CompileOutcome executeJavac(List<Path> sourceFiles, DependencyResolution dependencyResolution, String outputDir) {
         try {
             List<String> command = new ArrayList<>();
             command.add("javac");
@@ -167,15 +257,25 @@ public class Compiler {
 
             int exitCode = process.waitFor();
 
-            return new ProcessResult(exitCode == 0, outputBytes, errorBytes);
+            return new CompileOutcome(exitCode == 0,
+                    new String(outputBytes, StandardCharsets.UTF_8),
+                    new String(errorBytes, StandardCharsets.UTF_8));
 
-        } catch (IOException | InterruptedException e) {
+        } catch (java.io.IOException | InterruptedException e) {
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }
             String message = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
-            return new ProcessResult(false, new byte[0], message.getBytes());
+            return new CompileOutcome(false, "", message);
         }
+    }
+
+    private static List<File> toFileList(List<Path> paths) {
+        List<File> files = new ArrayList<>(paths.size());
+        for (Path path : paths) {
+            files.add(path.toFile());
+        }
+        return files;
     }
     
     private String buildClasspath(DependencyResolution dependencyResolution) {
@@ -219,29 +319,19 @@ public class Compiler {
         // No-op: batch compilation runs in the calling thread.
     }
     
-    private static class ProcessResult {
+    /**
+     * Immutable outcome of a compilation run, shared by the in-process and
+     * external-javac execution paths.
+     */
+    private static class CompileOutcome {
         private final boolean success;
-        private final byte[] output;
-        private final byte[] error;
-        
-        public ProcessResult(boolean success, byte[] output, byte[] error) {
+        private final String output;
+        private final String error;
+
+        CompileOutcome(boolean success, String output, String error) {
             this.success = success;
-            this.output = output;
-            this.error = error;
-        }
-        
-        public boolean isSuccess() { return success; }
-        public byte[] getOutput() { return output; }
-        public byte[] getError() { return error; }
-
-        /** Human-readable form of the captured stderr output. */
-        public String getErrorString() {
-            return new String(error, java.nio.charset.StandardCharsets.UTF_8);
-        }
-
-        /** Human-readable form of the captured stdout output. */
-        public String getOutputString() {
-            return new String(output, java.nio.charset.StandardCharsets.UTF_8);
+            this.output = output != null ? output : "";
+            this.error = error != null ? error : "";
         }
     }
 }

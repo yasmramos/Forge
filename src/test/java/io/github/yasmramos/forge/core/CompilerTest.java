@@ -33,6 +33,14 @@ class CompilerTest {
     }
 
     @Test
+    void testInProcessCompilerIsUsedWhenAvailable() {
+        Compiler compiler = new Compiler();
+        // The build runs on a JDK, so the JSR-199 system compiler must be present
+        assertTrue(compiler.isInProcessCompilationAvailable(),
+                "JSR-199 in-process compiler should be available on a JDK");
+    }
+
+    @Test
     void testCompileEmptyBatchSucceeds() {
         Compiler compiler = new Compiler();
 
