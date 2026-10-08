@@ -46,8 +46,7 @@ Forge/
 │   ├── cli/                          # Command-line interface
 │   │   └── ForgeCLI.java
 │   ├── model/                        # Data models and configurations
-│   ├── utils/                        # Utility functions
-│   └── config/                       # Configuration management
+│   └── utils/                        # Utility functions (ConfigReader)
 └── src/test/java/                    # Test suite
 ```
 
@@ -99,49 +98,46 @@ java -jar target/forge-1.0.0-SNAPSHOT.jar analyze
 java -jar target/forge-1.0.0-SNAPSHOT.jar clean
 ```
 
-For a new project, create a `forge.config` file in your project root:
+For a new project, run `forge init` to scaffold a `forge.json` file in your project root, or create it manually:
 
-```properties
-# Project Configuration
-project.name=my-project
-project.version=1.0.0
-source.directory=src/main/java
-test.directory=src/test/java
-output.directory=target/classes
+```json
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "sourceDirectory": "src/main/java",
+  "outputDirectory": "target/classes"
+}
 ```
 
 ## Configuration
 
-Forge supports configuration through properties files and programmatic APIs. The configuration system is flexible and allows customization of all aspects of the build process.
+Forge supports configuration through JSON files (`forge.json`) and programmatic APIs. The configuration system is flexible and allows customization of all aspects of the build process. See [`forge-example.json`](forge-example.json) for a complete reference.
 
 ### Configuration File Format
 
-Configuration files use standard Java properties format:
+Configuration files use JSON format with the following top-level keys:
 
-```properties
-# Core Settings
-project.name=my-project
-project.version=1.0.0
-source.directory=src/main/java
-test.directory=src/test/java
-output.directory=target/classes
-build.directory=target
+| Key | Type | Description |
+| --- | --- | --- |
+| `name` | string | Project name |
+| `version` | string | Project version |
+| `sourceDirectory` | string | Main source directory (default: `src/main/java`) |
+| `outputDirectory` | string | Compiled classes directory (default: `target/classes`) |
+| `sourcePaths` | array | Additional source/resource paths |
+| `dependencies` | object | Map of `groupId:artifactId` to `{ "version", "type" }` entries |
+| `plugins` | object | Map of plugin names to their settings |
+| `buildSettings` | object | Build behavior options (see below) |
 
-# Compilation Settings
-compiler.source=11
-compiler.target=11
-compiler.debug=true
-incremental.compilation=true
+Supported `buildSettings` keys:
 
-# Dependency Settings
-dependencies.repository=https://repo.maven.apache.org/maven2/
-offline.mode=false
-
-# Cache Settings
-cache.enabled=true
-cache.directory=.forge-cache
-cache.expiration.hours=24
-```
+| Key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `incremental` | boolean | `true` | Only recompile changed sources |
+| `parallel` | boolean | `true` | Use parallel processing where applicable |
+| `cacheEnabled` | boolean | `true` | Enable the on-disk build cache (`.forge-cache`) |
+| `threads` | number | available CPUs | Worker thread count |
+| `compiler` | string | `"javac"` | Compiler backend identifier |
+| `encoding` | string | `"UTF-8"` | Source file encoding |
 
 ### Programmatic Configuration
 
@@ -149,10 +145,15 @@ You can also configure Forge programmatically using the ProjectConfig class:
 
 ```java
 ProjectConfig config = new ProjectConfig();
-config.setProjectName("my-project");
+config.setName("my-project");
+config.setVersion("1.0.0");
 config.setSourceDirectory("src/main/java");
 config.setOutputDirectory("target/classes");
-config.setIncrementalCompilation(true);
+
+ProjectConfig.BuildSettings settings = new ProjectConfig.BuildSettings();
+settings.setIncremental(true);
+settings.setCacheEnabled(true);
+config.setBuildSettings(settings);
 
 ForgeEngine engine = new ForgeEngine(config);
 ProjectAnalysis analysis = engine.build();
@@ -197,7 +198,7 @@ For advanced integration, use the ForgeEngine API directly:
 // Create configuration
 ProjectConfig config = new ProjectConfig();
 config.setSourceDirectory("src/main/java");
-config.setTestDirectory("src/test/java");
+config.setOutputDirectory("target/classes");
 
 // Initialize engine
 ForgeEngine engine = new ForgeEngine(config);
@@ -215,9 +216,11 @@ int filesCompiled = compilation.getCompiledFiles().size();
 Forge's incremental build feature significantly speeds up rebuilds by only processing changed files:
 
 ```java
-// Enable incremental compilation
+// Enable incremental compilation (default: true)
 ProjectConfig config = new ProjectConfig();
-config.setIncrementalCompilation(true);
+ProjectConfig.BuildSettings settings = new ProjectConfig.BuildSettings();
+settings.setIncremental(true);
+config.setBuildSettings(settings);
 
 // The engine will track file changes and only recompile what's necessary
 ForgeEngine engine = new ForgeEngine(config);

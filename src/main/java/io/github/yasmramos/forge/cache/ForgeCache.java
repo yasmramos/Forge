@@ -2,6 +2,10 @@ package io.github.yasmramos.forge.cache;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -22,11 +27,20 @@ public class ForgeCache {
     private final Path cacheDirectory;
     
     public ForgeCache() {
+        this(Paths.get(System.getProperty("user.home"), ".forge", "cache").toString());
+    }
+
+    /**
+     * Create a cache backed by the given directory on disk.
+     *
+     * @param cacheDirectory path where cache entries are persisted
+     */
+    public ForgeCache(String cacheDirectory) {
         this.cache = new ConcurrentHashMap<>();
-        this.cacheDirectory = Paths.get(System.getProperty("user.home"), ".forge", "cache");
+        this.cacheDirectory = Paths.get(cacheDirectory);
         
         try {
-            Files.createDirectories(cacheDirectory);
+            Files.createDirectories(this.cacheDirectory);
         } catch (IOException e) {
             logger.warn("Failed to create cache directory", e);
         }
@@ -80,18 +94,60 @@ public class ForgeCache {
     private void persistToDisk(String key, CacheEntry entry) {
         try {
             Path cacheFile = cacheDirectory.resolve(key + ".cache");
-            // TODO: Implement serialization to disk
+
+            // Serialize the entry: lastModified (8 bytes) + compiled data length (4 bytes)
+            // + compiled data + metadata as UTF-8 "key=value" lines prefixed by its byte length
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(buffer);
+            out.writeLong(entry.getLastModified());
+            byte[] data = entry.getCompiledData() != null ? entry.getCompiledData() : new byte[0];
+            out.writeInt(data.length);
+            out.write(data);
+
+            Properties props = new Properties();
+            for (Map.Entry<String, String> meta : entry.getMetadata().entrySet()) {
+                props.setProperty(meta.getKey(), meta.getValue());
+            }
+            ByteArrayOutputStream metaBuffer = new ByteArrayOutputStream();
+            props.store(metaBuffer, null);
+            byte[] metaBytes = metaBuffer.toByteArray();
+            out.writeInt(metaBytes.length);
+            out.write(metaBytes);
+            out.flush();
+
+            Files.write(cacheFile, buffer.toByteArray());
+            logger.debug("Persisted cache entry: " + key);
         } catch (Exception e) {
             logger.debug("Failed to persist cache entry to disk", e);
         }
     }
-    
+
     private CacheEntry loadFromDisk(String key) {
         try {
             Path cacheFile = cacheDirectory.resolve(key + ".cache");
             if (Files.exists(cacheFile)) {
-                // TODO: Implement deserialization from disk
-                return null;
+                byte[] raw = Files.readAllBytes(cacheFile);
+                DataInputStream in = new DataInputStream(new ByteArrayInputStream(raw));
+
+                long lastModified = in.readLong();
+                int dataLen = in.readInt();
+                byte[] data = new byte[dataLen];
+                in.readFully(data);
+
+                int metaLen = in.readInt();
+                byte[] metaBytes = new byte[metaLen];
+                in.readFully(metaBytes);
+
+                Properties props = new Properties();
+                props.load(new ByteArrayInputStream(metaBytes));
+
+                Map<String, String> metadata = new ConcurrentHashMap<>();
+                for (String name : props.stringPropertyNames()) {
+                    metadata.put(name, props.getProperty(name));
+                }
+
+                logger.debug("Loaded cache entry from disk: " + key);
+                return new CacheEntry(lastModified, data, metadata);
             }
         } catch (Exception e) {
             logger.debug("Failed to load cache entry from disk", e);

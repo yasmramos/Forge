@@ -898,3 +898,6 @@
 # Claude Agent SDK debug files
 **/.claude/debug/
 **/.claude/debug/**
+
+# Build output
+target/
