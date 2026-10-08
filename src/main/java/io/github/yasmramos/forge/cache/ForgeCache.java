@@ -27,11 +27,20 @@ public class ForgeCache {
     private final Path cacheDirectory;
     
     public ForgeCache() {
+        this(Paths.get(System.getProperty("user.home"), ".forge", "cache").toString());
+    }
+
+    /**
+     * Create a cache backed by the given directory on disk.
+     *
+     * @param cacheDirectory path where cache entries are persisted
+     */
+    public ForgeCache(String cacheDirectory) {
         this.cache = new ConcurrentHashMap<>();
-        this.cacheDirectory = Paths.get(System.getProperty("user.home"), ".forge", "cache");
+        this.cacheDirectory = Paths.get(cacheDirectory);
         
         try {
-            Files.createDirectories(cacheDirectory);
+            Files.createDirectories(this.cacheDirectory);
         } catch (IOException e) {
             logger.warn("Failed to create cache directory", e);
         }

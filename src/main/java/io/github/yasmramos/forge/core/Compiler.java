@@ -14,25 +14,25 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
- * High-Performance Compiler for Forge Build System
- * Supports incremental compilation and parallel processing
+ * High-Performance Compiler for Forge Build System.
+ * Compiles sources in a single batch javac invocation with incremental
+ * cache support.
  */
 public class Compiler {
     
     private final Logger logger = LoggerFactory.getLogger(Compiler.class);
-    private final ExecutorService compilerExecutor;
     /** Extra classpath entries (e.g. third-party libraries) injected externally. */
     private String classpath = "";
 
+    /**
+     * Create a new compiler.
+     *
+     * <p>No thread pool is allocated eagerly: batch compilation runs in the
+     * calling thread, so an unused executor would only leak threads.</p>
+     */
     public Compiler() {
-        this.compilerExecutor = Executors.newFixedThreadPool(
-            Runtime.getRuntime().availableProcessors()
-        );
     }
 
     /**
@@ -95,7 +95,7 @@ public class Compiler {
 
         if (staleFiles.isEmpty()) {
             logger.info("All " + cachedCount + " files up to date (cache hit)");
-            return new CompilationResult(true, sourceFiles.size(), sourceFiles.size());
+            return new CompilationResult(true, sourceFiles.size(), sourceFiles.size(), cachedCount);
         }
 
         logger.info("Compiling " + staleFiles.size() + " file(s) in one batch (" + cachedCount + " cached)");
@@ -104,7 +104,7 @@ public class Compiler {
             Files.createDirectories(Paths.get(outputDir));
         } catch (IOException e) {
             logger.error("Could not create output directory: " + outputDir, e);
-            return new CompilationResult(false, sourceFiles.size(), cachedCount);
+            return new CompilationResult(false, sourceFiles.size(), cachedCount, cachedCount);
         }
 
         ProcessResult result = executeJavac(staleFiles, dependencyResolution, outputDir);
@@ -122,11 +122,11 @@ public class Compiler {
                 }
             }
             int compiled = staleFiles.size() + cachedCount;
-            return new CompilationResult(true, sourceFiles.size(), compiled);
+            return new CompilationResult(true, sourceFiles.size(), compiled, cachedCount);
         } else {
             logger.error("Batch compilation failed for " + staleFiles.size() + " file(s)");
             logger.error("javac output:\n" + result.getErrorString());
-            return new CompilationResult(false, sourceFiles.size(), cachedCount);
+            return new CompilationResult(false, sourceFiles.size(), cachedCount, cachedCount);
         }
     }
 
@@ -209,16 +209,14 @@ public class Compiler {
         return depMap;
     }
     
+    /**
+     * Release any resources held by this compiler.
+     *
+     * <p>Present for API compatibility with callers that shut the compiler
+     * down after a build; there is currently nothing to release.</p>
+     */
     public void shutdown() {
-        compilerExecutor.shutdown();
-        try {
-            if (!compilerExecutor.awaitTermination(30, java.util.concurrent.TimeUnit.SECONDS)) {
-                compilerExecutor.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            compilerExecutor.shutdownNow();
-            Thread.currentThread().interrupt();
-        }
+        // No-op: batch compilation runs in the calling thread.
     }
     
     private static class ProcessResult {
