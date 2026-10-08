@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +41,9 @@ public class ForgeEngine {
         );
         this.dependencyResolver = new DependencyResolver();
         this.compiler = new Compiler();
+        // Seed the compiler with third-party libraries available on the JVM classpath
+        // (SLF4J, Gson, ...) so javac can resolve external symbols when building sources.
+        this.compiler.setClasspath(System.getProperty("java.class.path"));
         this.analyzer = new BuildAnalyzer();
     }
     
@@ -65,21 +67,24 @@ public class ForgeEngine {
             // Phase 3: Compile sources
             logger.info("Compiling sources...");
             CompilationResult compilationResult = compileSources(analysis, dependencyResult);
-            
+
+            if (!compilationResult.isSuccess()) {
+                logger.error("Compilation failed: " + compilationResult.getCompiledFiles()
+                    + "/" + compilationResult.getTotalFiles() + " files compiled successfully");
+                return new BuildResult(false, null, null);
+            }
+
             // Phase 4: Package artifacts
             logger.info("Packaging artifacts...");
             PackageResult packageResult = packageArtifacts(compilationResult);
-            
-            // Phase 5: Run tests if enabled
-            if (config.getBuildSettings().isParallel()) {
-                logger.info("Running tests...");
-                TestResult testResult = runTests(packageResult);
-                
-                return new BuildResult(true, packageResult, testResult);
-            }
-            
-            return new BuildResult(true, packageResult, null);
-            
+
+            // Phase 5: Run tests after packaging, regardless of parallel/sequential mode
+            logger.info("Running tests...");
+            TestResult testResult = runTests(packageResult);
+
+            boolean buildSuccess = packageResult.isSuccess() && testResult.isSuccess();
+            return new BuildResult(buildSuccess, packageResult, testResult);
+
         } catch (Exception e) {
             logger.error("Build failed", e);
             return new BuildResult(false, null, null);
@@ -155,55 +160,42 @@ public class ForgeEngine {
     private CompilationResult compileSources(ProjectAnalysis analysis, 
                                            DependencyResolution dependencyResult) {
         List<Path> sourceFiles = analysis.getSourceFiles();
-        
-        if (config.getBuildSettings().isParallel()) {
-            return compileInParallel(sourceFiles, dependencyResult);
-        } else {
-            return compileSequentially(sourceFiles, dependencyResult);
+
+        // Batch compilation in a single javac invocation: Java sources reference
+        // each other, so per-file (parallel or sequential) compilation fails with
+        // unresolved symbols and spawns one JVM per file.
+        String outputDir = resolveOutputBaseDir().resolve("classes").toString();
+        return compiler.compileBatch(sourceFiles, dependencyResult, cache, outputDir);
+    }
+    
+    /**
+     * Resolve the base output directory from configuration, falling back to "target".
+     */
+    private Path resolveOutputBaseDir() {
+        String configured = config.getOutputDirectory();
+        if (configured != null && !configured.trim().isEmpty()) {
+            return Paths.get(configured);
         }
+        return Paths.get("target");
     }
-    
-    private CompilationResult compileInParallel(List<Path> sourceFiles, 
-                                              DependencyResolution dependencyResult) {
-        CompletableFuture<CompilationResult>[] compilationTasks = sourceFiles.stream()
-            .map(sourceFile -> CompletableFuture.supplyAsync(() -> {
-                try {
-                    return compiler.compile(sourceFile, dependencyResult, cache);
-                } catch (Exception e) {
-                    logger.error("Failed to compile: " + sourceFile, e);
-                    return null;
-                }
-            }, executor))
-            .toArray(CompletableFuture[]::new);
-        
-        CompletableFuture.allOf(compilationTasks).join();
-        
-        return new CompilationResult(true, sourceFiles.size(), compilationTasks.length);
-    }
-    
-    private CompilationResult compileSequentially(List<Path> sourceFiles, 
-                                                DependencyResolution dependencyResult) {
-        int successCount = 0;
-        
-        for (Path sourceFile : sourceFiles) {
-            try {
-                compiler.compile(sourceFile, dependencyResult, cache);
-                successCount++;
-            } catch (Exception e) {
-                logger.error("Failed to compile: " + sourceFile, e);
-            }
+
+    /**
+     * Resolve the main source directory from configuration, falling back to "src/main/java".
+     */
+    private Path resolveSourceDir() {
+        String configured = config.getSourceDirectory();
+        if (configured != null && !configured.trim().isEmpty()) {
+            return Paths.get(configured);
         }
-        
-        return new CompilationResult(successCount == sourceFiles.size(), 
-                                   sourceFiles.size(), successCount);
+        return Paths.get("src", "main", "java");
     }
-    
+
     private PackageResult packageArtifacts(CompilationResult compilationResult) {
         logger.info("Packaging compiled artifacts...");
         
         try {
-            // Create output directory
-            Path outputDir = Paths.get("target", "forge-output");
+            // Create output directory based on project configuration
+            Path outputDir = resolveOutputBaseDir().resolve("forge-output");
             Files.createDirectories(outputDir);
             
             int artifactCount = 0;
@@ -229,7 +221,7 @@ public class ForgeEngine {
     
     private Path packageMainJar(Path outputDir) {
         try {
-            Path classesDir = Paths.get("target", "classes");
+            Path classesDir = resolveOutputBaseDir().resolve("classes");
             if (!Files.exists(classesDir)) {
                 logger.warn("No classes directory found for JAR packaging");
                 return null;
@@ -263,8 +255,8 @@ public class ForgeEngine {
         int count = 0;
         
         try {
-            // Create sources JAR if source files exist
-            Path sourcesDir = Paths.get("src", "main", "java");
+            // Create sources JAR if source files exist (honoring configured source directory)
+            Path sourcesDir = resolveSourceDir();
             if (Files.exists(sourcesDir)) {
                 Path sourcesJar = outputDir.resolve("forge-sources.jar");
                 if (createSourcesJar(sourcesDir, sourcesJar)) {
@@ -305,14 +297,14 @@ public class ForgeEngine {
             Path docDir = outputDir.resolve("javadoc");
             Files.createDirectories(docDir);
             
-            // Generate javadoc for main sources
-            Path sourcesDir = Paths.get("src", "main", "java");
+            // Generate javadoc for main sources (honoring configured source directory)
+            Path sourcesDir = resolveSourceDir();
             if (!Files.exists(sourcesDir)) {
                 return false;
             }
             
             ProcessBuilder pb = new ProcessBuilder(
-                "javadoc", "-d", docDir.toString(), 
+                "javadoc", "-quiet", "-d", docDir.toString(), 
                 "-sourcepath", sourcesDir.toString(),
                 "-subpackages", "io.github.yasmramos.forge"
             );
@@ -420,9 +412,10 @@ public class ForgeEngine {
                 return true; // Skip tests without main method
             }
             
-            // Compile test
+            // Compile test (classpath derived from configured output directory)
+            String testClasspath = buildTestCompileClasspath();
             ProcessBuilder compilePb = new ProcessBuilder(
-                "javac", "-cp", "target/classes:target/forge-output/forge-main.jar", 
+                "javac", "-cp", testClasspath,
                 testFile.toString()
             );
             
@@ -436,7 +429,7 @@ public class ForgeEngine {
             
             // Run test
             ProcessBuilder runPb = new ProcessBuilder(
-                "java", "-cp", "target/classes:target/forge-output/forge-main.jar:.", 
+                "java", "-cp", testClasspath + File.pathSeparator + ".",
                 className
             );
             
@@ -451,7 +444,20 @@ public class ForgeEngine {
         }
     }
     
+    /**
+     * Build the classpath used for compiling and running tests,
+     * based on the configured output directory.
+     */
+    private String buildTestCompileClasspath() {
+        Path base = resolveOutputBaseDir();
+        return base.resolve("classes") + File.pathSeparator
+            + base.resolve("forge-output").resolve("forge-main.jar");
+    }
+
     private void shutdown() {
+        // Shut down the compiler's internal executor first to avoid thread leaks
+        compiler.shutdown();
+
         executor.shutdown();
         try {
             if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {

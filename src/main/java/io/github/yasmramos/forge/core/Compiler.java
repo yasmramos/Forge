@@ -26,138 +26,178 @@ public class Compiler {
     
     private final Logger logger = LoggerFactory.getLogger(Compiler.class);
     private final ExecutorService compilerExecutor;
-    
+    /** Extra classpath entries (e.g. third-party libraries) injected externally. */
+    private String classpath = "";
+
     public Compiler() {
         this.compilerExecutor = Executors.newFixedThreadPool(
             Runtime.getRuntime().availableProcessors()
         );
     }
+
+    /**
+     * Set additional classpath entries used when invoking javac.
+     *
+     * @param classpath platform-separated list of jars/directories
+     */
+    public void setClasspath(String classpath) {
+        this.classpath = classpath != null ? classpath : "";
+    }
+
+    public String getClasspath() {
+        return classpath;
+    }
     
+    /**
+     * Compile a single source file against the given dependency resolution.
+     */
     public CompilationResult compile(Path sourceFile, DependencyResolution dependencyResolution, ForgeCache cache) {
-        String cacheKey = ForgeCache.generateKey(sourceFile.toFile(), 
-            dependencyResolution.getDependencies().isEmpty() ? null : 
-            createDependencyMap(dependencyResolution));
-        
-        // Check cache first
-        if (cache.isValid(cacheKey, sourceFile.toFile())) {
-            logger.debug("Using cached compilation for: " + sourceFile);
-            return new CompilationResult(true, 1, 1);
+        List<Path> files = new ArrayList<>();
+        files.add(sourceFile);
+        return compileBatch(files, dependencyResolution, cache, "target/classes");
+    }
+
+    /**
+     * Compile all sources in a single javac invocation.
+     *
+     * <p>Batch compilation is required because Java sources reference each other:
+     * compiling one file at a time fails with unresolved symbols unless every
+     * sibling source is passed on the command line. A single invocation also
+     * avoids spawning one JVM per file.</p>
+     *
+     * @param sourceFiles          all source files to compile together
+     * @param dependencyResolution resolved external dependencies (may be null)
+     * @param cache                build cache; entries are keyed per source file
+     * @param outputDir            directory where class files are emitted
+     * @return aggregated compilation result
+     */
+    public CompilationResult compileBatch(List<Path> sourceFiles, DependencyResolution dependencyResolution,
+                                          ForgeCache cache, String outputDir) {
+        if (sourceFiles == null || sourceFiles.isEmpty()) {
+            return new CompilationResult(true, 0, 0);
         }
-        
+
+        // Filter out files that are already cached as valid
+        List<Path> staleFiles = new ArrayList<>();
+        int cachedCount = 0;
+        Map<String, Object> depMap = dependencyResolution != null && !dependencyResolution.getDependencies().isEmpty()
+            ? createDependencyMap(dependencyResolution) : null;
+
+        for (Path sourceFile : sourceFiles) {
+            String cacheKey = ForgeCache.generateKey(sourceFile.toFile(), depMap);
+            if (cache != null && cache.isValid(cacheKey, sourceFile.toFile())) {
+                logger.debug("Using cached compilation for: " + sourceFile);
+                cachedCount++;
+            } else {
+                staleFiles.add(sourceFile);
+            }
+        }
+
+        if (staleFiles.isEmpty()) {
+            logger.info("All " + cachedCount + " files up to date (cache hit)");
+            return new CompilationResult(true, sourceFiles.size(), sourceFiles.size());
+        }
+
+        logger.info("Compiling " + staleFiles.size() + " file(s) in one batch (" + cachedCount + " cached)");
+
         try {
-            logger.debug("Compiling: " + sourceFile);
-            
-            // Perform actual compilation
-            ProcessResult result = executeJavac(sourceFile, dependencyResolution);
-            
-            if (result.isSuccess()) {
-                // Cache successful compilation
+            Files.createDirectories(Paths.get(outputDir));
+        } catch (IOException e) {
+            logger.error("Could not create output directory: " + outputDir, e);
+            return new CompilationResult(false, sourceFiles.size(), cachedCount);
+        }
+
+        ProcessResult result = executeJavac(staleFiles, dependencyResolution, outputDir);
+
+        if (result.isSuccess()) {
+            // Cache each successfully compiled file
+            for (Path sourceFile : staleFiles) {
+                String cacheKey = ForgeCache.generateKey(sourceFile.toFile(), depMap);
                 ForgeCache.CacheEntry cacheEntry = new ForgeCache.CacheEntry(
-                    sourceFile.toFile().lastModified(), 
+                    sourceFile.toFile().lastModified(),
                     result.getOutput()
                 );
-                cache.put(cacheKey, cacheEntry);
-                
-                return new CompilationResult(true, 1, 1);
-            } else {
-                logger.error("Compilation failed for: " + sourceFile);
-                logger.error("Error: " + result.getError());
-                return new CompilationResult(false, 1, 0);
+                if (cache != null) {
+                    cache.put(cacheKey, cacheEntry);
+                }
             }
-            
-        } catch (Exception e) {
-            logger.error("Exception during compilation: " + sourceFile, e);
-            return new CompilationResult(false, 1, 0);
+            int compiled = staleFiles.size() + cachedCount;
+            return new CompilationResult(true, sourceFiles.size(), compiled);
+        } else {
+            logger.error("Batch compilation failed for " + staleFiles.size() + " file(s)");
+            logger.error("javac output:\n" + result.getErrorString());
+            return new CompilationResult(false, sourceFiles.size(), cachedCount);
         }
     }
-    
+
     public CompilationResult compileIncremental(List<Path> changedSources, ForgeCache cache) {
         logger.info("Incremental compilation of " + changedSources.size() + " changed files");
-        
-        CompletableFuture<CompilationResult>[] tasks = changedSources.stream()
-            .map(sourceFile -> CompletableFuture.supplyAsync(() -> {
-                try {
-                    return compile(sourceFile, null, cache);
-                } catch (Exception e) {
-                    logger.error("Failed incremental compile: " + sourceFile, e);
-                    return new CompilationResult(false, 1, 0);
-                }
-            }, compilerExecutor))
-            .toArray(CompletableFuture[]::new);
-        
-        CompletableFuture.allOf(tasks).join();
-        
-        int totalFiles = changedSources.size();
-        int successFiles = 0;
-        
-        for (CompletableFuture<CompilationResult> task : tasks) {
-            try {
-                CompilationResult result = task.get();
-                if (result.isSuccess()) {
-                    successFiles++;
-                }
-            } catch (Exception e) {
-                logger.error("Failed to get compilation result", e);
-            }
-        }
-        
-        return new CompilationResult(successFiles == totalFiles, totalFiles, successFiles);
+        // Delegate to the batch compiler so cross-file symbol references resolve
+        return compileBatch(changedSources, null, cache, "target/classes");
     }
-    
-    private ProcessResult executeJavac(Path sourceFile, DependencyResolution dependencyResolution) {
+
+    private ProcessResult executeJavac(List<Path> sourceFiles, DependencyResolution dependencyResolution, String outputDir) {
         try {
             List<String> command = new ArrayList<>();
             command.add("javac");
             command.add("-encoding");
             command.add("UTF-8");
+            command.add("-proc:none"); // javac reads sources from disk; no need for sourcepath lookup
             command.add("-d");
-            command.add("target/classes");
-            
+            command.add(outputDir);
+
             // Add classpath
             String classpath = buildClasspath(dependencyResolution);
             if (!classpath.isEmpty()) {
                 command.add("-cp");
                 command.add(classpath);
             }
-            
-            command.add(sourceFile.toString());
-            
+
+            // Pass every source file in one invocation so interdependent classes resolve
+            for (Path sourceFile : sourceFiles) {
+                command.add(sourceFile.toString());
+            }
+
             ProcessBuilder processBuilder = new ProcessBuilder(command);
             Process process = processBuilder.start();
-            
-            // Read output and error streams
+
+            // Read output and error streams fully before waiting to avoid pipe-buffer deadlock
             byte[] outputBytes = process.getInputStream().readAllBytes();
             byte[] errorBytes = process.getErrorStream().readAllBytes();
-            
+
             int exitCode = process.waitFor();
-            
+
             return new ProcessResult(exitCode == 0, outputBytes, errorBytes);
-            
+
         } catch (IOException | InterruptedException e) {
-            return new ProcessResult(false, new byte[0], e.getMessage().getBytes());
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            String message = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+            return new ProcessResult(false, new byte[0], message.getBytes());
         }
     }
     
     private String buildClasspath(DependencyResolution dependencyResolution) {
-        if (dependencyResolution == null || dependencyResolution.getDependencies().isEmpty()) {
-            return "";
+        StringBuilder classpathBuilder = new StringBuilder();
+
+        // Start with externally provided classpath entries (resolved by the engine)
+        if (!classpath.isEmpty()) {
+            classpathBuilder.append(classpath);
         }
-        
-        StringBuilder classpath = new StringBuilder();
-        boolean first = true;
-        
-        for (io.github.yasmramos.forge.model.DependencyInfo dep : dependencyResolution.getDependencies()) {
-            if (!first) {
-                classpath.append(File.pathSeparator);
-            }
-            first = false;
-            
-            if (dep.isResolved() && dep.getLocalFile().exists()) {
-                classpath.append(dep.getLocalFile().getAbsolutePath());
+
+        if (dependencyResolution != null) {
+            for (io.github.yasmramos.forge.model.DependencyInfo dep : dependencyResolution.getDependencies()) {
+                if (dep.isResolved() && dep.getLocalFile().exists()) {
+                    if (classpathBuilder.length() > 0) {
+                        classpathBuilder.append(File.pathSeparator);
+                    }
+                    classpathBuilder.append(dep.getLocalFile().getAbsolutePath());
+                }
             }
         }
-        
-        return classpath.toString();
+
+        return classpathBuilder.toString();
     }
     
     private Map<String, Object> createDependencyMap(DependencyResolution dependencyResolution) {
@@ -171,6 +211,14 @@ public class Compiler {
     
     public void shutdown() {
         compilerExecutor.shutdown();
+        try {
+            if (!compilerExecutor.awaitTermination(30, java.util.concurrent.TimeUnit.SECONDS)) {
+                compilerExecutor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            compilerExecutor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
     
     private static class ProcessResult {
@@ -187,5 +235,15 @@ public class Compiler {
         public boolean isSuccess() { return success; }
         public byte[] getOutput() { return output; }
         public byte[] getError() { return error; }
+
+        /** Human-readable form of the captured stderr output. */
+        public String getErrorString() {
+            return new String(error, java.nio.charset.StandardCharsets.UTF_8);
+        }
+
+        /** Human-readable form of the captured stdout output. */
+        public String getOutputString() {
+            return new String(output, java.nio.charset.StandardCharsets.UTF_8);
+        }
     }
 }
