@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Forge launcher: runs the shaded fat jar from anywhere (AGENT.md section 16).
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+JAR="$REPO_ROOT/target/forge-1.0.0-SNAPSHOT.jar"
+if [ ! -f "$JAR" ]; then
+    echo "forge: $JAR not found. Build Forge first: mvn -q package -DskipTests" >&2
+    exit 1
+fi
+exec java -jar "$JAR" "$@"

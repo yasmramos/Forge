@@ -38,9 +38,18 @@ public class ForgeEngine {
     private final DependencyResolver dependencyResolver;
     private final Compiler compiler;
     private final BuildAnalyzer analyzer;
+
+    /**
+     * Expose the loaded project configuration so CLI commands such as
+     * {@code forge run} can read [exec] settings without re-parsing.
+     */
+    public ProjectConfig getConfig() {
+        return config;
+    }
     
     public ForgeEngine(ProjectConfig config) {
         this.config = config;
+
         this.cache = new ForgeCache();
         this.executor = Executors.newFixedThreadPool(
             Math.max(1, config.getBuildSettings().getThreads())
@@ -64,11 +73,21 @@ public class ForgeEngine {
             logger.info("Analyzing project structure...");
             ProjectAnalysis analysis = analyzer.analyzeProject(config);
             
-            // Phase 2: Resolve dependencies
-            logger.info("Resolving dependencies...");
-            DependencyResolution dependencyResult = dependencyResolver.resolve(
-                config.getDependencies(), analysis
-            );
+            // Phase 2: Resolve dependencies through Maven Resolver (Aether).
+            // AGENT.md section 2: never reimplement resolution; the same engine
+            // that produced forge.lock resolves the compile classpath here.
+            DependencyResolution dependencyResult = resolveWithAether();
+            if (dependencyResult == null) {
+                // Legacy path kept as a safety net when no repositories are
+                // declared or Aether cannot run in this environment.
+                logger.info("Resolving dependencies (legacy)...");
+                dependencyResult = dependencyResolver.resolve(
+                    config.getDependencies(), analysis
+                );
+            } else {
+                logger.info("Resolved " + dependencyResult.getSuccessCount()
+                    + " artifact(s) via Maven Resolver");
+            }
             
             // Phase 3: Compile sources
             logger.info("Compiling sources...");
@@ -228,6 +247,88 @@ public class ForgeEngine {
         // matching the Maven convention and the default configuration value.
         String outputDir = resolveClassesDir().toString();
         return compiler.compileBatch(sourceFiles, dependencyResult, cache, outputDir);
+    }
+
+    /**
+     * Resolve the declared dependencies with the Maven Resolver (Aether) engine
+     * and adapt the result to the legacy {@link DependencyResolution} model used
+     * by the compiler. Returns {@code null} when there is nothing to resolve or
+     * no repositories are configured, letting callers fall back to the legacy
+     * resolver. Failures propagate as build errors (AGENT.md section 10bis):
+     * an unresolvable coordinate must fail the build loudly, not silently drop
+     * the dependency.
+     */
+    private DependencyResolution resolveWithAether() throws Exception {
+        return resolveWithAether(null);
+    }
+
+    /**
+     * Same as {@link #resolveWithAether()} but allowing extra ad-hoc roots
+     * (e.g. the JUnit Platform launcher for test execution) that are not
+     * declared in forge.toml. Coordinates already declared always win.
+     */
+    private DependencyResolution resolveWithAether(List<String> extraRoots) throws Exception {
+        java.util.Map<String, Object> declared = config.getDependencies();
+        if ((declared == null || declared.isEmpty())
+                && (extraRoots == null || extraRoots.isEmpty())) {
+            return new DependencyResolution(); // Nothing to resolve: valid empty graph.
+        }
+        java.util.Map<String, String> repositories = config.getRepositories();
+        if (repositories == null || repositories.isEmpty()) {
+            return null; // No [repositories]: caller falls back to legacy resolution.
+        }
+
+        java.util.List<String> roots = new java.util.ArrayList<>();
+        for (java.util.Map.Entry<String, Object> entry : declared.entrySet()) {
+            String version = null;
+            if (entry.getValue() instanceof String) {
+                version = (String) entry.getValue();
+            } else if (entry.getValue() instanceof java.util.Map) {
+                Object v = ((java.util.Map<?, ?>) entry.getValue()).get("version");
+                if (v != null) {
+                    version = String.valueOf(v);
+                }
+            }
+            if (version != null && !version.trim().isEmpty()) {
+                roots.add(entry.getKey() + ":" + version);
+            }
+        }
+        // Ad-hoc roots supplied by the caller (deduplicated: declared wins).
+        if (extraRoots != null) {
+            for (String extra : extraRoots) {
+                String ga = extra.substring(0, extra.lastIndexOf(':'));
+                boolean alreadyDeclared = declared != null && declared.containsKey(ga);
+                if (!alreadyDeclared && !roots.contains(extra)) {
+                    roots.add(extra);
+                }
+            }
+        }
+        if (roots.isEmpty()) {
+            return new DependencyResolution();
+        }
+
+        File localCacheDir = Paths.get(System.getProperty("user.home"),
+            ".forge", "cache", "deps").toFile();
+        io.github.yasmramos.forge.core.resolver.AetherDependencyResolver aether =
+            new io.github.yasmramos.forge.core.resolver.AetherDependencyResolver(
+                localCacheDir, repositories);
+        io.github.yasmramos.forge.core.resolver.AetherDependencyResolver.ResolvedGraph graph =
+            aether.resolveTransitive(roots);
+
+        DependencyResolution resolution = new DependencyResolution();
+        for (io.github.yasmramos.forge.core.resolver.AetherDependencyResolver.ResolvedArtifact artifact
+                : graph.getArtifacts()) {
+            String[] ga = artifact.getCoordinates().split(":");
+            if (ga.length != 3) {
+                continue;
+            }
+            Path jarPath = artifact.getFile().toPath();
+            resolution.addDependency(new io.github.yasmramos.forge.model.DependencyInfo(
+                ga[0] + ":" + ga[1], ga[2],
+                io.github.yasmramos.forge.model.DependencyType.MAVEN,
+                jarPath, true));
+        }
+        return resolution;
     }
     
     /**
@@ -410,39 +511,77 @@ public class ForgeEngine {
     
     private TestResult runTests(PackageResult packageResult) {
         logger.info("Running tests...");
-        
+
         try {
             // Find test files
             List<Path> testFiles = findTestFiles();
-            
+
             if (testFiles.isEmpty()) {
                 logger.info("No test files found, skipping test execution");
                 return new TestResult(true, 0, 0);
             }
-            
-            // Compile and run tests
-            int totalTests = testFiles.size();
-            int passedTests = 0;
-            
-            for (Path testFile : testFiles) {
-                try {
-                    if (runSingleTest(testFile)) {
-                        passedTests++;
+
+            Path testClassesDir = resolveBuildBaseDir().resolve("test-classes");
+            java.nio.file.Files.createDirectories(testClassesDir);
+
+            // Resolve the full test classpath through Aether: declared
+            // dependencies plus the JUnit Platform launcher needed to run
+            // Jupiter tests programmatically (AGENT.md section 21).
+            DependencyResolution testDeps = resolveWithAether(java.util.Arrays.asList(
+                "org.junit.platform:junit-platform-launcher:1.9.2"));
+            StringBuilder cp = new StringBuilder();
+            cp.append(resolveClassesDir()).append(File.pathSeparator).append(testClassesDir);
+            if (testDeps != null) {
+                for (io.github.yasmramos.forge.model.DependencyInfo dep : testDeps.getDependencies()) {
+                    if (dep.isResolved() && dep.getLocalPath() != null) {
+                        cp.append(File.pathSeparator).append(dep.getLocalPath());
                     }
-                } catch (Exception e) {
-                    logger.error("Test failed: " + testFile, e);
                 }
             }
-            
-            logger.info("Test execution complete: " + passedTests + "/" + totalTests + " passed");
-            return new TestResult(passedTests == totalTests, totalTests, passedTests);
-            
+            String classpath = cp.toString();
+
+            // Compile every test source in one javac invocation so that
+            // shared helper classes resolve correctly.
+            ProcessBuilder compilePb = new ProcessBuilder(
+                "javac", "-cp", classpath, "-d", testClassesDir.toString());
+            compilePb.redirectErrorStream(true);
+            for (Path testFile : testFiles) {
+                compilePb.command().add(testFile.toString());
+            }
+            Process compileProcess = compilePb.start();
+            String compileOut = new String(compileProcess.getInputStream().readAllBytes());
+            if (compileProcess.waitFor() != 0) {
+                logger.error("Test compilation failed:\n" + compileOut);
+                return new TestResult(false, testFiles.size(), 0);
+            }
+
+            // Run all compiled tests with the JUnit Platform Console
+            // standalone launcher (auto-discovery under test-classes).
+            // Runner class lives in Forge's own jar (shaded), so it is on
+            // the JVM classpath of this process; append it to the child cp.
+            String selfJar = io.github.yasmramos.forge.Forge.class.getProtectionDomain()
+                .getCodeSource().getLocation().getPath();
+            ProcessBuilder runPb = new ProcessBuilder(
+                "java", "-cp", classpath + File.pathSeparator + selfJar,
+                "io.github.yasmramos.forge.core.test.JUnitRunner",
+                testClassesDir.toString());
+            runPb.redirectErrorStream(true);
+            Process runProcess = runPb.start();
+            String runOut = new String(runProcess.getInputStream().readAllBytes());
+            int exitCode = runProcess.waitFor();
+
+            System.err.println(runOut);
+            boolean passed = exitCode == 0;
+            logger.info("Test execution complete: " + (passed ? "all tests passed"
+                : "tests failed (exit code " + exitCode + ")"));
+            return new TestResult(passed, testFiles.size(), passed ? testFiles.size() : 0);
+
         } catch (Exception e) {
             logger.error("Test execution failed", e);
             return new TestResult(false, 0, 0);
         }
     }
-    
+
     private List<Path> findTestFiles() {
         List<Path> testFiles = new ArrayList<>();
         

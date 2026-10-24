@@ -1,0 +1,15 @@
+# App module: depends on example.core by coordinate (not by path).
+
+forge = "0.1"
+
+[project]
+name = "example.app"
+
+[source.main]
+java = ["src/main/java"]
+
+[dependencies.compile]
+"com.example:example.core" = "${project.version}"
+
+[exec]
+main = "com.example.app.Main"

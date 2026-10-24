@@ -30,3 +30,27 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
+  examples:
+    # Fire-test for the examples/ projects (AGENT.md contract): if an
+    # example stops building or running, Forge itself is broken.
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 11
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: maven
+    - name: Package Forge CLI
+      run: mvn -B -q package -DskipTests
+    - name: Fire-test hello-world (build + run)
+      working-directory: examples/hello-world
+      run: |
+        ../../bin/forge build
+        ../../bin/forge run 2>/dev/null | grep -q "Hello from Forge"
+    - name: Fire-test library (build + tests)
+      working-directory: examples/library
+      run: ../../bin/forge build 2>&1 | tee /tmp/lib.log | grep -q "FORGE-TESTS found=.*passed"
+

@@ -45,6 +45,15 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- JUnit Platform Launcher: compile scope on purpose. Forge runs
+             user tests programmatically (AGENT.md section 21), so the
+             launcher is part of Forge's runtime, not a test-only dep. -->
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>1.9.2</version>
+        </dependency>
         
         <!-- TOML Configuration Parsing (NightConfig) -->
         <dependency>
@@ -152,8 +161,19 @@
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>io.github.yasmramos.forge.Forge</mainClass>
                                 </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
-                            <minimizeJar>true</minimizeJar>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>module-info.class</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions></plugin>
