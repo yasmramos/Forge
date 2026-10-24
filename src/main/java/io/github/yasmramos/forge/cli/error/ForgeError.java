@@ -39,23 +39,39 @@ public class ForgeError {
         return sb.toString();
     }
 
+    /**
+     * Best-effort translation of a legacy exception into a registered,
+     * structured error. New code must throw {@link ForgeException} built from
+     * an {@link ErrorCode.Entry} directly; this adapter only exists so older
+     * call sites keep producing catalog codes instead of ad-hoc strings.
+     */
     public static ForgeError of(Exception e) {
         String m = e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
+        if (e instanceof ForgeException) {
+            return ((ForgeException) e).getError();
+        }
         if (m.contains("cycle detected")) {
-            return new ForgeError("F001", m,
-                "Tasks form a dependency loop, so no valid execution order exists.",
-                "Remove or invert one edge shown in the cycle path.",
-                "https://forge.dev/errors/F001");
+            return new ForgeError(ErrorCode.TSK_0001.getCode(), m,
+                ErrorCode.TSK_0001.getWhy(), ErrorCode.TSK_0001.getHow(),
+                ErrorCode.TSK_0001.getDocsUrl());
+        }
+        if (m.contains("dangling") || m.contains("unknown task")) {
+            return new ForgeError(ErrorCode.TSK_0002.getCode(), m,
+                ErrorCode.TSK_0002.getWhy(), ErrorCode.TSK_0002.getHow(),
+                ErrorCode.TSK_0002.getDocsUrl());
+        }
+        if (m.contains("Missing forge.lock")) {
+            return new ForgeError(ErrorCode.LCK_0004.getCode(), m,
+                ErrorCode.LCK_0004.getWhy(), ErrorCode.LCK_0004.getHow(),
+                ErrorCode.LCK_0004.getDocsUrl());
         }
         if (m.contains("stale") || m.contains("forge.lock")) {
-            return new ForgeError("F002", m,
-                "The lockfile was produced from a different configuration.",
-                "Run 'forge update' and commit the refreshed forge.lock.",
-                "https://forge.dev/errors/F002");
+            return new ForgeError(ErrorCode.LCK_0003.getCode(), m,
+                ErrorCode.LCK_0003.getWhy(), ErrorCode.LCK_0003.getHow(),
+                ErrorCode.LCK_0003.getDocsUrl());
         }
-        return new ForgeError("F000", m,
-            "An unexpected error occurred while running the build.",
-            "Re-run with --debug for details, or report this error.",
-            "https://forge.dev/errors/F000");
+        return new ForgeError(ErrorCode.INT_0001.getCode(), m,
+            ErrorCode.INT_0001.getWhy(), ErrorCode.INT_0001.getHow(),
+            ErrorCode.INT_0001.getDocsUrl());
     }
 }

@@ -27,7 +27,9 @@ class TaskGraphTest {
         TaskGraph g = new TaskGraph();
         g.add(task("a", "compile").dependsOn("b"));
         g.add(task("b", "test").dependsOn("a"));
-        IllegalStateException e = assertThrows(IllegalStateException.class, g::validate);
+        io.github.yasmramos.forge.cli.error.ForgeException e =
+            assertThrows(io.github.yasmramos.forge.cli.error.ForgeException.class, g::validate);
+        assertEquals("FORGE-TSK-0001", e.getCode());
         assertTrue(e.getMessage().contains("cycle detected"), e.getMessage());
     }
 
@@ -35,8 +37,11 @@ class TaskGraphTest {
     void rejectsUnknownDependency() {
         TaskGraph g = new TaskGraph();
         g.add(task("a", "compile").dependsOn("ghost"));
-        IllegalStateException e = assertThrows(IllegalStateException.class, g::validate);
+        io.github.yasmramos.forge.cli.error.ForgeException e =
+            assertThrows(io.github.yasmramos.forge.cli.error.ForgeException.class, g::validate);
+        assertEquals("FORGE-TSK-0002", e.getCode());
         assertTrue(e.getMessage().contains("ghost"));
+        assertFalse(e.getTaskTrace().isEmpty(), "error must carry task context");
     }
 
     @Test

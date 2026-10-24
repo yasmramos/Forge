@@ -20,7 +20,9 @@ public class TaskGraph {
 
     public void add(ForgeTask task) {
         if (tasks.containsKey(task.getName())) {
-            throw new IllegalArgumentException("Duplicate task name: " + task.getName());
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.TSK_0003,
+                "duplicate task name '" + task.getName() + "'");
         }
         tasks.put(task.getName(), task);
     }
@@ -28,8 +30,9 @@ public class TaskGraph {
     public ForgeTask get(String name) {
         ForgeTask t = tasks.get(name);
         if (t == null) {
-            throw new IllegalArgumentException("No such task: '" + name
-                + "'. Declared tasks: " + tasks.keySet());
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.TSK_0002,
+                "no such task: '" + name + "'. Declared tasks: " + tasks.keySet());
         }
         return t;
     }
@@ -45,9 +48,10 @@ public class TaskGraph {
         for (ForgeTask t : tasks.values()) {
             for (String dep : combined(t)) {
                 if (!tasks.containsKey(dep)) {
-                    throw new IllegalStateException("Task '" + t.getName()
-                        + "' depends on unknown task '" + dep
-                        + "'. Fix: declare that task or remove the dependency.");
+                    throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                        io.github.yasmramos.forge.cli.error.ErrorCode.TSK_0002,
+                        "task '" + t.getName() + "' depends on unknown task '" + dep + "'")
+                        .at(t.getName(), String.valueOf(t.getType()));
                 }
             }
         }
@@ -69,8 +73,10 @@ public class TaskGraph {
         if (!visiting.add(name)) {
             List<String> cycle = new ArrayList<>(visiting);
             int start = cycle.indexOf(name);
-            throw new IllegalStateException("Dependency cycle detected: "
-                + String.join(" -> ", cycle.subList(start, cycle.size())) + " -> " + name);
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.TSK_0001,
+                "dependency cycle detected: "
+                    + String.join(" -> ", cycle.subList(start, cycle.size())) + " -> " + name);
         }
         ForgeTask task = get(name);
         for (String dep : combined(task)) {
