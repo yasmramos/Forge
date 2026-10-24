@@ -142,40 +142,65 @@ public class ForgeCLI {
             outputDir = "target/classes";
         }
         
-        // Create forge.json configuration
-        String config = String.format("{\n" +
-            "  \"name\": \"%s\",\n" +
-            "  \"version\": \"%s\",\n" +
-            "  \"sourceDirectory\": \"%s\",\n" +
-            "  \"outputDirectory\": \"%s\",\n" +
-            "  \"sourcePaths\": [\"src/main/java\"],\n" +
-            "  \"dependencies\": {},\n" +
-            "  \"plugins\": {},\n" +
-            "  \"buildSettings\": {\n" +
-            "    \"incremental\": true,\n" +
-            "    \"parallel\": true,\n" +
-            "    \"cacheEnabled\": true,\n" +
-            "    \"threads\": %d,\n" +
-            "    \"compiler\": \"javac\",\n" +
-            "    \"encoding\": \"UTF-8\"\n" +
-            "  }\n" +
-            "}", name, version, sourceDir, outputDir, 
-            Runtime.getRuntime().availableProcessors());
-        
+        // Create forge.toml configuration (TOML format, parsed with NightConfig)
+        String config = String.format(
+            "# Forge project configuration.\n" +
+            "# Schema version of the Forge configuration format.\n" +
+            "forge = \"0.1\"\n" +
+            "\n" +
+            "[project]\n" +
+            "name    = \"%s\"\n" +
+            "version = \"%s\"\n" +
+            "\n" +
+            "[repositories]\n" +
+            "central = \"https://repo1.maven.org/maven2\"\n" +
+            "\n" +
+            "[toolchain]\n" +
+            "language = \"11\"\n" +
+            "\n" +
+            "[source.main]\n" +
+            "java      = [\"%s\"]\n" +
+            "resources = [\"src/main/resources\"]\n" +
+            "\n" +
+            "[source.test]\n" +
+            "java      = [\"src/test/java\"]\n" +
+            "resources = [\"src/test/resources\"]\n" +
+            "\n" +
+            "[dependencies.compile]\n" +
+            "\n" +
+            "[dependencies.test]\n" +
+            "\n" +
+            "[build]\n" +
+            "incremental   = true\n" +
+            "parallel      = true\n" +
+            "threads       = 0        # 0 = auto (available cores)\n" +
+            "cache_enabled = true\n" +
+            "\n" +
+            "[compile]\n" +
+            "encoding = \"UTF-8\"\n" +
+            "debug    = true\n" +
+            "args     = []\n" +
+            "\n" +
+            "[exec]\n" +
+            "main     = \"\"\n" +
+            "args     = []\n" +
+            "jvm_args = []\n",
+            name, version, sourceDir);
+
         try {
             java.nio.file.Files.write(
-                java.nio.file.Paths.get("forge.json"), 
+                java.nio.file.Paths.get("forge.toml"),
                 config.getBytes()
             );
             System.out.println("Project initialized successfully!");
-            System.out.println("Created forge.json configuration file");
+            System.out.println("Created forge.toml configuration file");
             System.out.println("Create your source files in: " + sourceDir);
-            
+
         } catch (Exception e) {
             System.err.println("Failed to initialize project: " + e.getMessage());
         }
     }
-    
+
     private void showInfo() {
         System.out.println("Forge Build System Information:");
         System.out.println("  Version: 1.0.0-SNAPSHOT");

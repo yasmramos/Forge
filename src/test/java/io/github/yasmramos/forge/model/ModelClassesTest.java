@@ -62,8 +62,9 @@ class ModelClassesTest {
     void testProjectConfigDependencies() {
         ProjectConfig config = new ProjectConfig();
 
-        // Test dependencies map
-        assertNull(config.getDependencies());
+        // Test dependencies map: initialized empty by the constructor
+        assertNotNull(config.getDependencies());
+        assertTrue(config.getDependencies().isEmpty());
 
         config.setDependencies(null);
         assertNull(config.getDependencies());

@@ -1,0 +1,76 @@
+# Forge configuration file (TOML format).
+# Replaces the legacy forge.json configuration.
+
+# Forge configuration schema version.
+# Allows the format to evolve without breaking existing builds.
+forge = "0.1"
+
+[project]
+name    = "awesome"
+version = "1.0.0"
+# group = "com.example"   # optional, useful for publishing
+# description = "..."     # optional
+
+# Reusable properties. Expanded as ${name} inside string values.
+# Flat keys are quoted so TOML does not nest them.
+[project.properties]
+"slf4j.version" = "2.0.7"
+"junit.version" = "5.9.2"
+
+# Modules of a multi-module project.
+# Module names are quoted because they contain a literal dot.
+# Each module has its own forge.toml in its directory.
+[project.modules]
+"awesome.core"    = "${project.version}"
+"awesome.logging" = "${project.version}"
+
+[repositories]
+central = "https://repo1.maven.org/maven2"
+# corporate = "https://nexus.example.com/repository/maven-public"
+
+# Single source of truth for the Java version.
+# toolchain covers: source, target, JDK version used to compile, etc.
+[toolchain]
+language = "11"
+# jdk_vendor = "temurin"   # optional
+# jdk_version = "11"       # pin the compiler runtime version
+
+# Source roots separated by scope (main / test), and by kind within each scope.
+# This decouples "what I compile" from "where I compile it".
+[source.main]
+java      = ["src/main/java"]
+resources = ["src/main/resources"]
+
+[source.test]
+java      = ["src/test/java"]
+resources = ["src/test/resources"]
+
+# Dependencies by scope: compile, runtime, test, provided.
+[dependencies.compile]
+"org.slf4j:slf4j-api" = "${slf4j.version}"
+
+[dependencies.runtime]
+"ch.qos.logback:logback-classic" = "1.4.11"
+
+[dependencies.test]
+"org.junit.jupiter:junit-jupiter" = "${junit.version}"
+
+[build]
+incremental   = true
+parallel      = true
+threads       = 0        # 0 = auto (number of available cores)
+cache_enabled = true     # consistent snake_case
+
+# Compiler configuration.
+# source/target no longer live here: they belong to [toolchain].
+[compile]
+encoding = "UTF-8"
+debug    = true
+args     = ["-Xlint:all"]
+
+# Exec configuration.
+# snake_case consistent with the rest of the file.
+[exec]
+main     = "com.example.Main"
+args     = ["--verbose"]
+jvm_args = ["-Xmx2g"]

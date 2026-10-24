@@ -42,7 +42,7 @@ public class ForgeEngine {
         this.dependencyResolver = new DependencyResolver();
         this.compiler = new Compiler();
         // Seed the compiler with third-party libraries available on the JVM classpath
-        // (SLF4J, Gson, ...) so javac can resolve external symbols when building sources.
+        // (SLF4J, NightConfig, ...) so javac can resolve external symbols when building sources.
         this.compiler.setClasspath(System.getProperty("java.class.path"));
         this.analyzer = new BuildAnalyzer();
     }
