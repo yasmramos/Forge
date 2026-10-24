@@ -134,11 +134,16 @@ public class ForgeEngine {
         logger.info("Cleaning build artifacts...");
         
         try {
-            // Clean the whole build base directory (target/), not just the
-            // classes subdirectory, so packaged artifacts are removed too.
             {
-                Path outputPath = resolveBuildBaseDir();
-                if (Files.exists(outputPath)) {
+                // Only remove build outputs: the compiled-classes directory
+                // and the packaged-artifacts directory. Never wipe the whole
+                // build base, which also holds tool state (e.g. Surefire's
+                // working directory during tests).
+                for (Path outputPath : List.of(
+                        resolveClassesDir(), resolveBuildBaseDir().resolve("forge-output"))) {
+                    if (!Files.exists(outputPath)) {
+                        continue;
+                    }
                     Files.walk(outputPath)
                         .sorted((a, b) -> b.compareTo(a))
                         .forEach(path -> {
@@ -171,10 +176,19 @@ public class ForgeEngine {
         // output path would produce nested/wrong class locations.
         // Compiled classes go to <buildBase>/classes (target/classes),
         // matching the Maven convention and the default configuration value.
-        String outputDir = resolveBuildBaseDir().resolve("classes").toString();
+        String outputDir = resolveClassesDir().toString();
         return compiler.compileBatch(sourceFiles, dependencyResult, cache, outputDir);
     }
     
+    /**
+     * Resolve the compiled-classes directory (build base + "classes",
+     * i.e. target/classes by Maven convention). Always absolute so that
+     * results do not depend on the process working directory.
+     */
+    private Path resolveClassesDir() {
+        return resolveBuildBaseDir().resolve("classes");
+    }
+
     /**
      * Resolve the build base directory (Maven convention: "target"). The
      * configured output directory is the compiled-classes directory
@@ -233,7 +247,7 @@ public class ForgeEngine {
     
     private Path packageMainJar(Path outputDir) {
         try {
-            Path classesDir = resolveBuildBaseDir().resolve("classes");
+            Path classesDir = resolveClassesDir();
             if (!Files.exists(classesDir)) {
                 logger.warn("No classes directory found for JAR packaging");
                 return null;
@@ -462,7 +476,7 @@ public class ForgeEngine {
      */
     private String buildTestCompileClasspath() {
         Path base = resolveBuildBaseDir();
-        return base.resolve("classes") + File.pathSeparator
+        return resolveClassesDir() + File.pathSeparator
             + base.resolve("forge-output").resolve("forge-main.jar");
     }
 
