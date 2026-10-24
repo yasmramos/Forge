@@ -222,7 +222,16 @@ public class ProjectConfig {
     }
     
     public void setOutputDirectory(String outputDirectory) {
-        this.outputDirectory = outputDirectory;
+        // Relative paths are resolved against the current working directory and
+        // stored as absolute, so build artifacts always land in the project's
+        // own target/ directory even when the JVM CWD changes (e.g. Surefire
+        // sets CWD to target/ during test runs). Absolute values are kept as-is.
+        if (outputDirectory != null && !outputDirectory.trim().isEmpty()
+                && !new java.io.File(outputDirectory).isAbsolute()) {
+            this.outputDirectory = new java.io.File(outputDirectory).getAbsolutePath();
+        } else {
+            this.outputDirectory = outputDirectory;
+        }
     }
     
     public List<String> getSourcePaths() {

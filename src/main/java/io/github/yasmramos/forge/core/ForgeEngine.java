@@ -134,8 +134,10 @@ public class ForgeEngine {
         logger.info("Cleaning build artifacts...");
         
         try {
-            if (config.getOutputDirectory() != null) {
-                Path outputPath = Paths.get(config.getOutputDirectory());
+            // Clean the whole build base directory (target/), not just the
+            // classes subdirectory, so packaged artifacts are removed too.
+            {
+                Path outputPath = resolveBuildBaseDir();
                 if (Files.exists(outputPath)) {
                     Files.walk(outputPath)
                         .sorted((a, b) -> b.compareTo(a))
@@ -164,19 +166,29 @@ public class ForgeEngine {
         // Batch compilation in a single javac invocation: Java sources reference
         // each other, so per-file (parallel or sequential) compilation fails with
         // unresolved symbols and spawns one JVM per file.
-        String outputDir = resolveOutputBaseDir().resolve("classes").toString();
+        // Absolute path: the JVM working directory can differ between runs
+        // (e.g. Surefire sets CWD to target/ during tests), so a relative
+        // output path would produce nested/wrong class locations.
+        // Compiled classes go to <buildBase>/classes (target/classes),
+        // matching the Maven convention and the default configuration value.
+        String outputDir = resolveBuildBaseDir().resolve("classes").toString();
         return compiler.compileBatch(sourceFiles, dependencyResult, cache, outputDir);
     }
     
     /**
-     * Resolve the base output directory from configuration, falling back to "target".
+     * Resolve the build base directory (Maven convention: "target"). The
+     * configured output directory is the compiled-classes directory
+     * (target/classes); its parent is used as the build base so that all
+     * derived paths (classes/, forge-output/) stay consistent.
      */
-    private Path resolveOutputBaseDir() {
+    private Path resolveBuildBaseDir() {
         String configured = config.getOutputDirectory();
         if (configured != null && !configured.trim().isEmpty()) {
-            return Paths.get(configured);
+            Path classes = Paths.get(configured).toAbsolutePath().normalize();
+            Path parent = classes.getParent();
+            return parent != null ? parent : classes;
         }
-        return Paths.get("target");
+        return Paths.get("target").toAbsolutePath().normalize();
     }
 
     /**
@@ -195,7 +207,7 @@ public class ForgeEngine {
         
         try {
             // Create output directory based on project configuration
-            Path outputDir = resolveOutputBaseDir().resolve("forge-output");
+            Path outputDir = resolveBuildBaseDir().resolve("forge-output");
             Files.createDirectories(outputDir);
             
             int artifactCount = 0;
@@ -221,7 +233,7 @@ public class ForgeEngine {
     
     private Path packageMainJar(Path outputDir) {
         try {
-            Path classesDir = resolveOutputBaseDir().resolve("classes");
+            Path classesDir = resolveBuildBaseDir().resolve("classes");
             if (!Files.exists(classesDir)) {
                 logger.warn("No classes directory found for JAR packaging");
                 return null;
@@ -449,7 +461,7 @@ public class ForgeEngine {
      * based on the configured output directory.
      */
     private String buildTestCompileClasspath() {
-        Path base = resolveOutputBaseDir();
+        Path base = resolveBuildBaseDir();
         return base.resolve("classes") + File.pathSeparator
             + base.resolve("forge-output").resolve("forge-main.jar");
     }

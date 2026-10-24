@@ -84,7 +84,10 @@ public class Compiler {
     public CompilationResult compile(Path sourceFile, DependencyResolution dependencyResolution, ForgeCache cache) {
         List<Path> files = new ArrayList<>();
         files.add(sourceFile);
-        return compileBatch(files, dependencyResolution, cache, "target/classes");
+        // Absolute path: the JVM working directory may differ between runs
+        // (e.g. Surefire sets CWD to target/ during tests), so a relative
+        // output path would produce nested/wrong class locations.
+        return compileBatch(files, dependencyResolution, cache, new File("target/classes").getAbsolutePath());
     }
 
     /**
@@ -167,7 +170,7 @@ public class Compiler {
     public CompilationResult compileIncremental(List<Path> changedSources, ForgeCache cache) {
         logger.info("Incremental compilation of " + changedSources.size() + " changed files");
         // Delegate to the batch compiler so cross-file symbol references resolve
-        return compileBatch(changedSources, null, cache, "target/classes");
+        return compileBatch(changedSources, null, cache, new File("target/classes").getAbsolutePath());
     }
 
     /**
