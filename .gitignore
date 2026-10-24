@@ -814,12 +814,15 @@
 # ==============================================================================
 # CACHE & BUILD ARTIFACTS
 # ==============================================================================
+# NOTE: these patterns are for build output directories only. Never use bare
+# "**/cache/" here: it silently ignores Java source packages named "cache"
+# (e.g. src/main/java/**/core/cache/) and breaks CI compilation.
 **/.cache/
-**/cache/
-**/build/
-**/dist/
-**/out/
+/build/
+/dist/
+/out/
 **/target/
+.forge/cache/
 **/.next/
 **/.nuxt/
 **/.vuepress/dist/
