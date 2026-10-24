@@ -10,7 +10,11 @@ public final class TaskType {
     public static final String COMPILE = "compile";
     public static final String TEST = "test";
     public static final String PACKAGE = "package";
-    public static final String EXEC = "exec";
+    /**
+     * Graph task that invokes a JVM process (AGENT.md section 10: renamed from
+     * "exec" to disambiguate it from the user-facing "forge run" command).
+     */
+    public static final String JAVA_EXEC = "javaExec";
     public static final String CLEAN = "clean";
     public static final String RESOLVE = "resolve";
 
