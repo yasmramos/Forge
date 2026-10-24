@@ -16,7 +16,7 @@ public class TaskTypeRegistry {
     private static final Set<String> BUILT_INS = new LinkedHashSet<>(
         java.util.Arrays.asList(
             TaskType.COMPILE, TaskType.TEST, TaskType.PACKAGE,
-            TaskType.EXEC, TaskType.CLEAN, TaskType.RESOLVE));
+            TaskType.JAVA_EXEC, TaskType.CLEAN, TaskType.RESOLVE));
 
     private final Map<String, TaskType> types = new ConcurrentHashMap<>();
 
