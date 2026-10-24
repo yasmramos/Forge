@@ -143,6 +143,10 @@ public class ForgeCLI {
                             System.out.println("Task-graph build OK: " + report.cacheHits()
                                 + " from cache, " + report.executed() + " executed.");
                         }
+                    } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
+                        // Structured errors render their own what/why/how block
+                        // (AGENT.md section 10bis); do not flatten them here.
+                        System.err.println(fe.formatUserFacing());
                     } catch (Exception e) {
                         System.err.println("Task-graph build error: " + e.getMessage());
                         System.err.println("Fix: check forge.toml and run again with --debug"

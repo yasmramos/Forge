@@ -49,7 +49,9 @@ public final class LockCommand {
 
             LockfileGenerator generator =
                     new LockfileGenerator(new File(DEFAULT_LOCAL_REPO), repositories);
-            Lockfile lock = generator.generate(projectRoot, config);
+            // Explicit regeneration: skip the stale-lock guard (that guard belongs
+            // to normal builds, per AGENT.md section 7bis).
+            Lockfile lock = generator.generate(projectRoot, config, false);
             lock.write(projectRoot);
 
             stdout.println("forge.lock refreshed: " + lock.getDependencies().size()

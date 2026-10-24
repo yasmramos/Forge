@@ -145,6 +145,13 @@ public class ForgeEngine {
         logger.info("Starting task-graph build for project: " + config.getName());
 
         File projectRoot = new File(System.getProperty("user.dir"));
+
+        // Lock enforcement (AGENT.md section 7bis): a normal build never
+        // re-resolves dependencies. If forge.lock exists it must match the
+        // current forge.toml (config hash) and be internally intact; otherwise
+        // the build fails with an actionable error before touching outputs.
+        io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(projectRoot);
+
         TaskCache taskCache = new TaskCache(projectRoot);
         TaskContext context = new TaskContext(projectRoot);
 

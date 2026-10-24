@@ -65,6 +65,27 @@ public final class LockfileGenerator {
      * @throws AetherDependencyResolver.ResolutionFailedException when coordinates cannot be resolved
      */
     public Lockfile generate(File projectRoot, ProjectConfig config) throws Exception {
+        return generate(projectRoot, config, true);
+    }
+
+    /**
+     * Resolves and locks the declared dependencies.
+     *
+     * @param enforceLock when true (the default), an existing {@code forge.lock}
+     *                    must match the current configuration hash before any
+     *                    network resolution happens: a normal build never
+     *                    silently re-resolves (AGENT.md section 7bis). Only
+     *                    {@code forge lock refresh} passes false to regenerate.
+     */
+    public Lockfile generate(File projectRoot, ProjectConfig config, boolean enforceLock)
+            throws Exception {
+        if (enforceLock) {
+            File lockFile = new File(projectRoot, Lockfile.FILE_NAME);
+            if (lockFile.isFile()) {
+                Lockfile existing = Lockfile.read(projectRoot);
+                existing.verifyAgainst(new File(projectRoot, ConfigReader.CONFIG_FILE_NAME));
+            }
+        }
         List<String> roots = compileScopeCoordinates(config);
         if (roots.isEmpty()) {
             // Nothing to resolve: emit a valid, empty lock so builds stay reproducible.
@@ -100,6 +121,24 @@ public final class LockfileGenerator {
         String configHash = Lockfile.hashOf(
                 new File(projectRoot, ConfigReader.CONFIG_FILE_NAME));
         return new Lockfile(configHash, locked);
+    }
+
+    /**
+     * Lock enforcement used by normal builds (AGENT.md section 7bis): a build
+     * never silently re-resolves dependencies. If {@code forge.lock} exists it
+     * must be internally intact (content hash) and match the current
+     * {@code forge.toml} (config hash); otherwise this fails with an actionable
+     * ForgeException before any output is touched. When no lock exists yet,
+     * this is a no-op so early-stage projects can still build until the user
+     * runs {@code forge lock refresh}.
+     */
+    public static void enforceExistingLock(File projectRoot) throws Exception {
+        File lockFile = new File(projectRoot, Lockfile.FILE_NAME);
+        if (!lockFile.isFile()) {
+            return; // No lock yet: nothing to enforce (see class javadoc).
+        }
+        Lockfile existing = Lockfile.read(projectRoot);
+        existing.verifyAgainst(new File(projectRoot, ConfigReader.CONFIG_FILE_NAME));
     }
 
     /** Direct compile-scope coordinates ({@code group:artifact:version}) from the config. */
