@@ -52,5 +52,8 @@ jobs:
         ../../bin/forge run 2>/dev/null | grep -q "Hello from Forge"
     - name: Fire-test library (build + tests)
       working-directory: examples/library
-      run: ../../bin/forge build 2>&1 | tee /tmp/lib.log | grep -q "FORGE-TESTS found=.*passed"
+      # The engine relays the JUnitRunner subprocess output through its own
+      # logger, which prefixes every line with timestamp/level; match the
+      # summary numbers regardless of that prefix.
+      run: ../../bin/forge build 2>&1 | tee /tmp/lib.log | grep -Eq "FORGE-TESTS found=[0-9]+ passed=[1-9][0-9]* failed=0"
 
