@@ -98,46 +98,52 @@ java -jar target/forge-1.0.0-SNAPSHOT.jar analyze
 java -jar target/forge-1.0.0-SNAPSHOT.jar clean
 ```
 
-For a new project, run `forge init` to scaffold a `forge.json` file in your project root, or create it manually:
+For a new project, run `forge init` to scaffold a `forge.toml` file in your project root, or create it manually:
 
-```json
-{
-  "name": "my-project",
-  "version": "1.0.0",
-  "sourceDirectory": "src/main/java",
-  "outputDirectory": "target/classes"
-}
+```toml
+forge = "0.1"
+
+[project]
+name    = "my-project"
+version = "1.0.0"
+
+[source.main]
+java      = ["src/main/java"]
+resources = ["src/main/resources"]
 ```
 
 ## Configuration
 
-Forge supports configuration through JSON files (`forge.json`) and programmatic APIs. The configuration system is flexible and allows customization of all aspects of the build process. See [`forge-example.json`](forge-example.json) for a complete reference.
+Forge supports configuration through TOML files (`forge.toml`) and programmatic APIs. The configuration system is flexible and allows customization of all aspects of the build process. TOML parsing is provided by the [NightConfig](https://github.com/MineCreepers/NightConfig) library. See [`forge.toml`](forge.toml) at the repository root for a complete reference.
+
+> **Note:** JSON configuration (`forge.json`) has been fully migrated to TOML. Forge no longer reads JSON configuration files.
 
 ### Configuration File Format
 
-Configuration files use JSON format with the following top-level keys:
+Configuration files use TOML format with the following sections:
 
-| Key | Type | Description |
-| --- | --- | --- |
-| `name` | string | Project name |
-| `version` | string | Project version |
-| `sourceDirectory` | string | Main source directory (default: `src/main/java`) |
-| `outputDirectory` | string | Compiled classes directory (default: `target/classes`) |
-| `sourcePaths` | array | Additional source/resource paths |
-| `dependencies` | object | Map of `groupId:artifactId` to `{ "version", "type" }` entries |
-| `plugins` | object | Map of plugin names to their settings |
-| `buildSettings` | object | Build behavior options (see below) |
+| Section | Description |
+| --- | --- |
+| `forge` | Configuration schema version (currently `"0.1"`) |
+| `[project]` | Project identity: `name`, `version`, optional `group` / `description` |
+| `[project.properties]` | Reusable properties expanded as `${name}` inside string values |
+| `[project.modules]` | Multi-module map: module name to version expression |
+| `[repositories]` | Named Maven repositories (e.g. `central = "https://repo1.maven.org/maven2"`) |
+| `[toolchain]` | Single source of truth for the Java version: `language`, optional `jdk_vendor` / `jdk_version` |
+| `[source.main]` / `[source.test]` | Source roots per scope: `java` and `resources` arrays |
+| `[dependencies.compile\|runtime\|test\|provided]` | Scoped dependencies: `"group:artifact" = "version"` |
+| `[build]` | Build behavior options (see below) |
+| `[compile]` | Compiler options: `encoding`, `debug`, `args` |
+| `[exec]` | Run configuration: `main`, `args`, `jvm_args` |
 
-Supported `buildSettings` keys:
+Supported `[build]` keys (snake_case):
 
 | Key | Type | Default | Description |
 | --- | --- | --- | --- |
 | `incremental` | boolean | `true` | Only recompile changed sources |
 | `parallel` | boolean | `true` | Use parallel processing where applicable |
-| `cacheEnabled` | boolean | `true` | Enable the on-disk build cache (`.forge-cache`) |
-| `threads` | number | available CPUs | Worker thread count |
-| `compiler` | string | `"javac"` | Compiler backend identifier |
-| `encoding` | string | `"UTF-8"` | Source file encoding |
+| `cache_enabled` | boolean | `true` | Enable the on-disk build cache (`.forge-cache`) |
+| `threads` | number | `0` (auto) | Worker thread count; `0` means available CPUs |
 
 ### Programmatic Configuration
 

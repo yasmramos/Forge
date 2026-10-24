@@ -39,8 +39,16 @@ class ModelClassesTest {
         config.setSourceDirectory("src/main/java");
         assertEquals("src/main/java", config.getSourceDirectory());
 
+        // Relative paths are normalized to absolute paths so that the build
+        // output location is independent of the process working directory.
         config.setOutputDirectory("target/classes");
-        assertEquals("target/classes", config.getOutputDirectory());
+        assertEquals(new java.io.File("target/classes").getAbsolutePath(),
+                config.getOutputDirectory());
+
+        // Absolute paths are kept as-is.
+        String absolute = new java.io.File("/tmp/forge-out").getAbsolutePath();
+        config.setOutputDirectory(absolute);
+        assertEquals(absolute, config.getOutputDirectory());
     }
 
     @Test
@@ -62,8 +70,9 @@ class ModelClassesTest {
     void testProjectConfigDependencies() {
         ProjectConfig config = new ProjectConfig();
 
-        // Test dependencies map
-        assertNull(config.getDependencies());
+        // Test dependencies map: initialized empty by the constructor
+        assertNotNull(config.getDependencies());
+        assertTrue(config.getDependencies().isEmpty());
 
         config.setDependencies(null);
         assertNull(config.getDependencies());

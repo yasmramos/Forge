@@ -54,13 +54,13 @@ public class Forge {
     private static Optional<ProjectConfig> loadProjectConfig() {
         try {
             String currentDir = System.getProperty("user.dir");
-            File configFile = Paths.get(currentDir, "forge.json").toFile();
+            File configFile = Paths.get(currentDir, ConfigReader.CONFIG_FILE_NAME).toFile();
             
             if (configFile.exists()) {
                 logger.info("Loading Forge configuration from: " + configFile.getAbsolutePath());
                 return Optional.of(ConfigReader.loadConfig(configFile));
             } else {
-                logger.info("No forge.json found, running in standalone mode");
+                logger.info("No forge.toml found, running in standalone mode");
                 return Optional.empty();
             }
         } catch (IOException e) {
