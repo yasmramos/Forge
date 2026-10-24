@@ -40,12 +40,33 @@ public class ForgeCLI {
             case "info":
                 showInfo();
                 break;
+            case "lock":
+                executeLock(args);
+                break;
             case "help":
                 showHelp();
                 break;
             default:
                 logger.warn("Unknown command: " + command);
                 showHelp();
+        }
+    }
+
+    /**
+     * {@code forge lock refresh} - regenerate forge.lock explicitly.
+     * Per AGENT.md section 7bis the lockfile is never rewritten by a build;
+     * updating dependencies must be a conscious act.
+     */
+    private void executeLock(String[] args) {
+        String sub = args.length > 1 ? args[1].toLowerCase() : "";
+        if (!"refresh".equals(sub)) {
+            System.err.println("error: unknown lock subcommand '" + sub + "'.");
+            System.err.println("fix: run `forge lock refresh` to regenerate forge.lock.");
+            return;
+        }
+        int exit = new io.github.yasmramos.forge.cli.command.LockCommand().refresh(System.out);
+        if (exit != 0) {
+            logger.warn("forge lock refresh failed with exit code " + exit);
         }
     }
     
@@ -122,6 +143,10 @@ public class ForgeCLI {
                             System.out.println("Task-graph build OK: " + report.cacheHits()
                                 + " from cache, " + report.executed() + " executed.");
                         }
+                    } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
+                        // Structured errors render their own what/why/how block
+                        // (AGENT.md section 10bis); do not flatten them here.
+                        System.err.println(fe.formatUserFacing());
                     } catch (Exception e) {
                         System.err.println("Task-graph build error: " + e.getMessage());
                         System.err.println("Fix: check forge.toml and run again with --debug"
@@ -234,6 +259,7 @@ public class ForgeCLI {
         System.out.println();
         System.out.println("Available Commands:");
         System.out.println("  build [incremental|full|graph]  - Build the project");
+        System.out.println("  lock refresh              - Regenerate forge.lock explicitly (never done by builds)");
         System.out.println("  clean                     - Clean build artifacts");
         System.out.println("  init                      - Initialize new project");
         System.out.println("  info                      - Show system information");

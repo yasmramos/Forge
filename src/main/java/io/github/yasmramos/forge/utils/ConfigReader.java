@@ -214,6 +214,21 @@ public class ConfigReader {
         config.setRepositories(repositories);
 
         // ------------------------------------------------------------------
+        // [resolutions] (AGENT.md section 2bis): groupId:artifactId -> forced
+        // exact version. Highest-precedence conflict-alleviation mechanism.
+        // ------------------------------------------------------------------
+        Map<String, String> resolutions = new LinkedHashMap<>();
+        UnmodifiableConfig resSection = root.get("resolutions");
+        if (resSection != null) {
+            for (UnmodifiableConfig.Entry entry : resSection.entrySet()) {
+                if (entry.getValue() instanceof String) {
+                    resolutions.put(entry.getKey(), expand((String) entry.getValue(), properties));
+                }
+            }
+        }
+        config.setResolutions(resolutions);
+
+        // ------------------------------------------------------------------
         // [build] section (snake_case keys).
         // ------------------------------------------------------------------
         ProjectConfig.BuildSettings settings = config.getBuildSettings();

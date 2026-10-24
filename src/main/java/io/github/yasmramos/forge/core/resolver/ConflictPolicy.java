@@ -70,6 +70,24 @@ public final class ConflictPolicy {
             return conflicts;
         }
 
+        /**
+         * Renders this failure as a structured, actionable ForgeError with the
+         * registered catalog code FORGE-RSL-0001 (AGENT.md sections 2bis and 10bis):
+         * what happened, why, and how to fix it.
+         */
+        public io.github.yasmramos.forge.cli.error.ForgeException toForgeException() {
+            StringBuilder detail = new StringBuilder();
+            for (Conflict c : conflicts) {
+                if (detail.length() > 0) {
+                    detail.append("; ");
+                }
+                detail.append(c.getGroupArtifact())
+                      .append(" requested in versions ").append(c.getVersions());
+            }
+            return new io.github.yasmramos.forge.cli.error.ForgeException(
+                    io.github.yasmramos.forge.cli.error.ErrorCode.RSL_0001, detail.toString(), this);
+        }
+
         private static String buildMessage(List<Conflict> conflicts) {
             StringBuilder sb = new StringBuilder();
             sb.append("Version conflict(s) detected (Forge fails by default; ")

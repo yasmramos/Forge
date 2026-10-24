@@ -44,6 +44,12 @@ why  = "Task names are unique identifiers used for dependencies and cache keys."
 how  = "Rename one of the conflicting tasks."
 docs = "https://forge.dev/e/TSK-0003"
 
+["FORGE-RSL-0001"]
+what = "Version conflict detected while resolving dependencies."
+why  = "Two or more paths request different versions of the same artifact and no exact alignment exists; Forge fails by default instead of silently picking one."
+how  = "Pin a version with [resolutions] in forge.toml, import a BOM that aligns the versions, or run 'forge resolve --explain' to see who requests what. Then run 'forge lock refresh'."
+docs = "https://forge.dev/e/RSL-0001"
+
 ["FORGE-CCH-0001"]
 what = "A cached output archive failed integrity verification while being restored."
 why  = "The local cache entry was corrupted on disk."

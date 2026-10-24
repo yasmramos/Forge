@@ -30,6 +30,12 @@ public class ProjectConfig {
     private Map<String, String> properties = new LinkedHashMap<>();
     private Map<String, String> modules = new LinkedHashMap<>();
     private Map<String, String> repositories = new LinkedHashMap<>();
+
+    /**
+     * Explicit version overrides declared in [resolutions] of forge.toml
+     * (AGENT.md section 2bis): groupId:artifactId -> forced exact version.
+     */
+    private Map<String, String> resolutions = new LinkedHashMap<>();
     private String sourceCompatibility;
     private String targetCompatibility;
     private String jdkVendor;
@@ -95,6 +101,14 @@ public class ProjectConfig {
 
     public void setRepositories(Map<String, String> repositories) {
         this.repositories = repositories != null ? repositories : new LinkedHashMap<>();
+    }
+
+    public Map<String, String> getResolutions() {
+        return resolutions;
+    }
+
+    public void setResolutions(Map<String, String> resolutions) {
+        this.resolutions = resolutions != null ? resolutions : new LinkedHashMap<>();
     }
 
     public List<String> getMainJavaSources() {

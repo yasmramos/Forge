@@ -89,6 +89,14 @@ public final class ErrorCode {
         "https://forge.dev/e/TSK-0003");
 
     // --- Cache (CCH) ---
+    // --- RSL: dependency resolution domain (AGENT.md section 2bis) ---
+
+    public static final Entry RSL_0001 = register("FORGE-RSL-0001",
+        "Version conflict detected while resolving dependencies.",
+        "Two or more paths request different versions of the same artifact and no exact alignment exists; Forge fails by default instead of silently picking one.",
+        "Pin a version with [resolutions] in forge.toml, import a BOM that aligns the versions, or run 'forge resolve --explain' to see who requests what. Then run 'forge lock refresh'.",
+        "https://forge.dev/e/RSL-0001");
+
     public static final Entry CCH_0001 = register("FORGE-CCH-0001",
         "A cached output archive failed integrity verification while being restored.",
         "The local cache entry was corrupted on disk.",
