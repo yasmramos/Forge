@@ -6,6 +6,12 @@ import io.github.yasmramos.forge.model.DependencyResolution;
 import io.github.yasmramos.forge.model.CompilationResult;
 import io.github.yasmramos.forge.model.PackageResult;
 import io.github.yasmramos.forge.cache.ForgeCache;
+import io.github.yasmramos.forge.core.cache.TaskCache;
+import io.github.yasmramos.forge.core.graph.TaskGraph;
+import io.github.yasmramos.forge.core.graph.TaskScheduler;
+import io.github.yasmramos.forge.core.task.ForgeTask;
+import io.github.yasmramos.forge.core.task.StandardTaskFactory;
+import io.github.yasmramos.forge.core.task.TaskContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.File;
@@ -127,6 +133,43 @@ public class ForgeEngine {
         }
     }
     
+    /**
+     * Experimental task-graph build (AGENT.md decisions 1 and 3): the whole
+     * graph is built and validated up front ("configure time"), so any bad
+     * dependency reference or cycle fails before touching outputs. Then only
+     * cache-missed tasks execute, in parallel over independent branches
+     * ("execution time"). This path is opt-in until it replaces the legacy
+     * phased pipeline as the default.
+     */
+    public TaskScheduler.Report buildWithTaskGraph() throws Exception {
+        logger.info("Starting task-graph build for project: " + config.getName());
+
+        File projectRoot = new File(System.getProperty("user.dir"));
+        TaskCache taskCache = new TaskCache(projectRoot);
+        TaskContext context = new TaskContext(projectRoot);
+
+        StandardTaskFactory factory =
+            new StandardTaskFactory(config, projectRoot, resolveClassesDir());
+        TaskGraph graph = new TaskGraph();
+        graph.add(factory.compile());
+        graph.add(factory.test());
+        graph.add(factory.packageTask());
+
+        // Configure time: validate dangling references and cycles first.
+        graph.validate();
+
+        int threads = config.getBuildSettings().getThreads();
+        TaskScheduler scheduler = new TaskScheduler(threads);
+        TaskScheduler.Report report = scheduler.execute(graph, context, taskCache);
+
+        for (ForgeTask t : graph.topoOrder()) {
+            logger.info("[" + t.getName() + "] " + report.outcomes.get(t.getName()));
+        }
+        logger.info("Task-graph build finished: " + report.cacheHits() + " cache hits, "
+            + report.executed() + " executed");
+        return report;
+    }
+
     /**
      * Clean build artifacts
      */

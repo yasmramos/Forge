@@ -108,6 +108,26 @@ public class ForgeCLI {
                     System.out.println("Running full build...");
                     engine.build();
                     break;
+                case "graph":
+                    // Experimental: task-graph + content-cache pipeline
+                    // (AGENT.md decisions 1 and 3). Opt-in until it becomes default.
+                    System.out.println("Running experimental task-graph build...");
+                    try {
+                        io.github.yasmramos.forge.core.graph.TaskScheduler.Report report =
+                            engine.buildWithTaskGraph();
+                        if (report.failed()) {
+                            System.err.println("Task-graph build FAILED. See the per-task"
+                                + " outcomes above for which task broke and why.");
+                        } else {
+                            System.out.println("Task-graph build OK: " + report.cacheHits()
+                                + " from cache, " + report.executed() + " executed.");
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Task-graph build error: " + e.getMessage());
+                        System.err.println("Fix: check forge.toml and run again with --debug"
+                            + " for details.");
+                    }
+                    break;
                 default:
                     logger.warn("Unknown build type: " + buildType);
                     showHelp();
@@ -213,7 +233,7 @@ public class ForgeCLI {
         System.out.println("Forge Build System Help");
         System.out.println();
         System.out.println("Available Commands:");
-        System.out.println("  build [incremental|full]  - Build the project");
+        System.out.println("  build [incremental|full|graph]  - Build the project");
         System.out.println("  clean                     - Clean build artifacts");
         System.out.println("  init                      - Initialize new project");
         System.out.println("  info                      - Show system information");
@@ -223,6 +243,7 @@ public class ForgeCLI {
         System.out.println("Examples:");
         System.out.println("  forge build               - Run default build");
         System.out.println("  forge build incremental   - Run incremental build");
+        System.out.println("  forge build graph         - Run experimental task-graph build (opt-in cache/parallelism)");
         System.out.println("  forge build full          - Run full build");
         System.out.println("  forge clean               - Clean project");
         System.out.println();
