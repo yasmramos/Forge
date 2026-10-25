@@ -1,0 +1,21 @@
+# Minimal Forge example: validates forge.toml parsing, compilation and execution.
+# Start here. If this does not build, nothing else matters.
+
+forge = "0.1"
+
+[project]
+name    = "hello-world"
+version = "1.0.0"
+
+[toolchain]
+language = "11"
+
+[source.main]
+java = ["src/main/java"]
+
+[build]
+incremental   = true
+cache_enabled = true
+
+[exec]
+main = "com.example.hello.Main"

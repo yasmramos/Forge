@@ -159,8 +159,21 @@ public class ForgeCache {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             
-            // Include file path and content hash
-            String fileInfo = sourceFile.getAbsolutePath() + ":" + sourceFile.lastModified();
+            // Content-based identity (AGENT.md section 3): the key mixes the
+            // absolute path with a SHA-256 of the file bytes. Hashing content
+            // instead of trusting lastModified keeps entries correct when a
+            // checkout or rsync preserves timestamps but changes bytes, and
+            // avoids false invalidation when only the timestamp moves.
+            String fileInfo;
+            try {
+                byte[] content = Files.readAllBytes(sourceFile.toPath());
+                MessageDigest contentMd = MessageDigest.getInstance("SHA-256");
+                fileInfo = sourceFile.getAbsolutePath() + ":sha256:" + toHex(contentMd.digest(content));
+            } catch (Exception readFailure) {
+                // Unreadable file: fall back to path + timestamp so the entry
+                // simply behaves like the previous timestamp-based scheme.
+                fileInfo = sourceFile.getAbsolutePath() + ":" + sourceFile.lastModified();
+            }
             md.update(fileInfo.getBytes());
             
             // Include dependency information
@@ -182,6 +195,15 @@ public class ForgeCache {
         }
     }
     
+    /** Lowercase hex representation of a digest. */
+    private static String toHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+
     public static class CacheEntry {
         private final long lastModified;
         private final byte[] compiledData;

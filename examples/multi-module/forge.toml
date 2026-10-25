@@ -1,0 +1,20 @@
+# Multi-module root: declares shared configuration and the module list only.
+# Each module owns its own forge.toml (AGENT.md section 5).
+
+forge = "0.1"
+
+[project]
+name    = "multi-module"
+version = "1.0.0"
+group   = "com.example"
+
+# Module coordinates. Quoted keys because they contain a literal dot.
+[project.modules]
+"example.core" = "${project.version}"
+"example.app"  = "${project.version}"
+
+[repositories]
+central = "https://repo1.maven.org/maven2"
+
+[toolchain]
+language = "11"

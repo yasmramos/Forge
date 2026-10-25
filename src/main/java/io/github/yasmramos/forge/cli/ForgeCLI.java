@@ -43,6 +43,9 @@ public class ForgeCLI {
             case "lock":
                 executeLock(args);
                 break;
+            case "run":
+                executeRun(engine, args);
+                break;
             case "help":
                 showHelp();
                 break;
@@ -67,6 +70,37 @@ public class ForgeCLI {
         int exit = new io.github.yasmramos.forge.cli.command.LockCommand().refresh(System.out);
         if (exit != 0) {
             logger.warn("forge lock refresh failed with exit code " + exit);
+        }
+    }
+
+    /**
+     * {@code forge run [args...]} - launch the configured main class.
+     * Per AGENT.md section 10 this is a command, not a graph task: the
+     * executed program owns stdout (Forge logs go to stderr). Arguments
+     * after "--" override the static [exec] args from forge.toml.
+     */
+    private void executeRun(ForgeEngine engine, String[] args) {
+        java.util.List<String> userArgs = new java.util.ArrayList<>();
+        boolean afterSeparator = false;
+        for (int i = 1; i < args.length; i++) {
+            if ("--".equals(args[i])) {
+                afterSeparator = true;
+                continue;
+            }
+            if (afterSeparator) {
+                userArgs.add(args[i]);
+            }
+        }
+        try {
+            int exit = io.github.yasmramos.forge.cli.command.RunCommand.run(engine, userArgs);
+            if (exit != 0) {
+                logger.warn("Program exited with code " + exit);
+            }
+        } catch (Exception e) {
+            System.err.println("forge run failed");
+            System.err.println("What: " + e.getMessage());
+            System.err.println("Why:  the application could not be launched.");
+            System.err.println("Fix:  check [exec] main in forge.toml and run 'forge build' first.");
         }
     }
     
@@ -260,6 +294,7 @@ public class ForgeCLI {
         System.out.println("Available Commands:");
         System.out.println("  build [incremental|full|graph]  - Build the project");
         System.out.println("  lock refresh              - Regenerate forge.lock explicitly (never done by builds)");
+        System.out.println("  run [-- args...]          - Execute the [exec] main class (program owns stdout)");
         System.out.println("  clean                     - Clean build artifacts");
         System.out.println("  init                      - Initialize new project");
         System.out.println("  info                      - Show system information");

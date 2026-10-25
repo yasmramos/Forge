@@ -909,3 +909,6 @@ target/
 build/
 libs/
 target/
+
+# Exception: the Forge launcher script is source-controlled (AGENT.md section 16).
+!bin/forge
