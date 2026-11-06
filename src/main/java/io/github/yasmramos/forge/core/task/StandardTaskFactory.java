@@ -97,20 +97,17 @@ public class StandardTaskFactory {
 
         task.action(context -> {
             try {
-                java.nio.file.Files.createDirectories(jarFile.getParent());
-                ProcessBuilder pb = new ProcessBuilder(
-                    "jar", "cf", jarFile.toString(), "-C", classesDir.toString(), ".");
-                pb.redirectErrorStream(true);
-                Process p = pb.start();
-                int code = p.waitFor();
-                if (code != 0 || !java.nio.file.Files.isRegularFile(jarFile)) {
-                    return TaskResult.failure("Packaging failed with exit code " + code
-                        + ". Ensure the 'jar' tool is available and classes were compiled first.");
-                }
+                // Deterministic packaging (AGENT.md decision 17): a fixed entry
+                // timestamp plus sorted entries make the JAR byte-identical
+                // across runs and machines.
+                long epoch = io.github.yasmramos.forge.core.packageinfo.ReproducibleBuild
+                    .epochSeconds(projectRoot, config.getBuildSettings().getReproducibleTimestamp());
+                io.github.yasmramos.forge.core.packageinfo.JarWriter.writeDirectory(
+                    classesDir, jarFile, epoch);
                 return TaskResult.success("Packaged " + jarFile.getFileName());
             } catch (Exception e) {
                 return TaskResult.failure("Packaging failed: " + e.getMessage()
-                    + ". Verify the JDK bin directory is on PATH.");
+                    + ". Verify the compiled classes exist under " + classesDir + ".");
             }
         });
         return task;

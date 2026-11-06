@@ -107,4 +107,41 @@ class CompilerTest {
         assertTrue(second.isSuccess(), "Cached run should report success");
         assertEquals(1, second.getCachedFiles(), "Second run should report a cache hit");
     }
+
+    @Test
+    void warmCacheWithoutClassesRecompiles(@TempDir Path tmp) throws Exception {
+        Path src = Files.createDirectories(tmp.resolve("src"));
+        Path out = tmp.resolve("out");
+        Files.write(src.resolve("D.java"), "public class D {}".getBytes());
+
+        ForgeCache cache = new ForgeCache(tmp.resolve("cache").toString());
+        Compiler compiler = new Compiler();
+
+        assertTrue(compiler.compileBatch(
+            Collections.singletonList(src.resolve("D.java")), null, cache, out.toString())
+            .isSuccess());
+        assertTrue(Files.exists(out.resolve("D.class")));
+
+        // Simulate 'forge clean': the classes directory is gone but the
+        // persistent cache survives. The build must regenerate the classes
+        // instead of trusting the warm cache and emitting nothing.
+        deleteRecursively(out);
+
+        CompilationResult afterClean = compiler.compileBatch(
+            Collections.singletonList(src.resolve("D.java")), null, cache, out.toString());
+        assertTrue(afterClean.isSuccess(), "Build after clean must succeed");
+        assertEquals(0, afterClean.getCachedFiles(),
+            "Warm cache must be distrusted when its outputs are missing");
+        assertTrue(Files.exists(out.resolve("D.class")),
+            "Classes must be regenerated after a clean");
+    }
+
+    private static void deleteRecursively(Path p) throws Exception {
+        if (!Files.exists(p)) return;
+        try (var stream = Files.walk(p)) {
+            stream.sorted(java.util.Comparator.reverseOrder()).forEach(x -> {
+                try { Files.delete(x); } catch (Exception ignored) { }
+            });
+        }
+    }
 }

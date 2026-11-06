@@ -248,6 +248,10 @@ public class ConfigReader {
                 // 0 means "auto": use the number of available cores.
                 settings.setThreads(threads <= 0 ? Runtime.getRuntime().availableProcessors() : threads);
             }
+            if (build.contains("reproducible_timestamp")) {
+                settings.setReproducibleTimestamp(
+                    expand(build.get("reproducible_timestamp"), properties));
+            }
         }
 
         // ------------------------------------------------------------------

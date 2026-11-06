@@ -451,29 +451,27 @@ public class ForgeEngine {
                 logger.warn("No classes directory found for JAR packaging");
                 return null;
             }
-            
+
             Path jarFile = outputDir.resolve("forge-main.jar");
-            
-            // Create JAR using jar command
-            ProcessBuilder pb = new ProcessBuilder(
-                "jar", "cf", jarFile.toString(), "-C", classesDir.toString(), "."
-            );
-            
-            Process process = pb.start();
-            int exitCode = process.waitFor();
-            
-            if (exitCode == 0) {
-                logger.info("Main JAR created successfully");
-                return jarFile;
-            } else {
-                logger.error("Failed to create JAR, exit code: " + exitCode);
-                return null;
-            }
-            
+
+            // Deterministic packaging (AGENT.md decision 17): the external
+            // 'jar' tool stamps filesystem mtimes, so we write the archive
+            // ourselves with a fixed entry timestamp and sorted entries.
+            io.github.yasmramos.forge.core.packageinfo.JarWriter.writeDirectory(
+                classesDir, jarFile, artifactEpochSeconds());
+            logger.info("Main JAR created successfully");
+            return jarFile;
+
         } catch (Exception e) {
             logger.error("Error creating main JAR", e);
             return null;
         }
+    }
+
+    /** Fixed timestamp for reproducible artifacts (AGENT.md decision 17). */
+    private long artifactEpochSeconds() {
+        return io.github.yasmramos.forge.core.packageinfo.ReproducibleBuild.epochSeconds(
+            projectRoot, config.getBuildSettings().getReproducibleTimestamp());
     }
     
     private int packageAdditionalArtifacts(Path outputDir) {
@@ -503,14 +501,9 @@ public class ForgeEngine {
     
     private boolean createSourcesJar(Path sourcesDir, Path jarFile) {
         try {
-            ProcessBuilder pb = new ProcessBuilder(
-                "jar", "cf", jarFile.toString(), "-C", sourcesDir.toString(), "."
-            );
-            
-            Process process = pb.start();
-            int exitCode = process.waitFor();
-            
-            return exitCode == 0;
+            io.github.yasmramos.forge.core.packageinfo.JarWriter.writeDirectory(
+                sourcesDir, jarFile, artifactEpochSeconds());
+            return true;
         } catch (Exception e) {
             logger.error("Error creating sources JAR", e);
             return false;
