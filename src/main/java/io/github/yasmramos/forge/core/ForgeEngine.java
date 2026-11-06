@@ -559,108 +559,13 @@ public class ForgeEngine {
     
     private TestResult runTests(PackageResult packageResult) {
         logger.info("Running tests...");
-
-        try {
-            // Find test files
-            List<Path> testFiles = findTestFiles();
-
-            if (testFiles.isEmpty()) {
-                logger.info("No test files found, skipping test execution");
-                return new TestResult(true, 0, 0);
-            }
-
-            Path testClassesDir = resolveBuildBaseDir().resolve("test-classes");
-            java.nio.file.Files.createDirectories(testClassesDir);
-
-            // Resolve the full test classpath through Aether: declared
-            // dependencies plus the JUnit Platform launcher needed to run
-            // Jupiter tests programmatically (AGENT.md section 21).
-            DependencyResolution testDeps = resolveWithAether(java.util.Arrays.asList(
-                "org.junit.platform:junit-platform-launcher:1.9.2"));
-            StringBuilder cp = new StringBuilder();
-            cp.append(resolveClassesDir()).append(File.pathSeparator).append(testClassesDir);
-            if (testDeps != null) {
-                for (io.github.yasmramos.forge.model.DependencyInfo dep : testDeps.getDependencies()) {
-                    if (dep.isResolved() && dep.getLocalPath() != null) {
-                        cp.append(File.pathSeparator).append(dep.getLocalPath());
-                    }
-                }
-            }
-            String classpath = cp.toString();
-
-            // Compile every test source in one javac invocation so that
-            // shared helper classes resolve correctly.
-            ProcessBuilder compilePb = new ProcessBuilder(
-                "javac", "-cp", classpath, "-d", testClassesDir.toString());
-            compilePb.redirectErrorStream(true);
-            for (Path testFile : testFiles) {
-                compilePb.command().add(testFile.toString());
-            }
-            Process compileProcess = compilePb.start();
-            String compileOut = new String(compileProcess.getInputStream().readAllBytes());
-            if (compileProcess.waitFor() != 0) {
-                logger.error("Test compilation failed:\n" + compileOut);
-                return new TestResult(false, testFiles.size(), 0);
-            }
-
-            // Run all compiled tests with the JUnit Platform Console
-            // standalone launcher (auto-discovery under test-classes).
-            // Runner class lives in Forge's own jar (shaded), so it is on
-            // the JVM classpath of this process; append it to the child cp.
-            String selfJar = io.github.yasmramos.forge.Forge.class.getProtectionDomain()
-                .getCodeSource().getLocation().getPath();
-            ProcessBuilder runPb = new ProcessBuilder(
-                "java", "-cp", classpath + File.pathSeparator + selfJar,
-                "io.github.yasmramos.forge.core.test.JUnitRunner",
-                testClassesDir.toString());
-            runPb.redirectErrorStream(true);
-            Process runProcess = runPb.start();
-            String runOut = new String(runProcess.getInputStream().readAllBytes());
-            int exitCode = runProcess.waitFor();
-
-            System.err.println(runOut);
-            boolean passed = exitCode == 0;
-            logger.info("Test execution complete: " + (passed ? "all tests passed"
-                : "tests failed (exit code " + exitCode + ")"));
-            return new TestResult(passed, testFiles.size(), passed ? testFiles.size() : 0);
-
-        } catch (Exception e) {
-            logger.error("Test execution failed", e);
-            return new TestResult(false, 0, 0);
-        }
-    }
-
-    private List<Path> findTestFiles() {
-        List<Path> testFiles = new ArrayList<>();
-        
-        try {
-            // Common test directory patterns, resolved against the project root
-            // (not the process CWD) so a build driven from another directory
-            // never picks up unrelated test sources.
-            Path base = projectRoot.toPath();
-            Path[] testDirs = {
-                base.resolve(Paths.get("src", "test", "java")),
-                base.resolve("test"),
-                base.resolve(Paths.get("src", "test"))
-            };
-            
-            for (Path testDir : testDirs) {
-                if (Files.exists(testDir)) {
-                    Files.walk(testDir)
-                        .filter(path -> path.toString().endsWith(".java"))
-                        .filter(path -> {
-                            String fileName = path.getFileName().toString().toLowerCase();
-                            return fileName.contains("test") || fileName.contains("spec");
-                        })
-                        .forEach(testFiles::add);
-                }
-            }
-            
-        } catch (IOException e) {
-            logger.error("Error finding test files", e);
-        }
-        
-        return testFiles;
+        io.github.yasmramos.forge.core.test.TestExecutor.Result result =
+            io.github.yasmramos.forge.core.test.TestExecutor.execute(
+                config, projectRoot, resolveClassesDir(),
+                resolveBuildBaseDir().resolve("test-classes"));
+        logger.info("Test execution complete: " + (result.isSuccess() ? "all tests passed"
+            : "tests failed"));
+        return new TestResult(result.isSuccess(), result.getTotal(), result.getPassed());
     }
     
     private boolean runSingleTest(Path testFile) {

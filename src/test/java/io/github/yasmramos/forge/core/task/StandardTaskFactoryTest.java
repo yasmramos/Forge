@@ -12,6 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -122,10 +124,59 @@ class StandardTaskFactoryTest {
 
         assertEquals(TaskScheduler.Outcome.EXECUTED, r.outcomes.get("compile"),
             "changed sources must invalidate the compile task");
-        assertEquals(TaskScheduler.Outcome.CACHE_HIT, r.outcomes.get("test"),
-            "test inputs unchanged -> still cached");
+        assertEquals(TaskScheduler.Outcome.EXECUTED, r.outcomes.get("test"),
+            "test consumes compile outputs, so it must re-run when compile does");
         assertEquals(TaskScheduler.Outcome.EXECUTED, r.outcomes.get("package"),
-            "package consumes compile outputs, so it must re-run when compile does");
+            "package consumes test/compile outputs, so it must re-run when they do");
+    }
+
+    @Test
+    void testTaskExecutesRealTestsAndFailsOnBrokenTest() throws Exception {
+        // A project with a real JUnit test: the graph's test task must compile
+        // and run it (not be a no-op), pass when green and fail when red.
+        ProjectConfig config = configWithSources();
+        Map<String, String> repos = new LinkedHashMap<>();
+        repos.put("central", "https://repo1.maven.org/maven2");
+        config.setRepositories(repos);
+        Map<String, Object> deps = new LinkedHashMap<>();
+        Map<String, Object> junit = new LinkedHashMap<>();
+        junit.put("version", "5.9.2");
+        junit.put("scope", "test");
+        deps.put("org.junit.jupiter:junit-jupiter", junit);
+        config.setDependencies(deps);
+
+        Path testSrc = root.toPath().resolve("src/test/java");
+        Files.createDirectories(testSrc);
+        Path testFile = testSrc.resolve("HelloTest.java");
+        Files.write(testFile, ("import org.junit.jupiter.api.Test;\n"
+            + "import static org.junit.jupiter.api.Assertions.*;\n"
+            + "class HelloTest { @Test void ok() { assertEquals(2, 1 + 1); } }\n")
+            .getBytes(StandardCharsets.UTF_8));
+
+        StandardTaskFactory factory = new StandardTaskFactory(
+            config, root, new File(root, "build/classes").toPath());
+        TaskCache cache = new TaskCache(root);
+
+        TaskGraph green = new TaskGraph();
+        green.add(factory.compile());
+        green.add(factory.test());
+        TaskScheduler.Report r = new TaskScheduler(2).execute(green, new TaskContext(root), cache);
+        assertEquals(TaskScheduler.Outcome.EXECUTED, r.outcomes.get("test"),
+            "test task must actually run");
+        assertTrue(new File(root, "build/test-classes/HelloTest.class").isFile(),
+            "test classes were compiled");
+
+        // Break the test: the task must fail instead of reporting success.
+        Files.write(testFile, ("import org.junit.jupiter.api.Test;\n"
+            + "import static org.junit.jupiter.api.Assertions.*;\n"
+            + "class HelloTest { @Test void bad() { assertEquals(3, 1 + 1); } }\n")
+            .getBytes(StandardCharsets.UTF_8));
+        TaskGraph red = new TaskGraph();
+        red.add(factory.compile());
+        red.add(factory.test());
+        TaskScheduler.Report r2 = new TaskScheduler(2).execute(red, new TaskContext(root), cache);
+        assertEquals(TaskScheduler.Outcome.FAILED, r2.outcomes.get("test"),
+            "a failing test must fail the test task");
     }
 
     private void runOnce(StandardTaskFactory factory, TaskCache cache) throws Exception {
