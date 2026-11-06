@@ -141,43 +141,19 @@ public final class TestExecutor {
 
     /**
      * Absolute paths of every test-scope dependency plus the JUnit Platform
-     * launcher, resolved through Maven Resolver. Best-effort: a resolution
-     * failure yields an empty list so the caller still compiles against the
-     * main classes and reports the real compiler error.
+     * launcher, resolved through the shared Aether adapter (AGENT.md section 2).
+     * Best-effort: a resolution failure yields an empty list so the caller still
+     * compiles against the main classes and reports the real compiler error.
      */
     private static List<String> resolveTestDependencyJars(ProjectConfig config) {
-        List<String> roots = new ArrayList<>();
-        java.util.Map<String, Object> declared = config.getDependencies();
-        if (declared != null) {
-            for (java.util.Map.Entry<String, Object> entry : declared.entrySet()) {
-                if (!DependencyScopes.TEST.contains(DependencyScopes.scopeOf(entry.getValue()))) {
-                    continue;
-                }
-                String version = DependencyScopes.versionOf(entry.getValue());
-                if (version != null && !version.trim().isEmpty()) {
-                    roots.add(entry.getKey() + ":" + version);
-                }
-            }
-        }
-        if (!roots.contains(JUNIT_LAUNCHER)) {
-            roots.add(JUNIT_LAUNCHER);
-        }
-        java.util.Map<String, String> repositories = config.getRepositories();
-        if (repositories == null || repositories.isEmpty()) {
-            return Collections.emptyList();
-        }
         List<String> jars = new ArrayList<>();
         try {
-            File localCacheDir = Paths.get(System.getProperty("user.home"),
-                ".forge", "cache", "deps").toFile();
-            io.github.yasmramos.forge.core.resolver.AetherDependencyResolver aether =
-                new io.github.yasmramos.forge.core.resolver.AetherDependencyResolver(
-                    localCacheDir, repositories);
-            io.github.yasmramos.forge.core.resolver.AetherDependencyResolver.ResolvedGraph graph =
-                aether.resolveTransitive(roots);
-            for (io.github.yasmramos.forge.core.resolver.AetherDependencyResolver.ResolvedArtifact a
-                    : graph.getArtifacts()) {
-                jars.add(a.getFile().getAbsolutePath());
+            io.github.yasmramos.forge.model.DependencyResolution resolution =
+                io.github.yasmramos.forge.core.resolver.AetherResolution.resolve(
+                    config, DependencyScopes.TEST,
+                    Collections.singletonList(JUNIT_LAUNCHER));
+            for (io.github.yasmramos.forge.model.DependencyInfo d : resolution.getDependencies()) {
+                jars.add(d.getLocalFile().getAbsolutePath());
             }
         } catch (Exception e) {
             System.err.println("Test dependency resolution failed (" + e.getMessage()

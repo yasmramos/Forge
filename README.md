@@ -42,7 +42,7 @@ Forge/
 │   │   ├── ForgeEngine.java          # Main build orchestration
 │   │   ├── BuildAnalyzer.java        # Project structure analysis
 │   │   ├── Compiler.java             # Source compilation
-│   │   └── DependencyResolver.java   # Dependency management
+│   │   └── resolver/                 # Maven Resolver, conflict policy, lockfile
 │   ├── cli/                          # Command-line interface
 │   │   └── ForgeCLI.java
 │   ├── model/                        # Data models and configurations
@@ -91,11 +91,11 @@ The fastest way to get started with Forge is to use the command-line interface:
 # Build the current project
 java -jar target/forge-1.0.0-SNAPSHOT.jar build
 
-# Analyze project structure
-java -jar target/forge-1.0.0-SNAPSHOT.jar analyze
-
 # Clean build artifacts
 java -jar target/forge-1.0.0-SNAPSHOT.jar clean
+
+# Regenerate forge.lock
+java -jar target/forge-1.0.0-SNAPSHOT.jar lock refresh
 ```
 
 For a new project, run `forge init` to scaffold a `forge.toml` file in your project root, or create it manually:
@@ -183,17 +183,20 @@ forge build
 # Clean all build artifacts
 forge clean
 
-# Analyze project structure
-forge analyze
+# Run the project's main class ([exec] main in forge.toml)
+forge run
 
-# Run tests
-forge test
+# Regenerate forge.lock from forge.toml (never done by a build)
+forge lock refresh
 
-# Package artifacts
-forge package
+# Build through the task graph (compile -> test -> package)
+forge build graph
 
 # Incremental build (only changed files)
-forge build --incremental
+forge build incremental
+
+# Show version and configuration
+forge info
 ```
 
 ### Programmatic Usage
@@ -244,7 +247,7 @@ The core module contains the essential build engine components:
 - **ForgeEngine**: Orchestrates the entire build process, coordinating between different subsystems.
 - **BuildAnalyzer**: Analyzes project structure, identifies source files, and calculates metrics.
 - **Compiler**: Handles Java source compilation with support for incremental builds.
-- **DependencyResolver**: Manages project dependencies and their resolution.
+- **resolver/**: Maven Resolver (Aether) integration, conflict policy and lockfile generation.
 
 ### Cache Module
 
@@ -310,13 +313,10 @@ mvn surefire-report:report
 ### Code Quality
 
 ```bash
-# Run code analysis
-mvn analyze
+# Verify the build (compile + tests)
+mvn verify
 
-# Check for code style violations
-mvn checkstyle:check
-
-# Generate code coverage report
+# Generate the JaCoCo coverage report (bound to the verify phase)
 mvn jacoco:report
 ```
 

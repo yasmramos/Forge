@@ -35,7 +35,6 @@ public class ForgeEngine {
     private final ProjectConfig config;
     private final ForgeCache cache;
     private final ExecutorService executor;
-    private final DependencyResolver dependencyResolver;
     private final Compiler compiler;
     private final BuildAnalyzer analyzer;
     private final File projectRoot;
@@ -66,7 +65,6 @@ public class ForgeEngine {
         this.executor = Executors.newFixedThreadPool(
             Math.max(1, config.getBuildSettings().getThreads())
         );
-        this.dependencyResolver = new DependencyResolver();
         this.compiler = new Compiler();
         // Seed the compiler with third-party libraries available on the JVM classpath
         // (SLF4J, NightConfig, ...) so javac can resolve external symbols when building sources.
@@ -98,18 +96,8 @@ public class ForgeEngine {
             // AGENT.md section 2: never reimplement resolution; the same engine
             // that produced forge.lock resolves the compile classpath here.
             DependencyResolution dependencyResult = resolveWithAether();
-            if (dependencyResult == null) {
-                // Legacy path kept as a safety net when no repositories are
-                // declared or Aether cannot run in this environment. Filter by
-                // scope so test/runtime deps never leak onto the compile classpath.
-                logger.info("Resolving dependencies (legacy)...");
-                dependencyResult = dependencyResolver.resolve(
-                    dependenciesForScopes(DependencyScopes.COMPILE), analysis
-                );
-            } else {
-                logger.info("Resolved " + dependencyResult.getSuccessCount()
-                    + " artifact(s) via Maven Resolver");
-            }
+            logger.info("Resolved " + dependencyResult.getSuccessCount()
+                + " artifact(s) via Maven Resolver");
             
             // Phase 3: Compile sources
             logger.info("Compiling sources...");
@@ -277,108 +265,15 @@ public class ForgeEngine {
     }
 
     /**
-     * Resolve the declared dependencies with the Maven Resolver (Aether) engine
-     * and adapt the result to the legacy {@link DependencyResolution} model used
-     * by the compiler. Returns {@code null} when there is nothing to resolve or
-     * no repositories are configured, letting callers fall back to the legacy
-     * resolver. Failures propagate as build errors (AGENT.md section 10bis):
-     * an unresolvable coordinate must fail the build loudly, not silently drop
-     * the dependency.
+     * Resolve the compile classpath (compile + provided scopes) through Maven
+     * Resolver, per AGENT.md section 2. Scope filtering keeps test and runtime
+     * dependencies off the main compile classpath.
      */
-    private DependencyResolution resolveWithAether() throws Exception {
-        return resolveWithAether(DependencyScopes.COMPILE, null);
+    private DependencyResolution resolveWithAether() {
+        return io.github.yasmramos.forge.core.resolver.AetherResolution.resolve(
+            config, DependencyScopes.COMPILE, null);
     }
 
-    /**
-     * Same as {@link #resolveWithAether()} but allowing extra ad-hoc roots
-     * (e.g. the JUnit Platform launcher for test execution) that are not
-     * declared in forge.toml. Coordinates already declared always win.
-     */
-    private DependencyResolution resolveWithAether(List<String> extraRoots) throws Exception {
-        return resolveWithAether(DependencyScopes.TEST, extraRoots);
-    }
-
-    /**
-     * Resolves the declared dependencies whose scope is in {@code allowedScopes}
-     * (plus any {@code extraRoots}) through Maven Resolver (Aether).
-     *
-     * <p>Scope filtering matters: the compile classpath must not see test or
-     * runtime dependencies. Only {@code compile} and {@code provided} belong on
-     * it; {@code runtime} is added at run time ({@code forge run}) and
-     * {@code test} only for test compilation/execution. Without the filter,
-     * declaring JUnit under {@code [dependencies.test]} leaked it onto the main
-     * compile classpath (AGENT.md section 2).</p>
-     *
-     * @param allowedScopes scopes to include as roots
-     * @param extraRoots    ad-hoc {@code group:artifact:version} roots not
-     *                      declared in forge.toml (always included)
-     */
-    private DependencyResolution resolveWithAether(java.util.Set<String> allowedScopes,
-                                                   List<String> extraRoots) throws Exception {
-        java.util.Map<String, Object> declared = config.getDependencies();
-        java.util.List<String> roots = new java.util.ArrayList<>();
-        if (declared != null) {
-            for (java.util.Map.Entry<String, Object> entry : declared.entrySet()) {
-                if (!allowedScopes.contains(DependencyScopes.scopeOf(entry.getValue()))) {
-                    continue; // scope not on this classpath
-                }
-                String version = DependencyScopes.versionOf(entry.getValue());
-                if (version != null && !version.trim().isEmpty()) {
-                    roots.add(entry.getKey() + ":" + version);
-                }
-            }
-        }
-        if (roots.isEmpty() && (extraRoots == null || extraRoots.isEmpty())) {
-            return new DependencyResolution(); // Nothing to resolve: valid empty graph.
-        }
-        java.util.Map<String, String> repositories = config.getRepositories();
-        if (repositories == null || repositories.isEmpty()) {
-            return null; // No [repositories]: caller falls back to legacy resolution.
-        }
-
-        // Ad-hoc roots supplied by the caller (deduplicated: declared wins).
-        if (extraRoots != null) {
-            for (String extra : extraRoots) {
-                String ga = extra.substring(0, extra.lastIndexOf(':'));
-                boolean alreadyDeclared = declared != null && declared.containsKey(ga);
-                if (!alreadyDeclared && !roots.contains(extra)) {
-                    roots.add(extra);
-                }
-            }
-        }
-        if (roots.isEmpty()) {
-            return new DependencyResolution();
-        }
-
-        File localCacheDir = Paths.get(System.getProperty("user.home"),
-            ".forge", "cache", "deps").toFile();
-        io.github.yasmramos.forge.core.resolver.AetherDependencyResolver aether =
-            new io.github.yasmramos.forge.core.resolver.AetherDependencyResolver(
-                localCacheDir, repositories);
-        io.github.yasmramos.forge.core.resolver.AetherDependencyResolver.ResolvedGraph graph =
-            aether.resolveTransitive(roots);
-
-        DependencyResolution resolution = new DependencyResolution();
-        for (io.github.yasmramos.forge.core.resolver.AetherDependencyResolver.ResolvedArtifact artifact
-                : graph.getArtifacts()) {
-            String[] ga = artifact.getCoordinates().split(":");
-            if (ga.length != 3) {
-                continue;
-            }
-            Path jarPath = artifact.getFile().toPath();
-            resolution.addDependency(new io.github.yasmramos.forge.model.DependencyInfo(
-                ga[0] + ":" + ga[1], ga[2],
-                io.github.yasmramos.forge.model.DependencyType.MAVEN,
-                jarPath, true));
-        }
-        return resolution;
-    }
-
-    /** Declared dependencies filtered to the given scopes (legacy resolver path). */
-    private java.util.Map<String, Object> dependenciesForScopes(java.util.Set<String> allowedScopes) {
-        return DependencyScopes.filter(config.getDependencies(), allowedScopes);
-    }
-    
     /**
      * Resolve the compiled-classes directory (build base + "classes",
      * i.e. target/classes by Maven convention). Always absolute so that

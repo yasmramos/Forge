@@ -2,7 +2,6 @@ package io.github.yasmramos.forge.core.task;
 
 import io.github.yasmramos.forge.core.BuildAnalyzer;
 import io.github.yasmramos.forge.core.Compiler;
-import io.github.yasmramos.forge.core.DependencyResolver;
 import io.github.yasmramos.forge.model.CompilationResult;
 import io.github.yasmramos.forge.model.DependencyResolution;
 import io.github.yasmramos.forge.model.ProjectAnalysis;
@@ -53,13 +52,13 @@ public class StandardTaskFactory {
         task.action(context -> {
             BuildAnalyzer analyzer = new BuildAnalyzer();
             ProjectAnalysis analysis = analyzer.analyzeProject(config);
-            DependencyResolver resolver = new DependencyResolver();
-            // Only compile-scope deps belong on the main compile classpath.
-            DependencyResolution resolution = resolver.resolve(
-                io.github.yasmramos.forge.core.DependencyScopes.filter(
-                    config.getDependencies(),
-                    io.github.yasmramos.forge.core.DependencyScopes.COMPILE),
-                analysis);
+            // Only compile-scope deps belong on the main compile classpath;
+            // resolution goes through Maven Resolver (AGENT.md section 2).
+            DependencyResolution resolution =
+                io.github.yasmramos.forge.core.resolver.AetherResolution.resolve(
+                    config,
+                    io.github.yasmramos.forge.core.DependencyScopes.COMPILE,
+                    null);
 
             Compiler compiler = new Compiler();
             compiler.setClasspath(System.getProperty("java.class.path"));
