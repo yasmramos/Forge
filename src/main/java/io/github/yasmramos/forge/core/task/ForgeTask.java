@@ -59,6 +59,26 @@ public class ForgeTask {
      * (AGENT.md decision 3: content-based invalidation, never time-based).
      */
     public String computeHash() {
+        return computeHash(java.util.Collections.emptyMap());
+    }
+
+    /**
+     * Same key derivation as {@link #computeHash()}, additionally folding in the
+     * content hashes of this task's hard dependencies.
+     *
+     * <p>A task's result depends on what its upstream tasks produced, so its key
+     * must change whenever an upstream key changes. Without this, a task that
+     * consumes another task's outputs (e.g. {@code package} archiving the
+     * classes produced by {@code compile}) would keep hitting its stale cache
+     * entry after the upstream re-ran (AGENT.md decision 3). The scheduler
+     * passes the already-computed dependency hashes; folding them here keeps the
+     * rule in one place instead of trusting every task author to declare it.</p>
+     *
+     * @param dependencyHashes task name -&gt; that task's computed hash, for the
+     *                         names in {@link #getDependsOn()}. Missing entries
+     *                         (e.g. a task computed outside a graph) are skipped.
+     */
+    public String computeHash(Map<String, String> dependencyHashes) {
         java.security.MessageDigest digest = TaskInput.sha256();
         TaskInput.update(digest, name);
         TaskInput.update(digest, type.getName());
@@ -70,6 +90,20 @@ public class ForgeTask {
         java.util.Collections.sort(hashes);
         for (String h : hashes) {
             TaskInput.update(digest, h);
+        }
+        // Fold in hard dependencies (sorted for the same order-independence).
+        List<String> depEntries = new ArrayList<>();
+        if (dependencyHashes != null) {
+            for (String dep : dependsOn) {
+                String depHash = dependencyHashes.get(dep);
+                if (depHash != null) {
+                    depEntries.add(dep + "=" + depHash);
+                }
+            }
+        }
+        java.util.Collections.sort(depEntries);
+        for (String d : depEntries) {
+            TaskInput.update(digest, d);
         }
         return TaskInput.hex(digest.digest());
     }

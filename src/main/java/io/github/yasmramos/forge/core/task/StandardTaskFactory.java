@@ -72,13 +72,17 @@ public class StandardTaskFactory {
     /**
      * Creates the package task. It hard-depends on compile (its outputs feed
      * the JAR) and declares the produced JAR as a relocatable output.
+     *
+     * <p>The dependency is expressed only through {@code dependsOn(COMPILE)}:
+     * the scheduler folds the compile task's content hash into this task's
+     * cache key (see {@link ForgeTask#computeHash(java.util.Map)}), so a changed
+     * source re-runs packaging instead of restoring a stale JAR from cache.</p>
      */
     public ForgeTask packageTask() {
         TaskType type = new TaskTypeRegistry().get(TaskType.PACKAGE);
         Path jarFile = classesDir.getParent().resolve("forge-output").resolve("forge-main.jar");
         ForgeTask task = new ForgeTask(PACKAGE, type)
             .dependsOn(COMPILE)
-            .input(new TaskInput.ValueInput("upstream:compile", COMPILE))
             .output(new TaskOutput("jar", Collections.singletonList(relative(jarFile))));
 
         task.action(context -> {

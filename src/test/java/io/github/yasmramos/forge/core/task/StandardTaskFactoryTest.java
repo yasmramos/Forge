@@ -124,6 +124,8 @@ class StandardTaskFactoryTest {
             "changed sources must invalidate the compile task");
         assertEquals(TaskScheduler.Outcome.CACHE_HIT, r.outcomes.get("test"),
             "test inputs unchanged -> still cached");
+        assertEquals(TaskScheduler.Outcome.EXECUTED, r.outcomes.get("package"),
+            "package consumes compile outputs, so it must re-run when compile does");
     }
 
     private void runOnce(StandardTaskFactory factory, TaskCache cache) throws Exception {

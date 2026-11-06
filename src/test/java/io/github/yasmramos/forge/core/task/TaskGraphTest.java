@@ -81,6 +81,30 @@ class TaskGraphTest {
     }
 
     @Test
+    void dependentHashFoldsUpstreamHash() {
+        // A task consuming another task's outputs must change its key when the
+        // upstream key changes (AGENT.md decision 3). Otherwise `package` would
+        // restore a stale JAR after `compile` re-ran.
+        ForgeTask pkg = task("package", "package").dependsOn("compile");
+        String without = pkg.computeHash(java.util.Collections.emptyMap());
+        assertEquals(pkg.computeHash(), without, "no upstream hash -> same as plain computeHash");
+
+        java.util.Map<String, String> up1 = java.util.Collections.singletonMap("compile", "aaaa");
+        java.util.Map<String, String> up2 = java.util.Collections.singletonMap("compile", "bbbb");
+        assertNotEquals(pkg.computeHash(up1), pkg.computeHash(up2),
+            "changing the upstream hash must change the dependent's key");
+    }
+
+    @Test
+    void softDependencyDoesNotAffectHash() {
+        // Soft dependencies order execution but do not force it, so they must
+        // not invalidate the cache key.
+        ForgeTask t = task("package", "package").softDependsOn("compile");
+        java.util.Map<String, String> upstream = java.util.Collections.singletonMap("compile", "aaaa");
+        assertEquals(t.computeHash(), t.computeHash(upstream));
+    }
+
+    @Test
     void cacheStoreRestoreRoundTrip(@TempDir File root) throws Exception {
         File outDir = new File(root, "build/classes");
         outDir.mkdirs();
