@@ -189,6 +189,20 @@ forge run
 # Regenerate forge.lock from forge.toml (never done by a build)
 forge lock refresh
 
+# Show the resolved dependency tree (optionally filtered / depth-limited)
+forge tree
+forge tree --depth=2 slf4j
+
+# Explain why a dependency is in the graph
+forge why org.slf4j:slf4j-api
+
+# Inspect resolution; --explain shows the full version derivation
+forge resolve
+forge resolve --explain
+
+# List the available task types
+forge tasks
+
 # Build through the task graph (compile -> test -> package)
 forge build graph
 

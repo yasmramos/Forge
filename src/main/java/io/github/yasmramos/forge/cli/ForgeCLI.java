@@ -55,6 +55,17 @@ public class ForgeCLI {
                     return executeLock(args);
                 case "run":
                     return executeRun(requireEngine(engine), args);
+                case "tree":
+                    return io.github.yasmramos.forge.cli.command.DependencyCommand.tree(
+                        tail(args), System.out);
+                case "why":
+                    return io.github.yasmramos.forge.cli.command.DependencyCommand.why(
+                        tail(args), System.out);
+                case "resolve":
+                    return io.github.yasmramos.forge.cli.command.DependencyCommand.resolve(
+                        tail(args), System.out);
+                case "tasks":
+                    return io.github.yasmramos.forge.cli.command.TaskCommand.list(System.out);
                 case "help":
                     showHelp();
                     return 0;
@@ -80,6 +91,11 @@ public class ForgeCLI {
                 "this command needs a project; no forge.toml was found here");
         }
         return engine;
+    }
+
+    /** Arguments after the command word (i.e. dropping {@code args[0]}). */
+    private static String[] tail(String[] args) {
+        return java.util.Arrays.copyOfRange(args, 1, args.length);
     }
 
     /**
@@ -338,6 +354,10 @@ public class ForgeCLI {
         System.out.println("Available Commands:");
         System.out.println("  build [incremental|full|graph]  - Build the project");
         System.out.println("  lock refresh              - Regenerate forge.lock explicitly (never done by builds)");
+        System.out.println("  tree [--depth=N] [filter] - Show the resolved dependency tree");
+        System.out.println("  why <coordinate>          - Explain why a dependency is in the graph");
+        System.out.println("  resolve [--explain]       - Inspect the dependency graph; --explain shows version derivation");
+        System.out.println("  tasks                     - List available task types");
         System.out.println("  run [-- args...]          - Execute the [exec] main class (program owns stdout)");
         System.out.println("  clean                     - Clean build artifacts");
         System.out.println("  init                      - Initialize new project");
