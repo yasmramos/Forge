@@ -23,6 +23,7 @@ import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
+import org.eclipse.aether.util.graph.transformer.ConflictResolver;
 import org.eclipse.aether.util.graph.visitor.PreorderNodeListGenerator;
 
 import java.io.File;
@@ -52,11 +53,22 @@ public final class AetherDependencyResolver {
     public static final class ResolvedGraph {
         private final List<ResolvedArtifact> artifacts;
         private final Map<String, List<String>> requestedVersionsByGa;
+        private final DependencyTree tree;
 
         ResolvedGraph(List<ResolvedArtifact> artifacts,
-                      Map<String, List<String>> requestedVersionsByGa) {
+                      Map<String, List<String>> requestedVersionsByGa,
+                      DependencyTree tree) {
             this.artifacts = Collections.unmodifiableList(artifacts);
             this.requestedVersionsByGa = Collections.unmodifiableMap(requestedVersionsByGa);
+            this.tree = tree;
+        }
+
+        /**
+         * Full traversal tree, losers of conflict mediation included. Backs
+         * {@code forge tree}, {@code forge why} and {@code forge resolve --explain}.
+         */
+        public DependencyTree getTree() {
+            return tree;
         }
 
         /** All artifacts actually selected in the resolved graph, with their files. */
@@ -162,6 +174,11 @@ public final class AetherDependencyResolver {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
         session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(
                 session, new LocalRepository(localRepositoryDir)));
+        // Verbose conflict resolution (AGENT.md section 2bis): without it, Aether
+        // applies Maven's "nearest wins" and drops the losing versions from the
+        // graph, so Forge's fail-by-default policy could never see a conflict.
+        // Losers stay in the tree (marked) and are filtered off the classpath.
+        session.setConfigProperty(ConflictResolver.CONFIG_PROP_VERBOSE, "true");
         return session;
     }
 
@@ -203,13 +220,28 @@ public final class AetherDependencyResolver {
             }
             String ga = a.getGroupId() + ":" + a.getArtifactId();
             versionsSeenByGa.computeIfAbsent(ga, k -> new ArrayList<>()).add(a.getVersion());
+            if (isOmitted(node)) {
+                // A version that lost conflict mediation: it stays in the tree so
+                // the conflict is visible, but it must never reach a classpath.
+                continue;
+            }
             String scope = node.getDependency() != null && node.getDependency().getScope() != null
                     ? node.getDependency().getScope() : "compile";
             artifacts.add(new ResolvedArtifact(
                     a.getGroupId() + ":" + a.getArtifactId() + ":" + a.getVersion(),
                     scope, a.getFile()));
         }
-        return new ResolvedGraph(artifacts, versionsSeenByGa);
+        return new ResolvedGraph(artifacts, versionsSeenByGa,
+                DependencyTree.from(result.getRoot()));
+    }
+
+    /**
+     * True when Aether's verbose conflict resolver marked this node as a loser.
+     * Detecting conflicts at all requires verbose mode (see {@link #newSession()}),
+     * because the default session silently drops the losing nodes.
+     */
+    private static boolean isOmitted(DependencyNode node) {
+        return node.getData().get(ConflictResolver.NODE_DATA_WINNER) instanceof DependencyNode;
     }
 
     /**

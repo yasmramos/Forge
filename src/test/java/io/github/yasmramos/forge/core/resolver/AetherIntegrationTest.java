@@ -71,9 +71,12 @@ class AetherIntegrationTest {
     }
 
     @Test
-    void conflictDetectionOverRealGraph(@TempDir File cacheDir) {
-        // logback-classic 1.4.11 depends on slf4j-api 2.0.7; requesting an older
-        // slf4j directly produces two distinct versions in the traversal input set.
+    void conflictIsDetectedOverRealGraphAndLoserStaysOffClasspath(@TempDir File cacheDir) {
+        // logback-classic 1.4.11 pulls slf4j-api 2.0.7; requesting 1.7.36 directly
+        // makes two distinct versions reachable. This is the case that used to be
+        // invisible: without verbose conflict resolution Aether applied Maven's
+        // nearest-wins and dropped the loser before Forge could see it, so the
+        // fail-by-default policy (AGENT.md section 2bis) never fired.
         AetherDependencyResolver resolver =
                 new AetherDependencyResolver(cacheDir, central());
 
@@ -82,13 +85,28 @@ class AetherIntegrationTest {
                 "org.slf4j:slf4j-api:1.7.36");
         AetherDependencyResolver.ResolvedGraph graph = resolver.resolveTransitive(deps);
 
-        // Aether's own mediation selects ONE version per GA (nearest wins), so the
-        // selected graph has no duplicates; Forge's stricter policy therefore runs
-        // at lock time over requested sets. Verify selection is deterministic here:
+        // 1. Both requested versions are now visible to the policy.
         Map<String, List<String>> seen = graph.getRequestedVersionsByGa();
-        ConflictPolicy policy = ConflictPolicy.strict();
-        Map<String, String> chosen = policy.enforce(seen); // must not throw: no dupes post-mediation
-        assertNotNull(chosen.get("org.slf4j:slf4j-api"));
-        assertTrue(graph.getArtifacts().size() >= 3, "transitive closure pulled in");
+        assertTrue(seen.get("org.slf4j:slf4j-api").containsAll(
+                        java.util.Arrays.asList("1.7.36", "2.0.7")),
+                "conflict must be visible: both versions were requested");
+
+        // 2. The strict policy therefore fails by default (no silent pick).
+        ConflictPolicy.ConflictException ex = assertThrows(
+                ConflictPolicy.ConflictException.class,
+                () -> ConflictPolicy.strict().enforce(seen));
+        assertEquals("org.slf4j:slf4j-api", ex.getConflicts().get(0).getGroupArtifact());
+
+        // 3. The classpath carries exactly ONE slf4j-api jar: the loser never leaks.
+        long slf4jApiJars = graph.getArtifacts().stream()
+                .filter(a -> a.getCoordinates().startsWith("org.slf4j:slf4j-api:"))
+                .count();
+        assertEquals(1, slf4jApiJars,
+                "only the mediated winner belongs on the classpath");
+
+        // 4. The tree keeps the loser, marked, so `forge why`/`tree` can show it.
+        boolean hasOmitted = graph.getTree().flatten().stream()
+                .anyMatch(n -> "org.slf4j:slf4j-api".equals(n.getGroupArtifact()) && n.isOmitted());
+        assertTrue(hasOmitted, "loser node is retained and flagged in the tree");
     }
 }
