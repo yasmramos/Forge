@@ -38,6 +38,7 @@ public class ForgeEngine {
     private final DependencyResolver dependencyResolver;
     private final Compiler compiler;
     private final BuildAnalyzer analyzer;
+    private final File projectRoot;
 
     /**
      * Expose the loaded project configuration so CLI commands such as
@@ -48,7 +49,18 @@ public class ForgeEngine {
     }
     
     public ForgeEngine(ProjectConfig config) {
+        this(config, new File(System.getProperty("user.dir")));
+    }
+
+    /**
+     * @param projectRoot directory holding {@code forge.toml} and {@code
+     *                    forge.lock}; defaults to the process working directory
+     *                    and is overridable so tests can run against a temp
+     *                    project without mutating the real cwd.
+     */
+    public ForgeEngine(ProjectConfig config, File projectRoot) {
         this.config = config;
+        this.projectRoot = projectRoot;
 
         this.cache = new ForgeCache();
         this.executor = Executors.newFixedThreadPool(
@@ -69,6 +81,15 @@ public class ForgeEngine {
         logger.info("Starting Forge build for project: " + config.getName());
         
         try {
+            // Lock enforcement (AGENT.md section 7bis): a normal build never
+            // re-resolves dependencies. If forge.lock exists it must match the
+            // current forge.toml (config hash) and be internally intact;
+            // otherwise the build fails with an actionable error before
+            // touching any output. A missing lock is allowed for now
+            // (bootstrap); the graph path already enforces it identically.
+            io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(
+                projectRoot);
+
             // Phase 1: Analyze project structure
             logger.info("Analyzing project structure...");
             ProjectAnalysis analysis = analyzer.analyzeProject(config);
@@ -111,6 +132,11 @@ public class ForgeEngine {
             boolean buildSuccess = packageResult.isSuccess() && testResult.isSuccess();
             return new BuildResult(buildSuccess, packageResult, testResult);
 
+        } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
+            // Structured errors already answer what/why/how (AGENT.md 10bis):
+            // render the block instead of a raw stack trace.
+            logger.error(fe.formatUserFacing());
+            return new BuildResult(false, null, null);
         } catch (Exception e) {
             logger.error("Build failed", e);
             return new BuildResult(false, null, null);
@@ -164,7 +190,7 @@ public class ForgeEngine {
     public TaskScheduler.Report buildWithTaskGraph() throws Exception {
         logger.info("Starting task-graph build for project: " + config.getName());
 
-        File projectRoot = new File(System.getProperty("user.dir"));
+        File projectRoot = this.projectRoot;
 
         // Lock enforcement (AGENT.md section 7bis): a normal build never
         // re-resolves dependencies. If forge.lock exists it must match the
@@ -608,11 +634,14 @@ public class ForgeEngine {
         List<Path> testFiles = new ArrayList<>();
         
         try {
-            // Common test directory patterns
+            // Common test directory patterns, resolved against the project root
+            // (not the process CWD) so a build driven from another directory
+            // never picks up unrelated test sources.
+            Path base = projectRoot.toPath();
             Path[] testDirs = {
-                Paths.get("src", "test", "java"),
-                Paths.get("test"),
-                Paths.get("src", "test")
+                base.resolve(Paths.get("src", "test", "java")),
+                base.resolve("test"),
+                base.resolve(Paths.get("src", "test"))
             };
             
             for (Path testDir : testDirs) {

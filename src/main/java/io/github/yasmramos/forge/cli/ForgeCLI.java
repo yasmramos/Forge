@@ -161,7 +161,7 @@ public class ForgeCLI {
                     break;
                 case "full":
                     System.out.println("Running full build...");
-                    engine.build();
+                    reportBuild(engine.build());
                     break;
                 case "graph":
                     // Experimental: task-graph + content-cache pipeline
@@ -193,7 +193,19 @@ public class ForgeCLI {
             }
         } else {
             System.out.println("Running build...");
-            engine.build();
+            reportBuild(engine.build());
+        }
+    }
+
+    /**
+     * Prints the outcome of a default/full build. The failure detail (including
+     * structured lockfile errors) is logged by the engine; here we surface a
+     * non-zero-worthy signal and a pointer to the fix instead of staying silent.
+     */
+    private void reportBuild(io.github.yasmramos.forge.core.ForgeEngine.BuildResult result) {
+        if (result != null && !result.isSuccess()) {
+            System.err.println("Build FAILED. See the messages above for the cause"
+                + " (run with --debug for a stack trace).");
         }
     }
     
