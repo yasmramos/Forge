@@ -35,9 +35,9 @@ public class ForgeEngine {
     private final ProjectConfig config;
     private final ForgeCache cache;
     private final ExecutorService executor;
-    private final DependencyResolver dependencyResolver;
     private final Compiler compiler;
     private final BuildAnalyzer analyzer;
+    private final File projectRoot;
 
     /**
      * Expose the loaded project configuration so CLI commands such as
@@ -48,13 +48,23 @@ public class ForgeEngine {
     }
     
     public ForgeEngine(ProjectConfig config) {
+        this(config, new File(System.getProperty("user.dir")));
+    }
+
+    /**
+     * @param projectRoot directory holding {@code forge.toml} and {@code
+     *                    forge.lock}; defaults to the process working directory
+     *                    and is overridable so tests can run against a temp
+     *                    project without mutating the real cwd.
+     */
+    public ForgeEngine(ProjectConfig config, File projectRoot) {
         this.config = config;
+        this.projectRoot = projectRoot;
 
         this.cache = new ForgeCache();
         this.executor = Executors.newFixedThreadPool(
             Math.max(1, config.getBuildSettings().getThreads())
         );
-        this.dependencyResolver = new DependencyResolver();
         this.compiler = new Compiler();
         // Seed the compiler with third-party libraries available on the JVM classpath
         // (SLF4J, NightConfig, ...) so javac can resolve external symbols when building sources.
@@ -69,6 +79,15 @@ public class ForgeEngine {
         logger.info("Starting Forge build for project: " + config.getName());
         
         try {
+            // Lock enforcement (AGENT.md section 7bis): a normal build never
+            // re-resolves dependencies. If forge.lock exists it must match the
+            // current forge.toml (config hash) and be internally intact;
+            // otherwise the build fails with an actionable error before
+            // touching any output. A missing lock is allowed for now
+            // (bootstrap); the graph path already enforces it identically.
+            io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(
+                projectRoot);
+
             // Phase 1: Analyze project structure
             logger.info("Analyzing project structure...");
             ProjectAnalysis analysis = analyzer.analyzeProject(config);
@@ -77,17 +96,8 @@ public class ForgeEngine {
             // AGENT.md section 2: never reimplement resolution; the same engine
             // that produced forge.lock resolves the compile classpath here.
             DependencyResolution dependencyResult = resolveWithAether();
-            if (dependencyResult == null) {
-                // Legacy path kept as a safety net when no repositories are
-                // declared or Aether cannot run in this environment.
-                logger.info("Resolving dependencies (legacy)...");
-                dependencyResult = dependencyResolver.resolve(
-                    config.getDependencies(), analysis
-                );
-            } else {
-                logger.info("Resolved " + dependencyResult.getSuccessCount()
-                    + " artifact(s) via Maven Resolver");
-            }
+            logger.info("Resolved " + dependencyResult.getSuccessCount()
+                + " artifact(s) via Maven Resolver");
             
             // Phase 3: Compile sources
             logger.info("Compiling sources...");
@@ -110,6 +120,11 @@ public class ForgeEngine {
             boolean buildSuccess = packageResult.isSuccess() && testResult.isSuccess();
             return new BuildResult(buildSuccess, packageResult, testResult);
 
+        } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
+            // Structured errors already answer what/why/how (AGENT.md 10bis):
+            // carry them out so the CLI renders with --format=json/--debug
+            // rather than flattening to a bare stack trace here.
+            return new BuildResult(false, null, null, fe);
         } catch (Exception e) {
             logger.error("Build failed", e);
             return new BuildResult(false, null, null);
@@ -163,7 +178,7 @@ public class ForgeEngine {
     public TaskScheduler.Report buildWithTaskGraph() throws Exception {
         logger.info("Starting task-graph build for project: " + config.getName());
 
-        File projectRoot = new File(System.getProperty("user.dir"));
+        File projectRoot = this.projectRoot;
 
         // Lock enforcement (AGENT.md section 7bis): a normal build never
         // re-resolves dependencies. If forge.lock exists it must match the
@@ -250,87 +265,15 @@ public class ForgeEngine {
     }
 
     /**
-     * Resolve the declared dependencies with the Maven Resolver (Aether) engine
-     * and adapt the result to the legacy {@link DependencyResolution} model used
-     * by the compiler. Returns {@code null} when there is nothing to resolve or
-     * no repositories are configured, letting callers fall back to the legacy
-     * resolver. Failures propagate as build errors (AGENT.md section 10bis):
-     * an unresolvable coordinate must fail the build loudly, not silently drop
-     * the dependency.
+     * Resolve the compile classpath (compile + provided scopes) through Maven
+     * Resolver, per AGENT.md section 2. Scope filtering keeps test and runtime
+     * dependencies off the main compile classpath.
      */
-    private DependencyResolution resolveWithAether() throws Exception {
-        return resolveWithAether(null);
+    private DependencyResolution resolveWithAether() {
+        return io.github.yasmramos.forge.core.resolver.AetherResolution.resolve(
+            config, DependencyScopes.COMPILE, null);
     }
 
-    /**
-     * Same as {@link #resolveWithAether()} but allowing extra ad-hoc roots
-     * (e.g. the JUnit Platform launcher for test execution) that are not
-     * declared in forge.toml. Coordinates already declared always win.
-     */
-    private DependencyResolution resolveWithAether(List<String> extraRoots) throws Exception {
-        java.util.Map<String, Object> declared = config.getDependencies();
-        if ((declared == null || declared.isEmpty())
-                && (extraRoots == null || extraRoots.isEmpty())) {
-            return new DependencyResolution(); // Nothing to resolve: valid empty graph.
-        }
-        java.util.Map<String, String> repositories = config.getRepositories();
-        if (repositories == null || repositories.isEmpty()) {
-            return null; // No [repositories]: caller falls back to legacy resolution.
-        }
-
-        java.util.List<String> roots = new java.util.ArrayList<>();
-        for (java.util.Map.Entry<String, Object> entry : declared.entrySet()) {
-            String version = null;
-            if (entry.getValue() instanceof String) {
-                version = (String) entry.getValue();
-            } else if (entry.getValue() instanceof java.util.Map) {
-                Object v = ((java.util.Map<?, ?>) entry.getValue()).get("version");
-                if (v != null) {
-                    version = String.valueOf(v);
-                }
-            }
-            if (version != null && !version.trim().isEmpty()) {
-                roots.add(entry.getKey() + ":" + version);
-            }
-        }
-        // Ad-hoc roots supplied by the caller (deduplicated: declared wins).
-        if (extraRoots != null) {
-            for (String extra : extraRoots) {
-                String ga = extra.substring(0, extra.lastIndexOf(':'));
-                boolean alreadyDeclared = declared != null && declared.containsKey(ga);
-                if (!alreadyDeclared && !roots.contains(extra)) {
-                    roots.add(extra);
-                }
-            }
-        }
-        if (roots.isEmpty()) {
-            return new DependencyResolution();
-        }
-
-        File localCacheDir = Paths.get(System.getProperty("user.home"),
-            ".forge", "cache", "deps").toFile();
-        io.github.yasmramos.forge.core.resolver.AetherDependencyResolver aether =
-            new io.github.yasmramos.forge.core.resolver.AetherDependencyResolver(
-                localCacheDir, repositories);
-        io.github.yasmramos.forge.core.resolver.AetherDependencyResolver.ResolvedGraph graph =
-            aether.resolveTransitive(roots);
-
-        DependencyResolution resolution = new DependencyResolution();
-        for (io.github.yasmramos.forge.core.resolver.AetherDependencyResolver.ResolvedArtifact artifact
-                : graph.getArtifacts()) {
-            String[] ga = artifact.getCoordinates().split(":");
-            if (ga.length != 3) {
-                continue;
-            }
-            Path jarPath = artifact.getFile().toPath();
-            resolution.addDependency(new io.github.yasmramos.forge.model.DependencyInfo(
-                ga[0] + ":" + ga[1], ga[2],
-                io.github.yasmramos.forge.model.DependencyType.MAVEN,
-                jarPath, true));
-        }
-        return resolution;
-    }
-    
     /**
      * Resolve the compiled-classes directory (build base + "classes",
      * i.e. target/classes by Maven convention). Always absolute so that
@@ -403,29 +346,27 @@ public class ForgeEngine {
                 logger.warn("No classes directory found for JAR packaging");
                 return null;
             }
-            
+
             Path jarFile = outputDir.resolve("forge-main.jar");
-            
-            // Create JAR using jar command
-            ProcessBuilder pb = new ProcessBuilder(
-                "jar", "cf", jarFile.toString(), "-C", classesDir.toString(), "."
-            );
-            
-            Process process = pb.start();
-            int exitCode = process.waitFor();
-            
-            if (exitCode == 0) {
-                logger.info("Main JAR created successfully");
-                return jarFile;
-            } else {
-                logger.error("Failed to create JAR, exit code: " + exitCode);
-                return null;
-            }
-            
+
+            // Deterministic packaging (AGENT.md decision 17): the external
+            // 'jar' tool stamps filesystem mtimes, so we write the archive
+            // ourselves with a fixed entry timestamp and sorted entries.
+            io.github.yasmramos.forge.core.packageinfo.JarWriter.writeDirectory(
+                classesDir, jarFile, artifactEpochSeconds());
+            logger.info("Main JAR created successfully");
+            return jarFile;
+
         } catch (Exception e) {
             logger.error("Error creating main JAR", e);
             return null;
         }
+    }
+
+    /** Fixed timestamp for reproducible artifacts (AGENT.md decision 17). */
+    private long artifactEpochSeconds() {
+        return io.github.yasmramos.forge.core.packageinfo.ReproducibleBuild.epochSeconds(
+            projectRoot, config.getBuildSettings().getReproducibleTimestamp());
     }
     
     private int packageAdditionalArtifacts(Path outputDir) {
@@ -455,14 +396,9 @@ public class ForgeEngine {
     
     private boolean createSourcesJar(Path sourcesDir, Path jarFile) {
         try {
-            ProcessBuilder pb = new ProcessBuilder(
-                "jar", "cf", jarFile.toString(), "-C", sourcesDir.toString(), "."
-            );
-            
-            Process process = pb.start();
-            int exitCode = process.waitFor();
-            
-            return exitCode == 0;
+            io.github.yasmramos.forge.core.packageinfo.JarWriter.writeDirectory(
+                sourcesDir, jarFile, artifactEpochSeconds());
+            return true;
         } catch (Exception e) {
             logger.error("Error creating sources JAR", e);
             return false;
@@ -511,105 +447,13 @@ public class ForgeEngine {
     
     private TestResult runTests(PackageResult packageResult) {
         logger.info("Running tests...");
-
-        try {
-            // Find test files
-            List<Path> testFiles = findTestFiles();
-
-            if (testFiles.isEmpty()) {
-                logger.info("No test files found, skipping test execution");
-                return new TestResult(true, 0, 0);
-            }
-
-            Path testClassesDir = resolveBuildBaseDir().resolve("test-classes");
-            java.nio.file.Files.createDirectories(testClassesDir);
-
-            // Resolve the full test classpath through Aether: declared
-            // dependencies plus the JUnit Platform launcher needed to run
-            // Jupiter tests programmatically (AGENT.md section 21).
-            DependencyResolution testDeps = resolveWithAether(java.util.Arrays.asList(
-                "org.junit.platform:junit-platform-launcher:1.9.2"));
-            StringBuilder cp = new StringBuilder();
-            cp.append(resolveClassesDir()).append(File.pathSeparator).append(testClassesDir);
-            if (testDeps != null) {
-                for (io.github.yasmramos.forge.model.DependencyInfo dep : testDeps.getDependencies()) {
-                    if (dep.isResolved() && dep.getLocalPath() != null) {
-                        cp.append(File.pathSeparator).append(dep.getLocalPath());
-                    }
-                }
-            }
-            String classpath = cp.toString();
-
-            // Compile every test source in one javac invocation so that
-            // shared helper classes resolve correctly.
-            ProcessBuilder compilePb = new ProcessBuilder(
-                "javac", "-cp", classpath, "-d", testClassesDir.toString());
-            compilePb.redirectErrorStream(true);
-            for (Path testFile : testFiles) {
-                compilePb.command().add(testFile.toString());
-            }
-            Process compileProcess = compilePb.start();
-            String compileOut = new String(compileProcess.getInputStream().readAllBytes());
-            if (compileProcess.waitFor() != 0) {
-                logger.error("Test compilation failed:\n" + compileOut);
-                return new TestResult(false, testFiles.size(), 0);
-            }
-
-            // Run all compiled tests with the JUnit Platform Console
-            // standalone launcher (auto-discovery under test-classes).
-            // Runner class lives in Forge's own jar (shaded), so it is on
-            // the JVM classpath of this process; append it to the child cp.
-            String selfJar = io.github.yasmramos.forge.Forge.class.getProtectionDomain()
-                .getCodeSource().getLocation().getPath();
-            ProcessBuilder runPb = new ProcessBuilder(
-                "java", "-cp", classpath + File.pathSeparator + selfJar,
-                "io.github.yasmramos.forge.core.test.JUnitRunner",
-                testClassesDir.toString());
-            runPb.redirectErrorStream(true);
-            Process runProcess = runPb.start();
-            String runOut = new String(runProcess.getInputStream().readAllBytes());
-            int exitCode = runProcess.waitFor();
-
-            System.err.println(runOut);
-            boolean passed = exitCode == 0;
-            logger.info("Test execution complete: " + (passed ? "all tests passed"
-                : "tests failed (exit code " + exitCode + ")"));
-            return new TestResult(passed, testFiles.size(), passed ? testFiles.size() : 0);
-
-        } catch (Exception e) {
-            logger.error("Test execution failed", e);
-            return new TestResult(false, 0, 0);
-        }
-    }
-
-    private List<Path> findTestFiles() {
-        List<Path> testFiles = new ArrayList<>();
-        
-        try {
-            // Common test directory patterns
-            Path[] testDirs = {
-                Paths.get("src", "test", "java"),
-                Paths.get("test"),
-                Paths.get("src", "test")
-            };
-            
-            for (Path testDir : testDirs) {
-                if (Files.exists(testDir)) {
-                    Files.walk(testDir)
-                        .filter(path -> path.toString().endsWith(".java"))
-                        .filter(path -> {
-                            String fileName = path.getFileName().toString().toLowerCase();
-                            return fileName.contains("test") || fileName.contains("spec");
-                        })
-                        .forEach(testFiles::add);
-                }
-            }
-            
-        } catch (IOException e) {
-            logger.error("Error finding test files", e);
-        }
-        
-        return testFiles;
+        io.github.yasmramos.forge.core.test.TestExecutor.Result result =
+            io.github.yasmramos.forge.core.test.TestExecutor.execute(
+                config, projectRoot, resolveClassesDir(),
+                resolveBuildBaseDir().resolve("test-classes"));
+        logger.info("Test execution complete: " + (result.isSuccess() ? "all tests passed"
+            : "tests failed"));
+        return new TestResult(result.isSuccess(), result.getTotal(), result.getPassed());
     }
     
     private boolean runSingleTest(Path testFile) {
@@ -689,16 +533,31 @@ public class ForgeEngine {
         private final boolean success;
         private final PackageResult packageResult;
         private final TestResult testResult;
-        
+        private final io.github.yasmramos.forge.cli.error.ForgeException error;
+
         public BuildResult(boolean success, PackageResult packageResult, TestResult testResult) {
+            this(success, packageResult, testResult, null);
+        }
+
+        public BuildResult(boolean success, PackageResult packageResult, TestResult testResult,
+                           io.github.yasmramos.forge.cli.error.ForgeException error) {
             this.success = success;
             this.packageResult = packageResult;
             this.testResult = testResult;
+            this.error = error;
         }
-        
+
         public boolean isSuccess() { return success; }
         public PackageResult getPackageResult() { return packageResult; }
         public TestResult getTestResult() { return testResult; }
+
+        /**
+         * Structured failure when the build aborted on a ForgeError; null when
+         * the build failed for a non-structured reason or succeeded. Lets the
+         * CLI render it with the user's {@code --format=json}/{@code --debug}
+         * flags (AGENT.md 10bis) instead of a bare "build failed" line.
+         */
+        public io.github.yasmramos.forge.cli.error.ForgeException getError() { return error; }
     }
 
     

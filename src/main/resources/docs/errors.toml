@@ -44,11 +44,41 @@ why  = "Task names are unique identifiers used for dependencies and cache keys."
 how  = "Rename one of the conflicting tasks."
 docs = "https://forge.dev/e/TSK-0003"
 
-["FORGE-RSL-0001"]
+["FORGE-CFG-0001"]
+what = "No forge.toml was found in the project root."
+why  = "Forge was run outside a project directory, or the configuration file was renamed or removed."
+how  = "Run 'forge init' to create a project, or change to the directory that holds forge.toml."
+docs = "https://forge.dev/e/CFG-0001"
+
+["FORGE-CFG-0002"]
+what = "The command line arguments were not understood."
+why  = "An unknown command, subcommand, or flag was passed to the Forge CLI."
+how  = "Run 'forge help' to see the available commands and their arguments."
+docs = "https://forge.dev/e/CFG-0002"
+
+["FORGE-DEP-0001"]
 what = "Version conflict detected while resolving dependencies."
 why  = "Two or more paths request different versions of the same artifact and no exact alignment exists; Forge fails by default instead of silently picking one."
 how  = "Pin a version with [resolutions] in forge.toml, import a BOM that aligns the versions, or run 'forge resolve --explain' to see who requests what. Then run 'forge lock refresh'."
-docs = "https://forge.dev/e/RSL-0001"
+docs = "https://forge.dev/e/DEP-0001"
+
+["FORGE-DEP-0002"]
+what = "A dependency could not be resolved from any configured repository."
+why  = "The coordinate or version is wrong, or every repository in [repositories] was unreachable."
+how  = "Check the coordinate and version in forge.toml, verify the repository URLs are reachable, then retry."
+docs = "https://forge.dev/e/DEP-0002"
+
+["FORGE-RUN-0001"]
+what = "The project does not declare a main class to run."
+why  = "'forge run' needs an entry point, but [exec] main is empty in forge.toml."
+how  = "Add [exec] main = \"com.example.Main\" to forge.toml."
+docs = "https://forge.dev/e/RUN-0001"
+
+["FORGE-RUN-0002"]
+what = "The compiled classes needed to run the project were not found."
+why  = "The project has not been built yet, or the build output directory is empty."
+how  = "Run 'forge build' before 'forge run'."
+docs = "https://forge.dev/e/RUN-0002"
 
 ["FORGE-CCH-0001"]
 what = "A cached output archive failed integrity verification while being restored."

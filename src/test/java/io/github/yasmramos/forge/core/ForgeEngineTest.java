@@ -58,6 +58,73 @@ class ForgeEngineTest {
         // Test that the clean method exists and can be called
         assertDoesNotThrow(() -> forgeEngine.clean());
     }
+
+    @Test
+    void staleLockFailsTheDefaultBuild(@TempDir Path tmp) throws Exception {
+        // A committed lock must match forge.toml; editing the config without
+        // refreshing the lock must fail the build (AGENT.md section 7bis).
+        java.io.File root = tmp.toFile();
+        java.io.File toml = new java.io.File(root, "forge.toml");
+        Path src = tmp.resolve("src/main/java");
+        java.nio.file.Files.createDirectories(src);
+        java.nio.file.Files.write(src.resolve("Hello.java"),
+            "public class Hello { }".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+
+        write(toml, "forge = \"0.1\"\n[project]\nname = \"lockcheck\"\nversion = \"1.0.0\"\n");
+        ProjectConfig config = io.github.yasmramos.forge.utils.ConfigReader.loadConfig(toml);
+        config.setSourceDirectory(src.toString());
+        config.setOutputDirectory(tmp.resolve("classes").toString());
+        new io.github.yasmramos.forge.core.resolver.LockfileGenerator(
+                new java.io.File(root, "cache"), config.getRepositories())
+            .generate(root, config)
+            .write(root);
+
+        // Positive control: a matching lock lets the build proceed.
+        assertTrue(new ForgeEngine(config, root).build().isSuccess(),
+            "build with a matching lock must succeed");
+
+        // Now change forge.toml: config_hash no longer matches the lock.
+        write(toml, "forge = \"0.1\"\n[project]\nname = \"lockcheck\"\nversion = \"1.0.0\"\n"
+            + "[build]\nthreads = 2\n");
+        ProjectConfig changed = io.github.yasmramos.forge.utils.ConfigReader.loadConfig(toml);
+        changed.setSourceDirectory(src.toString());
+        changed.setOutputDirectory(tmp.resolve("classes").toString());
+
+        assertFalse(new ForgeEngine(changed, root).build().isSuccess(),
+            "stale forge.lock must fail the build");
+    }
+
+    @Test
+    void enforceExistingLockReportsLck0003OnConfigDrift(@TempDir Path tmp) throws Exception {
+        java.io.File root = tmp.toFile();
+        java.io.File toml = new java.io.File(root, "forge.toml");
+        write(toml, "forge = \"0.1\"\n[project]\nname = \"lockcheck\"\nversion = \"1.0.0\"\n");
+        ProjectConfig config = io.github.yasmramos.forge.utils.ConfigReader.loadConfig(toml);
+        new io.github.yasmramos.forge.core.resolver.LockfileGenerator(
+                new java.io.File(root, "cache"), config.getRepositories())
+            .generate(root, config)
+            .write(root);
+        write(toml, "forge = \"0.1\"\n[project]\nname = \"lockcheck\"\nversion = \"2.0.0\"\n");
+
+        io.github.yasmramos.forge.cli.error.ForgeException ex = assertThrows(
+            io.github.yasmramos.forge.cli.error.ForgeException.class,
+            () -> io.github.yasmramos.forge.core.resolver.LockfileGenerator
+                .enforceExistingLock(root));
+        assertEquals("FORGE-LCK-0003", ex.getCode());
+    }
+
+    @Test
+    void missingLockIsNotEnforced(@TempDir Path tmp) {
+        // Bootstrap: with no forge.lock yet, enforcement is a no-op.
+        assertDoesNotThrow(() -> io.github.yasmramos.forge.core.resolver.LockfileGenerator
+            .enforceExistingLock(tmp.toFile()));
+    }
+
+    private static void write(java.io.File file, String content) throws Exception {
+        java.nio.file.Files.write(file.toPath(),
+            content.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    }
+
     
     private ProjectConfig createMockConfig() {
         ProjectConfig config = new ProjectConfig();

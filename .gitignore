@@ -18,8 +18,11 @@
 **/downloads/
 **/eggs/
 **/.eggs/
-**/lib/
-**/lib64/
+# NOTE: root-anchored on purpose. A bare "**/lib/" silently ignores Java
+# source packages named "lib" (e.g. examples/library/.../com/example/lib/)
+# and breaks CI the same way "**/cache/" did. Keep it root-only.
+/lib/
+/lib64/
 **/parts/
 **/sdist/
 **/var/

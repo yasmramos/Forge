@@ -38,20 +38,16 @@ public final class RunCommand {
 
         String mainClass = config.getMainClass();
         if (mainClass == null || mainClass.trim().isEmpty()) {
-            System.err.println("forge run failed");
-            System.err.println("What: no main class configured.");
-            System.err.println("Why:  'forge run' needs an entry point to launch.");
-            System.err.println("Fix:  add [exec] main = \"com.example.Main\" to forge.toml.");
-            return 1;
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.RUN_0001,
+                "no [exec] main is set in forge.toml");
         }
 
         Path classesDir = resolveClassesDir(config);
         if (!classesDir.toFile().isDirectory()) {
-            System.err.println("forge run failed");
-            System.err.println("What: compiled classes not found at " + classesDir + ".");
-            System.err.println("Why:  the project has not been built yet.");
-            System.err.println("Fix:  run 'forge build' before 'forge run'.");
-            return 1;
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.RUN_0002,
+                "expected compiled classes at " + classesDir);
         }
 
         List<String> command = new ArrayList<>();
@@ -118,15 +114,12 @@ public final class RunCommand {
         }
         List<String> roots = new ArrayList<>();
         for (java.util.Map.Entry<String, Object> entry : declared.entrySet()) {
-            String version = null;
-            if (entry.getValue() instanceof String) {
-                version = (String) entry.getValue();
-            } else if (entry.getValue() instanceof java.util.Map) {
-                Object v = ((java.util.Map<?, ?>) entry.getValue()).get("version");
-                if (v != null) {
-                    version = String.valueOf(v);
-                }
+            // The run classpath is compile + provided + runtime; test is excluded.
+            if (!io.github.yasmramos.forge.core.DependencyScopes.RUNTIME
+                    .contains(io.github.yasmramos.forge.core.DependencyScopes.scopeOf(entry.getValue()))) {
+                continue;
             }
+            String version = io.github.yasmramos.forge.core.DependencyScopes.versionOf(entry.getValue());
             if (version != null && !version.trim().isEmpty()) {
                 roots.add(entry.getKey() + ":" + version);
             }

@@ -2,7 +2,6 @@ package io.github.yasmramos.forge.core.task;
 
 import io.github.yasmramos.forge.core.BuildAnalyzer;
 import io.github.yasmramos.forge.core.Compiler;
-import io.github.yasmramos.forge.core.DependencyResolver;
 import io.github.yasmramos.forge.model.CompilationResult;
 import io.github.yasmramos.forge.model.DependencyResolution;
 import io.github.yasmramos.forge.model.ProjectAnalysis;
@@ -43,15 +42,23 @@ public class StandardTaskFactory {
         TaskType type = new TaskTypeRegistry().get(TaskType.COMPILE);
         ForgeTask task = new ForgeTask(COMPILE, type)
             .input(new TaskInput.FilesInput("main-sources", sourceRoots()))
-            .input(new TaskInput.ValueInput("dependencies", String.valueOf(config.getDependencies())))
+            .input(new TaskInput.ValueInput("dependencies", String.valueOf(
+                io.github.yasmramos.forge.core.DependencyScopes.filter(
+                    config.getDependencies(),
+                    io.github.yasmramos.forge.core.DependencyScopes.COMPILE))))
             .input(new TaskInput.ValueInput("toolchain", String.valueOf(config.getSourceCompatibility())))
             .output(new TaskOutput("classes", Collections.singletonList(relative(classesDir))));
 
         task.action(context -> {
             BuildAnalyzer analyzer = new BuildAnalyzer();
             ProjectAnalysis analysis = analyzer.analyzeProject(config);
-            DependencyResolver resolver = new DependencyResolver();
-            DependencyResolution resolution = resolver.resolve(config.getDependencies(), analysis);
+            // Only compile-scope deps belong on the main compile classpath;
+            // resolution goes through Maven Resolver (AGENT.md section 2).
+            DependencyResolution resolution =
+                io.github.yasmramos.forge.core.resolver.AetherResolution.resolve(
+                    config,
+                    io.github.yasmramos.forge.core.DependencyScopes.COMPILE,
+                    null);
 
             Compiler compiler = new Compiler();
             compiler.setClasspath(System.getProperty("java.class.path"));
@@ -72,49 +79,76 @@ public class StandardTaskFactory {
     /**
      * Creates the package task. It hard-depends on compile (its outputs feed
      * the JAR) and declares the produced JAR as a relocatable output.
+     *
+     * <p>The dependency is expressed only through {@code dependsOn(TEST)}:
+     * tests must pass before an artifact is packaged (Maven ordering), and the
+     * scheduler folds the test task's content hash — which itself folds the
+     * compile task's — into this task's cache key (see
+     * {@link ForgeTask#computeHash(java.util.Map)}), so a changed source re-runs
+     * packaging instead of restoring a stale JAR from cache.</p>
      */
     public ForgeTask packageTask() {
         TaskType type = new TaskTypeRegistry().get(TaskType.PACKAGE);
         Path jarFile = classesDir.getParent().resolve("forge-output").resolve("forge-main.jar");
         ForgeTask task = new ForgeTask(PACKAGE, type)
-            .dependsOn(COMPILE)
-            .input(new TaskInput.ValueInput("upstream:compile", COMPILE))
+            .dependsOn(TEST)
             .output(new TaskOutput("jar", Collections.singletonList(relative(jarFile))));
 
         task.action(context -> {
             try {
-                java.nio.file.Files.createDirectories(jarFile.getParent());
-                ProcessBuilder pb = new ProcessBuilder(
-                    "jar", "cf", jarFile.toString(), "-C", classesDir.toString(), ".");
-                pb.redirectErrorStream(true);
-                Process p = pb.start();
-                int code = p.waitFor();
-                if (code != 0 || !java.nio.file.Files.isRegularFile(jarFile)) {
-                    return TaskResult.failure("Packaging failed with exit code " + code
-                        + ". Ensure the 'jar' tool is available and classes were compiled first.");
-                }
+                // Deterministic packaging (AGENT.md decision 17): a fixed entry
+                // timestamp plus sorted entries make the JAR byte-identical
+                // across runs and machines.
+                long epoch = io.github.yasmramos.forge.core.packageinfo.ReproducibleBuild
+                    .epochSeconds(projectRoot, config.getBuildSettings().getReproducibleTimestamp());
+                io.github.yasmramos.forge.core.packageinfo.JarWriter.writeDirectory(
+                    classesDir, jarFile, epoch);
                 return TaskResult.success("Packaged " + jarFile.getFileName());
             } catch (Exception e) {
                 return TaskResult.failure("Packaging failed: " + e.getMessage()
-                    + ". Verify the JDK bin directory is on PATH.");
+                    + ". Verify the compiled classes exist under " + classesDir + ".");
             }
         });
         return task;
     }
 
     /**
-     * Creates the test task placeholder. Test execution wiring reuses the
-     * engine's existing runner once it is exposed through a stable API; until
-     * then the task is ordered after compile via a soft dependency and is a
-     * no-op that always succeeds, so graphs including it stay honest about
-     * what actually ran (AGENT.md decision 10).
+     * Creates the test task: test sources in, test execution out. It hard-depends
+     * on compile (tests run against the freshly compiled main classes, and the
+     * scheduler folds compile's hash into this task's key), so a source change
+     * re-runs the tests instead of restoring a stale result from cache.
+     *
+     * <p>Execution is delegated to {@link io.github.yasmramos.forge.core.test.TestExecutor},
+     * the same component the phased build uses, so both pipelines agree on what
+     * "running the tests" means.</p>
      */
     public ForgeTask test() {
         TaskType type = new TaskTypeRegistry().get(TaskType.TEST);
+        Path testClassesDir = classesDir.getParent().resolve("test-classes");
         ForgeTask task = new ForgeTask(TEST, type)
-            .softDependsOn(COMPILE)
-            .input(new TaskInput.FilesInput("test-sources", testSourceRoots()));
-        task.action(context -> TaskResult.success("No test runner bound yet; skipped"));
+            .dependsOn(COMPILE)
+            .input(new TaskInput.FilesInput("test-sources", testSourceRoots()))
+            .input(new TaskInput.ValueInput("test-dependencies", String.valueOf(
+                io.github.yasmramos.forge.core.DependencyScopes.filter(
+                    config.getDependencies(),
+                    io.github.yasmramos.forge.core.DependencyScopes.TEST))))
+            .output(new TaskOutput("test-classes", Collections.singletonList(relative(testClassesDir))));
+
+        task.action(context -> {
+            io.github.yasmramos.forge.core.test.TestExecutor.Result result =
+                io.github.yasmramos.forge.core.test.TestExecutor.execute(
+                    config, projectRoot, classesDir, testClassesDir);
+            if (!result.isSuccess()) {
+                return TaskResult.failure("Tests failed: " + result.getPassed()
+                    + "/" + result.getTotal() + " passed. See the JUnit output above"
+                    + " for the failing test(s).");
+            }
+            context.put(TEST + ".total", result.getTotal());
+            context.put(TEST + ".passed", result.getPassed());
+            return TaskResult.success(result.getTotal() == 0
+                ? "No test sources found"
+                : "Ran " + result.getTotal() + " test class(es), all passed");
+        });
         return task;
     }
 

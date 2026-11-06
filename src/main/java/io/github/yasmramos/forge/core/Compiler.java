@@ -128,6 +128,18 @@ public class Compiler {
             }
         }
 
+        if (staleFiles.isEmpty() && !hasCompiledClasses(outputDir)) {
+            // A warm cache is only trustworthy if the classes it claims to have
+            // produced are actually on disk. After a clean (or a fresh
+            // checkout) the output directory is gone while ~/.forge/cache
+            // survives, so skipping here would emit a build with no classes
+            // and break packaging and `forge run`.
+            logger.info("Compilation cache is warm but " + outputDir
+                + " has no classes; recompiling " + sourceFiles.size() + " file(s)");
+            staleFiles.addAll(sourceFiles);
+            cachedCount = 0;
+        }
+
         if (staleFiles.isEmpty()) {
             logger.info("All " + cachedCount + " files up to date (cache hit)");
             return new CompilationResult(true, sourceFiles.size(), sourceFiles.size(), cachedCount);
@@ -171,6 +183,23 @@ public class Compiler {
         logger.info("Incremental compilation of " + changedSources.size() + " changed files");
         // Delegate to the batch compiler so cross-file symbol references resolve
         return compileBatch(changedSources, null, cache, new File("target/classes").getAbsolutePath());
+    }
+
+    /**
+     * True when {@code outputDir} holds at least one compiled class file.
+     * Used to distrust a warm cache whose outputs were removed (a clean build
+     * keeps {@code ~/.forge/cache} but deletes the classes directory).
+     */
+    private static boolean hasCompiledClasses(String outputDir) {
+        File dir = new File(outputDir);
+        if (!dir.isDirectory()) {
+            return false;
+        }
+        try (java.util.stream.Stream<Path> stream = Files.walk(dir.toPath())) {
+            return stream.anyMatch(p -> p.toString().endsWith(".class"));
+        } catch (java.io.IOException e) {
+            return false;
+        }
     }
 
     /**

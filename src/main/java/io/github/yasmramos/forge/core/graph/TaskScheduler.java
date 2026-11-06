@@ -48,6 +48,9 @@ public class TaskScheduler {
         Map<String, Future<Outcome>> futures = new HashMap<>();
         ExecutorService pool = Executors.newFixedThreadPool(Math.max(1, threads));
         Map<String, Outcome> outcomes = new HashMap<>();
+        // Computed cache keys, published as each task finishes so dependents can
+        // fold them into their own key (see ForgeTask.computeHash(Map)).
+        Map<String, String> hashes = new java.util.concurrent.ConcurrentHashMap<>();
         try {
             // Submit ready tasks; each dependent waits on its deps' futures.
             for (ForgeTask t : ordered) {
@@ -64,7 +67,8 @@ public class TaskScheduler {
                                 }
                             }
                         }
-                        String hash = t.computeHash();
+                        String hash = t.computeHash(hashes);
+                        hashes.put(t.getName(), hash);
                         if (cache.isUpToDate(hash, t)) {
                             cache.restore(hash, t, context.getProjectRoot());
                             return Outcome.CACHE_HIT;

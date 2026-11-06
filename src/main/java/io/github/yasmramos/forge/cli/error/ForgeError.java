@@ -27,6 +27,32 @@ public class ForgeError {
     public String getHowToFix() { return howToFix; }
     public String getDocsUrl() { return docsUrl; }
 
+    /**
+     * Process exit code for this error, mapped by class as required by
+     * AGENT.md section 10bis: user/config errors exit 1, environment errors
+     * exit 2, and internal bugs exit 3 (a bug report is worth filing).
+     * The class is derived from the stable domain prefix of the code.
+     */
+    public int exitCode() {
+        String prefix = prefixOf(code);
+        switch (prefix) {
+            case "NET":
+            case "CCH":
+            case "PLG":
+                return 2; // environment
+            case "INT":
+                return 3; // internal bug
+            default:
+                return 1; // user / configuration
+        }
+    }
+
+    private static String prefixOf(String code) {
+        // FORGE-<PREFIX>-<NNNN>
+        String[] parts = code == null ? new String[0] : code.split("-");
+        return parts.length >= 2 ? parts[1] : "";
+    }
+
     /** Human rendering for TTYs; stderr-bound (AGENT.md decision 11). */
     public String format() {
         StringBuilder sb = new StringBuilder();

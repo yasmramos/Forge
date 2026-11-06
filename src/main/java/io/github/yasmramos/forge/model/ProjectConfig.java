@@ -288,6 +288,8 @@ public class ProjectConfig {
         private String compiler = "javac";
         private String encoding = "UTF-8";
         private boolean debug = true;
+        /** [build] reproducible_timestamp: fixed artifact timestamp (ADR 17). */
+        private String reproducibleTimestamp;
         
         public boolean isIncremental() {
             return incremental;
@@ -343,6 +345,15 @@ public class ProjectConfig {
         
         public void setDebug(boolean debug) {
             this.debug = debug;
+        }
+
+        /** [build] reproducible_timestamp; null when unset. */
+        public String getReproducibleTimestamp() {
+            return reproducibleTimestamp;
+        }
+
+        public void setReproducibleTimestamp(String reproducibleTimestamp) {
+            this.reproducibleTimestamp = reproducibleTimestamp;
         }
     }
 }
