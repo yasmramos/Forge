@@ -14,48 +14,50 @@ import java.util.Optional;
 /**
  * Forge Build System - Main Entry Point
  * Ultra-fast Java Build System - Next Generation
- * 
+ *
  * @author Forge Team
  * @version 1.0.0
  */
 public class Forge {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(Forge.class);
     private static ForgeEngine engine;
     private static ForgeCLI cli;
-    
+
     public static void main(String[] args) {
+        int exitCode = 0;
         try {
             logger.info("Starting Forge Build System v1.0.0");
-            
-            // Initialize CLI
+
+            // Initialize CLI (parses global flags: --format=json, --debug)
             cli = new ForgeCLI(args);
-            
+
             // Load project configuration
             Optional<ProjectConfig> config = loadProjectConfig();
-            
+
+            // Interactive mode is entered only when no command was given.
+            // With a command but no forge.toml, commands that do not need a
+            // project (init, info, help, lock) still run; the rest fail with a
+            // structured FORGE-CFG-0001 instead of dropping into a REPL.
             if (config.isPresent()) {
-                // Initialize engine with configuration
                 engine = new ForgeEngine(config.get());
-                
-                // Execute command
-                cli.execute(engine);
-            } else {
-                // Interactive mode if no project config found
-                cli.interactiveMode();
             }
-            
+            exitCode = cli.execute(engine);
+
         } catch (Exception e) {
             logger.error("Failed to start Forge", e);
-            System.exit(1);
+            exitCode = 1;
+        }
+        if (exitCode != 0) {
+            System.exit(exitCode);
         }
     }
-    
+
     private static Optional<ProjectConfig> loadProjectConfig() {
         try {
             String currentDir = System.getProperty("user.dir");
             File configFile = Paths.get(currentDir, ConfigReader.CONFIG_FILE_NAME).toFile();
-            
+
             if (configFile.exists()) {
                 logger.info("Loading Forge configuration from: " + configFile.getAbsolutePath());
                 return Optional.of(ConfigReader.loadConfig(configFile));

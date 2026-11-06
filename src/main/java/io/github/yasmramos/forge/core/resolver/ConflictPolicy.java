@@ -72,7 +72,7 @@ public final class ConflictPolicy {
 
         /**
          * Renders this failure as a structured, actionable ForgeError with the
-         * registered catalog code FORGE-RSL-0001 (AGENT.md sections 2bis and 10bis):
+         * registered catalog code FORGE-DEP-0001 (AGENT.md sections 2bis and 10bis):
          * what happened, why, and how to fix it.
          */
         public io.github.yasmramos.forge.cli.error.ForgeException toForgeException() {
@@ -85,7 +85,7 @@ public final class ConflictPolicy {
                       .append(" requested in versions ").append(c.getVersions());
             }
             return new io.github.yasmramos.forge.cli.error.ForgeException(
-                    io.github.yasmramos.forge.cli.error.ErrorCode.RSL_0001, detail.toString(), this);
+                    io.github.yasmramos.forge.cli.error.ErrorCode.DEP_0001, detail.toString(), this);
         }
 
         private static String buildMessage(List<Conflict> conflicts) {

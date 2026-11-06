@@ -38,20 +38,16 @@ public final class RunCommand {
 
         String mainClass = config.getMainClass();
         if (mainClass == null || mainClass.trim().isEmpty()) {
-            System.err.println("forge run failed");
-            System.err.println("What: no main class configured.");
-            System.err.println("Why:  'forge run' needs an entry point to launch.");
-            System.err.println("Fix:  add [exec] main = \"com.example.Main\" to forge.toml.");
-            return 1;
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.RUN_0001,
+                "no [exec] main is set in forge.toml");
         }
 
         Path classesDir = resolveClassesDir(config);
         if (!classesDir.toFile().isDirectory()) {
-            System.err.println("forge run failed");
-            System.err.println("What: compiled classes not found at " + classesDir + ".");
-            System.err.println("Why:  the project has not been built yet.");
-            System.err.println("Fix:  run 'forge build' before 'forge run'.");
-            return 1;
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.RUN_0002,
+                "expected compiled classes at " + classesDir);
         }
 
         List<String> command = new ArrayList<>();

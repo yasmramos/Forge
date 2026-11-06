@@ -88,15 +88,45 @@ public final class ErrorCode {
         "Rename one of the conflicting tasks.",
         "https://forge.dev/e/TSK-0003");
 
-    // --- Cache (CCH) ---
-    // --- RSL: dependency resolution domain (AGENT.md section 2bis) ---
+    // --- Config (CFG) ---
+    public static final Entry CFG_0001 = register("FORGE-CFG-0001",
+        "No forge.toml was found in the project root.",
+        "Forge was run outside a project directory, or the configuration file was renamed or removed.",
+        "Run 'forge init' to create a project, or change to the directory that holds forge.toml.",
+        "https://forge.dev/e/CFG-0001");
 
-    public static final Entry RSL_0001 = register("FORGE-RSL-0001",
+    public static final Entry CFG_0002 = register("FORGE-CFG-0002",
+        "The command line arguments were not understood.",
+        "An unknown command, subcommand, or flag was passed to the Forge CLI.",
+        "Run 'forge help' to see the available commands and their arguments.",
+        "https://forge.dev/e/CFG-0002");
+
+    // --- Dependency resolution (DEP) ---
+    public static final Entry DEP_0001 = register("FORGE-DEP-0001",
         "Version conflict detected while resolving dependencies.",
         "Two or more paths request different versions of the same artifact and no exact alignment exists; Forge fails by default instead of silently picking one.",
         "Pin a version with [resolutions] in forge.toml, import a BOM that aligns the versions, or run 'forge resolve --explain' to see who requests what. Then run 'forge lock refresh'.",
-        "https://forge.dev/e/RSL-0001");
+        "https://forge.dev/e/DEP-0001");
 
+    public static final Entry DEP_0002 = register("FORGE-DEP-0002",
+        "A dependency could not be resolved from any configured repository.",
+        "The coordinate or version is wrong, or every repository in [repositories] was unreachable.",
+        "Check the coordinate and version in forge.toml, verify the repository URLs are reachable, then retry.",
+        "https://forge.dev/e/DEP-0002");
+
+    // --- Process execution (RUN) ---
+    public static final Entry RUN_0001 = register("FORGE-RUN-0001",
+        "The project does not declare a main class to run.",
+        "'forge run' needs an entry point, but [exec] main is empty in forge.toml.",
+        "Add [exec] main = \"com.example.Main\" to forge.toml.",
+        "https://forge.dev/e/RUN-0001");
+    public static final Entry RUN_0002 = register("FORGE-RUN-0002",
+        "The compiled classes needed to run the project were not found.",
+        "The project has not been built yet, or the build output directory is empty.",
+        "Run 'forge build' before 'forge run'.",
+        "https://forge.dev/e/RUN-0002");
+
+    // --- Cache (CCH) ---
     public static final Entry CCH_0001 = register("FORGE-CCH-0001",
         "A cached output archive failed integrity verification while being restored.",
         "The local cache entry was corrupted on disk.",

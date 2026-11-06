@@ -9,50 +9,77 @@ import java.util.Scanner;
  * Command Line Interface for Forge Build System
  */
 public class ForgeCLI {
-    
+
     private final Logger logger = LoggerFactory.getLogger(ForgeCLI.class);
+    private final CliOptions options;
     private final String[] args;
+    private final io.github.yasmramos.forge.cli.error.ErrorRenderer errors;
     private Scanner scanner;
-    
+
     public ForgeCLI(String[] args) {
-        this.args = args;
+        this.options = CliOptions.parse(args);
+        this.args = options.restArray();
+        this.errors = new io.github.yasmramos.forge.cli.error.ErrorRenderer(
+            System.err, options.isJson(), options.isDebug());
         this.scanner = new Scanner(System.in);
     }
-    
-    public void execute(ForgeEngine engine) {
+
+    /**
+     * Executes the requested command and returns the process exit code
+     * (AGENT.md section 10bis): 0 on success, 1 user/config error, 2 environment
+     * error, 3 internal bug. Errors are rendered through ErrorRenderer so
+     * --format=json and --debug apply uniformly.
+     */
+    public int execute(ForgeEngine engine) {
         if (args.length == 0) {
             interactiveMode();
-            return;
+            return 0;
         }
-        
+
         String command = args[0].toLowerCase();
-        
-        switch (command) {
-            case "build":
-                executeBuild(engine, args);
-                break;
-            case "clean":
-                engine.clean();
-                break;
-            case "init":
-                initializeProject();
-                break;
-            case "info":
-                showInfo();
-                break;
-            case "lock":
-                executeLock(args);
-                break;
-            case "run":
-                executeRun(engine, args);
-                break;
-            case "help":
-                showHelp();
-                break;
-            default:
-                logger.warn("Unknown command: " + command);
-                showHelp();
+
+        try {
+            switch (command) {
+                case "build":
+                    return executeBuild(requireEngine(engine), args);
+                case "clean":
+                    requireEngine(engine).clean();
+                    return 0;
+                case "init":
+                    initializeProject();
+                    return 0;
+                case "info":
+                    showInfo();
+                    return 0;
+                case "lock":
+                    return executeLock(args);
+                case "run":
+                    return executeRun(requireEngine(engine), args);
+                case "help":
+                    showHelp();
+                    return 0;
+                default:
+                    throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                        io.github.yasmramos.forge.cli.error.ErrorCode.CFG_0002,
+                        "unknown command '" + command + "'");
+            }
+        } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
+            return errors.render(fe);
         }
+    }
+
+    /**
+     * Commands that operate on a project need a loaded configuration. When
+     * Forge runs outside a project, fail with a structured, actionable error
+     * (AGENT.md 10bis) rather than a null dereference.
+     */
+    private static ForgeEngine requireEngine(ForgeEngine engine) {
+        if (engine == null) {
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.CFG_0001,
+                "this command needs a project; no forge.toml was found here");
+        }
+        return engine;
     }
 
     /**
@@ -60,17 +87,15 @@ public class ForgeCLI {
      * Per AGENT.md section 7bis the lockfile is never rewritten by a build;
      * updating dependencies must be a conscious act.
      */
-    private void executeLock(String[] args) {
+    private int executeLock(String[] args) {
         String sub = args.length > 1 ? args[1].toLowerCase() : "";
         if (!"refresh".equals(sub)) {
-            System.err.println("error: unknown lock subcommand '" + sub + "'.");
-            System.err.println("fix: run `forge lock refresh` to regenerate forge.lock.");
-            return;
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.CFG_0002,
+                "unknown lock subcommand '" + sub + "'; expected 'refresh'");
         }
-        int exit = new io.github.yasmramos.forge.cli.command.LockCommand().refresh(System.out);
-        if (exit != 0) {
-            logger.warn("forge lock refresh failed with exit code " + exit);
-        }
+        new io.github.yasmramos.forge.cli.command.LockCommand().refresh(System.out);
+        return 0;
     }
 
     /**
@@ -79,7 +104,7 @@ public class ForgeCLI {
      * executed program owns stdout (Forge logs go to stderr). Arguments
      * after "--" override the static [exec] args from forge.toml.
      */
-    private void executeRun(ForgeEngine engine, String[] args) {
+    private int executeRun(ForgeEngine engine, String[] args) {
         java.util.List<String> userArgs = new java.util.ArrayList<>();
         boolean afterSeparator = false;
         for (int i = 1; i < args.length; i++) {
@@ -92,43 +117,40 @@ public class ForgeCLI {
             }
         }
         try {
-            int exit = io.github.yasmramos.forge.cli.command.RunCommand.run(engine, userArgs);
-            if (exit != 0) {
-                logger.warn("Program exited with code " + exit);
-            }
+            return io.github.yasmramos.forge.cli.command.RunCommand.run(engine, userArgs);
+        } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
+            throw fe;
         } catch (Exception e) {
-            System.err.println("forge run failed");
-            System.err.println("What: " + e.getMessage());
-            System.err.println("Why:  the application could not be launched.");
-            System.err.println("Fix:  check [exec] main in forge.toml and run 'forge build' first.");
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.RUN_0002, e.getMessage(), e);
         }
     }
-    
+
     public void interactiveMode() {
         logger.info("Welcome to Forge Build System Interactive Mode");
         logger.info("Type 'help' for available commands or 'exit' to quit");
-        
+
         while (true) {
             System.out.print("forge> ");
             String input = scanner.nextLine().trim();
-            
+
             if (input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("quit")) {
                 logger.info("Goodbye!");
                 break;
             }
-            
+
             if (input.isEmpty()) {
                 continue;
             }
-            
+
             processInteractiveCommand(input);
         }
     }
-    
+
     private void processInteractiveCommand(String input) {
         String[] parts = input.split("\\s+");
         String command = parts[0].toLowerCase();
-        
+
         switch (command) {
             case "build":
                 System.out.println("Building project...");
@@ -150,19 +172,18 @@ public class ForgeCLI {
                 System.out.println("Unknown command. Type 'help' for available commands.");
         }
     }
-    
-    private void executeBuild(ForgeEngine engine, String[] args) {
+
+    private int executeBuild(ForgeEngine engine, String[] args) {
         if (args.length > 1) {
             String buildType = args[1].toLowerCase();
             switch (buildType) {
                 case "incremental":
                     System.out.println("Running incremental build...");
                     engine.buildIncremental();
-                    break;
+                    return 0;
                 case "full":
                     System.out.println("Running full build...");
-                    reportBuild(engine.build());
-                    break;
+                    return reportBuild(engine.build());
                 case "graph":
                     // Experimental: task-graph + content-cache pipeline
                     // (AGENT.md decisions 1 and 3). Opt-in until it becomes default.
@@ -173,66 +194,75 @@ public class ForgeCLI {
                         if (report.failed()) {
                             System.err.println("Task-graph build FAILED. See the per-task"
                                 + " outcomes above for which task broke and why.");
-                        } else {
-                            System.out.println("Task-graph build OK: " + report.cacheHits()
-                                + " from cache, " + report.executed() + " executed.");
+                            return 1;
                         }
+                        System.out.println("Task-graph build OK: " + report.cacheHits()
+                            + " from cache, " + report.executed() + " executed.");
+                        return 0;
                     } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
                         // Structured errors render their own what/why/how block
                         // (AGENT.md section 10bis); do not flatten them here.
-                        System.err.println(fe.formatUserFacing());
+                        throw fe;
                     } catch (Exception e) {
-                        System.err.println("Task-graph build error: " + e.getMessage());
-                        System.err.println("Fix: check forge.toml and run again with --debug"
-                            + " for details.");
+                        throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                            io.github.yasmramos.forge.cli.error.ErrorCode.INT_0001,
+                            e.getMessage(), e);
                     }
-                    break;
                 default:
-                    logger.warn("Unknown build type: " + buildType);
-                    showHelp();
+                    throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                        io.github.yasmramos.forge.cli.error.ErrorCode.CFG_0002,
+                        "unknown build type '" + buildType + "'");
             }
         } else {
             System.out.println("Running build...");
-            reportBuild(engine.build());
+            return reportBuild(engine.build());
         }
     }
 
     /**
-     * Prints the outcome of a default/full build. The failure detail (including
-     * structured lockfile errors) is logged by the engine; here we surface a
-     * non-zero-worthy signal and a pointer to the fix instead of staying silent.
+     * Prints the outcome of a default/full build and returns the exit code.
+     * The failure detail (including structured lockfile errors) is logged by
+     * the engine; here we surface a non-zero-worthy signal and a pointer to
+     * the fix instead of staying silent.
      */
-    private void reportBuild(io.github.yasmramos.forge.core.ForgeEngine.BuildResult result) {
+    private int reportBuild(io.github.yasmramos.forge.core.ForgeEngine.BuildResult result) {
         if (result != null && !result.isSuccess()) {
+            if (result.getError() != null) {
+                // Render the structured failure the same way as any other error,
+                // honouring --format=json/--debug (AGENT.md 10bis).
+                return errors.render(result.getError());
+            }
             System.err.println("Build FAILED. See the messages above for the cause"
                 + " (run with --debug for a stack trace).");
+            return 1;
         }
+        return 0;
     }
-    
+
     private void initializeProject() {
         System.out.println("Initializing new Forge project...");
-        
+
         System.out.print("Project name: ");
         String name = scanner.nextLine().trim();
-        
+
         System.out.print("Version (default: 1.0.0): ");
         String version = scanner.nextLine().trim();
         if (version.isEmpty()) {
             version = "1.0.0";
         }
-        
+
         System.out.print("Source directory (default: src/main/java): ");
         String sourceDir = scanner.nextLine().trim();
         if (sourceDir.isEmpty()) {
             sourceDir = "src/main/java";
         }
-        
+
         System.out.print("Output directory (default: target/classes): ");
         String outputDir = scanner.nextLine().trim();
         if (outputDir.isEmpty()) {
             outputDir = "target/classes";
         }
-        
+
         // Create forge.toml configuration (TOML format, parsed with NightConfig)
         String config = String.format(
             "# Forge project configuration.\n" +
@@ -288,7 +318,9 @@ public class ForgeCLI {
             System.out.println("Create your source files in: " + sourceDir);
 
         } catch (Exception e) {
-            System.err.println("Failed to initialize project: " + e.getMessage());
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.CFG_0001,
+                "could not write forge.toml: " + e.getMessage(), e);
         }
     }
 
@@ -299,7 +331,7 @@ public class ForgeCLI {
         System.out.println("  OS: " + System.getProperty("os.name"));
         System.out.println("  Available Processors: " + Runtime.getRuntime().availableProcessors());
     }
-    
+
     private void showHelp() {
         System.out.println("Forge Build System Help");
         System.out.println();
@@ -319,6 +351,12 @@ public class ForgeCLI {
         System.out.println("  forge build graph         - Run experimental task-graph build (opt-in cache/parallelism)");
         System.out.println("  forge build full          - Run full build");
         System.out.println("  forge clean               - Clean project");
+        System.out.println();
+        System.out.println("Global flags (AGENT.md section 10bis):");
+        System.out.println("  --format=json             - Emit structured errors as JSON (for CI)");
+        System.out.println("  --debug                   - Append Java stack traces to errors");
+        System.out.println();
+        System.out.println("Exit codes: 0 success, 1 user/config error, 2 environment error, 3 internal bug");
         System.out.println();
     }
 }

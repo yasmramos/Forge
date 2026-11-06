@@ -1,5 +1,7 @@
 package io.github.yasmramos.forge.cli.command;
 
+import io.github.yasmramos.forge.cli.error.ErrorCode;
+import io.github.yasmramos.forge.cli.error.ForgeException;
 import io.github.yasmramos.forge.core.lockfile.Lockfile;
 import io.github.yasmramos.forge.core.resolver.AetherDependencyResolver;
 import io.github.yasmramos.forge.core.resolver.ConflictPolicy;
@@ -31,15 +33,17 @@ public final class LockCommand {
      * Runs {@code forge lock refresh} from the current directory.
      *
      * @param stdout stream for human-readable progress output
-     * @return 0 on success, non-zero on failure with an actionable message
+     * @return 0 on success
+     * @throws ForgeException with a registered catalog code on any failure
+     *         (AGENT.md section 10bis), so the CLI renders what/why/how
+     *         uniformly and honours {@code --format=json}.
      */
     public int refresh(PrintStream stdout) {
         File projectRoot = new File(".");
         File configFile = new File(projectRoot, ConfigReader.CONFIG_FILE_NAME);
         if (!configFile.isFile()) {
-            System.err.println("error: no forge.toml found in " + projectRoot.getAbsolutePath());
-            System.err.println("fix: run this command from a Forge project root, or use `forge init`.");
-            return 1;
+            throw new ForgeException(ErrorCode.CFG_0001,
+                "no forge.toml found in " + projectRoot.getAbsolutePath());
         }
         try {
             ProjectConfig config = ConfigReader.loadConfig(configFile);
@@ -59,26 +63,15 @@ public final class LockCommand {
             stdout.println("Commit forge.lock so every machine and CI job builds the same graph.");
             return 0;
         } catch (ConflictPolicy.ConflictException e) {
-            // Section 2bis: show who brings what BEFORE suggesting a fix.
-            System.err.println("error FORGE-RSL-0001: unaligned version conflicts detected.");
-            for (ConflictPolicy.Conflict c : e.getConflicts()) {
-                System.err.println("  - " + c);
-            }
-            System.err.println("fix: add an exact version under [resolutions] in forge.toml");
-            System.err.println("     (e.g. \"org.slf4j:slf4j-api\" = \"2.0.7\"), align via a BOM,");
-            System.err.println("     then run `forge lock refresh` again.");
-            return 1;
+            // Section 2bis: the conflict exception already carries a structured
+            // FORGE-DEP-0001 error listing who brings what before the fix.
+            throw e.toForgeException();
         } catch (AetherDependencyResolver.ResolutionFailedException e) {
-            System.err.println("error: dependency resolution failed.");
-            System.err.println("cause: " + e.getMessage());
-            System.err.println("fix: check coordinates/versions in forge.toml and that the");
-            System.err.println("     repository URLs in [repositories] are reachable.");
-            return 1;
+            throw new ForgeException(ErrorCode.DEP_0002, e.getMessage(), e);
+        } catch (ForgeException e) {
+            throw e;
         } catch (Exception e) {
-            System.err.println("error: could not refresh the lockfile.");
-            System.err.println("cause: " + e.getMessage());
-            System.err.println("fix: re-run with --debug for the full stack trace.");
-            return 1;
+            throw new ForgeException(ErrorCode.INT_0001, e.getMessage(), e);
         }
     }
 

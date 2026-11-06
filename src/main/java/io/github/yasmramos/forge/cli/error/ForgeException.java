@@ -48,12 +48,12 @@ public class ForgeException extends RuntimeException {
     }
 
     public ForgeException(ForgeError error) {
-        super(error.getWhat() + " [code=" + error.getCode() + "]", null, true, false);
+        super(error.getWhat() + " [code=" + error.getCode() + "]", null, true, true);
         this.error = error;
     }
 
     public ForgeException(ForgeError error, Throwable cause) {
-        super(error.getWhat() + " [code=" + error.getCode() + "]", cause, true, false);
+        super(error.getWhat() + " [code=" + error.getCode() + "]", cause, true, true);
         this.error = error;
     }
 
@@ -117,10 +117,25 @@ public class ForgeException extends RuntimeException {
 
     /** Human rendering for TTYs; stderr-bound (AGENT.md decisions 10bis, 11). */
     public String formatUserFacing() {
+        return formatUserFacing(false);
+    }
+
+    /**
+     * Human rendering; when {@code debug} is set the original Java stack trace
+     * is appended after the structured block (AGENT.md section 10bis: full
+     * traces only under {@code --debug}).
+     */
+    public String formatUserFacing(boolean debug) {
         StringBuilder sb = new StringBuilder(error.format());
         String chain = formatTaskChain();
         if (!chain.isEmpty()) {
             sb.append('\n').append(chain);
+        }
+        if (debug) {
+            Throwable cause = getCause() != null ? getCause() : this;
+            java.io.StringWriter sw = new java.io.StringWriter();
+            cause.printStackTrace(new java.io.PrintWriter(sw));
+            sb.append('\n').append(sw.toString().stripTrailing());
         }
         return sb.toString();
     }

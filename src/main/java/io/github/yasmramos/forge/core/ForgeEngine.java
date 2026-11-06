@@ -134,9 +134,9 @@ public class ForgeEngine {
 
         } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
             // Structured errors already answer what/why/how (AGENT.md 10bis):
-            // render the block instead of a raw stack trace.
-            logger.error(fe.formatUserFacing());
-            return new BuildResult(false, null, null);
+            // carry them out so the CLI renders with --format=json/--debug
+            // rather than flattening to a bare stack trace here.
+            return new BuildResult(false, null, null, fe);
         } catch (Exception e) {
             logger.error("Build failed", e);
             return new BuildResult(false, null, null);
@@ -638,16 +638,31 @@ public class ForgeEngine {
         private final boolean success;
         private final PackageResult packageResult;
         private final TestResult testResult;
-        
+        private final io.github.yasmramos.forge.cli.error.ForgeException error;
+
         public BuildResult(boolean success, PackageResult packageResult, TestResult testResult) {
+            this(success, packageResult, testResult, null);
+        }
+
+        public BuildResult(boolean success, PackageResult packageResult, TestResult testResult,
+                           io.github.yasmramos.forge.cli.error.ForgeException error) {
             this.success = success;
             this.packageResult = packageResult;
             this.testResult = testResult;
+            this.error = error;
         }
-        
+
         public boolean isSuccess() { return success; }
         public PackageResult getPackageResult() { return packageResult; }
         public TestResult getTestResult() { return testResult; }
+
+        /**
+         * Structured failure when the build aborted on a ForgeError; null when
+         * the build failed for a non-structured reason or succeeded. Lets the
+         * CLI render it with the user's {@code --format=json}/{@code --debug}
+         * flags (AGENT.md 10bis) instead of a bare "build failed" line.
+         */
+        public io.github.yasmramos.forge.cli.error.ForgeException getError() { return error; }
     }
 
     
