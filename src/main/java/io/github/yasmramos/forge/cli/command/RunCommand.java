@@ -118,15 +118,12 @@ public final class RunCommand {
         }
         List<String> roots = new ArrayList<>();
         for (java.util.Map.Entry<String, Object> entry : declared.entrySet()) {
-            String version = null;
-            if (entry.getValue() instanceof String) {
-                version = (String) entry.getValue();
-            } else if (entry.getValue() instanceof java.util.Map) {
-                Object v = ((java.util.Map<?, ?>) entry.getValue()).get("version");
-                if (v != null) {
-                    version = String.valueOf(v);
-                }
+            // The run classpath is compile + provided + runtime; test is excluded.
+            if (!io.github.yasmramos.forge.core.DependencyScopes.RUNTIME
+                    .contains(io.github.yasmramos.forge.core.DependencyScopes.scopeOf(entry.getValue()))) {
+                continue;
             }
+            String version = io.github.yasmramos.forge.core.DependencyScopes.versionOf(entry.getValue());
             if (version != null && !version.trim().isEmpty()) {
                 roots.add(entry.getKey() + ":" + version);
             }

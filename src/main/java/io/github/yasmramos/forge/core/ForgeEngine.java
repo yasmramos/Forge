@@ -79,10 +79,11 @@ public class ForgeEngine {
             DependencyResolution dependencyResult = resolveWithAether();
             if (dependencyResult == null) {
                 // Legacy path kept as a safety net when no repositories are
-                // declared or Aether cannot run in this environment.
+                // declared or Aether cannot run in this environment. Filter by
+                // scope so test/runtime deps never leak onto the compile classpath.
                 logger.info("Resolving dependencies (legacy)...");
                 dependencyResult = dependencyResolver.resolve(
-                    config.getDependencies(), analysis
+                    dependenciesForScopes(DependencyScopes.COMPILE), analysis
                 );
             } else {
                 logger.info("Resolved " + dependencyResult.getSuccessCount()
@@ -259,7 +260,7 @@ public class ForgeEngine {
      * the dependency.
      */
     private DependencyResolution resolveWithAether() throws Exception {
-        return resolveWithAether(null);
+        return resolveWithAether(DependencyScopes.COMPILE, null);
     }
 
     /**
@@ -268,9 +269,40 @@ public class ForgeEngine {
      * declared in forge.toml. Coordinates already declared always win.
      */
     private DependencyResolution resolveWithAether(List<String> extraRoots) throws Exception {
+        return resolveWithAether(DependencyScopes.TEST, extraRoots);
+    }
+
+    /**
+     * Resolves the declared dependencies whose scope is in {@code allowedScopes}
+     * (plus any {@code extraRoots}) through Maven Resolver (Aether).
+     *
+     * <p>Scope filtering matters: the compile classpath must not see test or
+     * runtime dependencies. Only {@code compile} and {@code provided} belong on
+     * it; {@code runtime} is added at run time ({@code forge run}) and
+     * {@code test} only for test compilation/execution. Without the filter,
+     * declaring JUnit under {@code [dependencies.test]} leaked it onto the main
+     * compile classpath (AGENT.md section 2).</p>
+     *
+     * @param allowedScopes scopes to include as roots
+     * @param extraRoots    ad-hoc {@code group:artifact:version} roots not
+     *                      declared in forge.toml (always included)
+     */
+    private DependencyResolution resolveWithAether(java.util.Set<String> allowedScopes,
+                                                   List<String> extraRoots) throws Exception {
         java.util.Map<String, Object> declared = config.getDependencies();
-        if ((declared == null || declared.isEmpty())
-                && (extraRoots == null || extraRoots.isEmpty())) {
+        java.util.List<String> roots = new java.util.ArrayList<>();
+        if (declared != null) {
+            for (java.util.Map.Entry<String, Object> entry : declared.entrySet()) {
+                if (!allowedScopes.contains(DependencyScopes.scopeOf(entry.getValue()))) {
+                    continue; // scope not on this classpath
+                }
+                String version = DependencyScopes.versionOf(entry.getValue());
+                if (version != null && !version.trim().isEmpty()) {
+                    roots.add(entry.getKey() + ":" + version);
+                }
+            }
+        }
+        if (roots.isEmpty() && (extraRoots == null || extraRoots.isEmpty())) {
             return new DependencyResolution(); // Nothing to resolve: valid empty graph.
         }
         java.util.Map<String, String> repositories = config.getRepositories();
@@ -278,21 +310,6 @@ public class ForgeEngine {
             return null; // No [repositories]: caller falls back to legacy resolution.
         }
 
-        java.util.List<String> roots = new java.util.ArrayList<>();
-        for (java.util.Map.Entry<String, Object> entry : declared.entrySet()) {
-            String version = null;
-            if (entry.getValue() instanceof String) {
-                version = (String) entry.getValue();
-            } else if (entry.getValue() instanceof java.util.Map) {
-                Object v = ((java.util.Map<?, ?>) entry.getValue()).get("version");
-                if (v != null) {
-                    version = String.valueOf(v);
-                }
-            }
-            if (version != null && !version.trim().isEmpty()) {
-                roots.add(entry.getKey() + ":" + version);
-            }
-        }
         // Ad-hoc roots supplied by the caller (deduplicated: declared wins).
         if (extraRoots != null) {
             for (String extra : extraRoots) {
@@ -329,6 +346,11 @@ public class ForgeEngine {
                 jarPath, true));
         }
         return resolution;
+    }
+
+    /** Declared dependencies filtered to the given scopes (legacy resolver path). */
+    private java.util.Map<String, Object> dependenciesForScopes(java.util.Set<String> allowedScopes) {
+        return DependencyScopes.filter(config.getDependencies(), allowedScopes);
     }
     
     /**

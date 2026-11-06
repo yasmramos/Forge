@@ -43,7 +43,10 @@ public class StandardTaskFactory {
         TaskType type = new TaskTypeRegistry().get(TaskType.COMPILE);
         ForgeTask task = new ForgeTask(COMPILE, type)
             .input(new TaskInput.FilesInput("main-sources", sourceRoots()))
-            .input(new TaskInput.ValueInput("dependencies", String.valueOf(config.getDependencies())))
+            .input(new TaskInput.ValueInput("dependencies", String.valueOf(
+                io.github.yasmramos.forge.core.DependencyScopes.filter(
+                    config.getDependencies(),
+                    io.github.yasmramos.forge.core.DependencyScopes.COMPILE))))
             .input(new TaskInput.ValueInput("toolchain", String.valueOf(config.getSourceCompatibility())))
             .output(new TaskOutput("classes", Collections.singletonList(relative(classesDir))));
 
@@ -51,7 +54,12 @@ public class StandardTaskFactory {
             BuildAnalyzer analyzer = new BuildAnalyzer();
             ProjectAnalysis analysis = analyzer.analyzeProject(config);
             DependencyResolver resolver = new DependencyResolver();
-            DependencyResolution resolution = resolver.resolve(config.getDependencies(), analysis);
+            // Only compile-scope deps belong on the main compile classpath.
+            DependencyResolution resolution = resolver.resolve(
+                io.github.yasmramos.forge.core.DependencyScopes.filter(
+                    config.getDependencies(),
+                    io.github.yasmramos.forge.core.DependencyScopes.COMPILE),
+                analysis);
 
             Compiler compiler = new Compiler();
             compiler.setClasspath(System.getProperty("java.class.path"));
