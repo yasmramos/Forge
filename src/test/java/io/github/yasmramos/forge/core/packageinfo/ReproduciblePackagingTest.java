@@ -60,11 +60,12 @@ class ReproduciblePackagingTest {
         JarWriter.writeDirectory(classes, jar, epoch);
 
         try (ZipFile zip = new ZipFile(jar.toFile())) {
-            var names = zip.stream().map(ZipEntry::getName).toList();
+            java.util.List<String> names = zip.stream().map(ZipEntry::getName)
+                .collect(java.util.stream.Collectors.toList());
             assertEquals("META-INF/MANIFEST.MF", names.get(0), "manifest is written first");
             assertEquals("a.txt", names.get(1));
             assertEquals("z.txt", names.get(2));
-            for (var e : zip.stream().toList()) {
+            for (ZipEntry e : zip.stream().collect(java.util.stream.Collectors.toList())) {
                 assertEquals(epoch * 1000L, e.getTime(),
                     "every entry carries the fixed build timestamp");
             }
