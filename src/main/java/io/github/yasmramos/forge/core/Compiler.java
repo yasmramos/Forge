@@ -20,8 +20,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * High-Performance Compiler for Forge Build System.
@@ -37,6 +41,9 @@ import java.util.Map;
  */
 public class Compiler {
 
+    /** First {@code package a.b.c;} declaration in a source file, if any. */
+    private static final Pattern PACKAGE_PATTERN =
+        Pattern.compile("^\\s*package\\s+([\\w.]+)\\s*;");
     private final Logger logger = LoggerFactory.getLogger(Compiler.class);
     /** In-process Java compiler (JSR-199); null when only an external javac exists. */
     private final JavaCompiler toolCompiler;
@@ -112,7 +119,18 @@ public class Compiler {
             return new CompilationResult(true, 0, 0);
         }
 
-        // Filter out files that are already cached as valid
+        // A source file reachable from more than one configured source root (or
+        // the same root declared twice) must be compiled once: duplicates
+        // inflate the file count and make javac report the same file twice.
+        sourceFiles = new ArrayList<>(new LinkedHashSet<>(sourceFiles));
+
+        // A file is a cache hit only if its content is cached AND its compiled
+        // output is still on disk. Validity is content-based (AGENT.md section
+        // 3); the presence check stops a warm cache from emitting an incomplete
+        // build when outputs were lost (a clean, a partial remote-cache restore,
+        // or a crash mid-write keeps ~/.forge/cache but loses class files). It
+        // is per file, so a single lost class is regenerated even when the other
+        // sources are unchanged.
         List<Path> staleFiles = new ArrayList<>();
         int cachedCount = 0;
         Map<String, Object> depMap = dependencyResolution != null && !dependencyResolution.getDependencies().isEmpty()
@@ -120,24 +138,13 @@ public class Compiler {
 
         for (Path sourceFile : sourceFiles) {
             String cacheKey = ForgeCache.generateKey(sourceFile.toFile(), depMap);
-            if (cache != null && cache.isValid(cacheKey, sourceFile.toFile())) {
+            boolean cached = cache != null && cache.isValid(cacheKey, sourceFile.toFile());
+            if (cached && compiledClassExists(sourceFile, Paths.get(outputDir))) {
                 logger.debug("Using cached compilation for: " + sourceFile);
                 cachedCount++;
             } else {
                 staleFiles.add(sourceFile);
             }
-        }
-
-        if (staleFiles.isEmpty() && !hasCompiledClasses(outputDir)) {
-            // A warm cache is only trustworthy if the classes it claims to have
-            // produced are actually on disk. After a clean (or a fresh
-            // checkout) the output directory is gone while ~/.forge/cache
-            // survives, so skipping here would emit a build with no classes
-            // and break packaging and `forge run`.
-            logger.info("Compilation cache is warm but " + outputDir
-                + " has no classes; recompiling " + sourceFiles.size() + " file(s)");
-            staleFiles.addAll(sourceFiles);
-            cachedCount = 0;
         }
 
         if (staleFiles.isEmpty()) {
@@ -180,20 +187,38 @@ public class Compiler {
     }
 
     /**
-     * True when {@code outputDir} holds at least one compiled class file.
-     * Used to distrust a warm cache whose outputs were removed (a clean build
-     * keeps {@code ~/.forge/cache} but deletes the classes directory).
+     * True when a source file's compiled form is on disk. The top-level class
+     * name matches the source file name and lives in its package directory
+     * (JLS 7.6); nested classes share the {@code Outer$Inner.class} prefix, so
+     * a match on {@code Package/Name.class} is enough to tell whether the file
+     * was compiled.
      */
-    private static boolean hasCompiledClasses(String outputDir) {
-        File dir = new File(outputDir);
-        if (!dir.isDirectory()) {
-            return false;
+    private static boolean compiledClassExists(Path sourceFile, Path outputDir) {
+        String fileName = sourceFile.getFileName().toString();
+        String baseName = fileName.endsWith(".java")
+            ? fileName.substring(0, fileName.length() - ".java".length())
+            : fileName;
+        String packagePath = readPackagePath(sourceFile);
+        Path classFile = packagePath.isEmpty()
+            ? outputDir.resolve(baseName + ".class")
+            : outputDir.resolve(packagePath).resolve(baseName + ".class");
+        return Files.isRegularFile(classFile);
+    }
+
+    /** Directory form of the {@code package} declaration, or "" for the default package. */
+    private static String readPackagePath(Path sourceFile) {
+        try {
+            for (String line : Files.readAllLines(sourceFile, StandardCharsets.UTF_8)) {
+                Matcher m = PACKAGE_PATTERN.matcher(line);
+                if (m.find()) {
+                    return m.group(1).trim().replace('.', File.separatorChar);
+                }
+            }
+        } catch (java.io.IOException | PatternSyntaxException e) {
+            // Unreadable source: fall back to the default package; the compile
+            // step will surface the real error.
         }
-        try (java.util.stream.Stream<Path> stream = Files.walk(dir.toPath())) {
-            return stream.anyMatch(p -> p.toString().endsWith(".class"));
-        } catch (java.io.IOException e) {
-            return false;
-        }
+        return "";
     }
 
     /**
@@ -209,7 +234,7 @@ public class Compiler {
             fileManager.setLocation(StandardLocation.CLASS_OUTPUT,
                     Arrays.asList(new File(outputDir)));
 
-            String classpath = buildClasspath(dependencyResolution);
+            String classpath = buildClasspath(dependencyResolution, outputDir);
             if (!classpath.isEmpty()) {
                 List<File> cpFiles = new ArrayList<>();
                 for (String entry : classpath.split(File.pathSeparator)) {
@@ -263,7 +288,7 @@ public class Compiler {
             command.add(outputDir);
 
             // Add classpath
-            String classpath = buildClasspath(dependencyResolution);
+            String classpath = buildClasspath(dependencyResolution, outputDir);
             if (!classpath.isEmpty()) {
                 command.add("-cp");
                 command.add(classpath);
@@ -304,11 +329,22 @@ public class Compiler {
         return files;
     }
     
-    private String buildClasspath(DependencyResolution dependencyResolution) {
+    private String buildClasspath(DependencyResolution dependencyResolution, String outputDir) {
         StringBuilder classpathBuilder = new StringBuilder();
 
-        // Start with externally provided classpath entries (resolved by the engine)
+        // The module's own output directory comes first. Incremental builds
+        // recompile only stale sources, and those routinely reference classes
+        // whose sources are unchanged and therefore absent from this batch;
+        // without outputDir on the classpath javac cannot resolve them.
+        if (outputDir != null && !outputDir.isEmpty()) {
+            classpathBuilder.append(outputDir);
+        }
+
+        // Then externally provided classpath entries (resolved by the engine)
         if (!classpath.isEmpty()) {
+            if (classpathBuilder.length() > 0) {
+                classpathBuilder.append(File.pathSeparator);
+            }
             classpathBuilder.append(classpath);
         }
 

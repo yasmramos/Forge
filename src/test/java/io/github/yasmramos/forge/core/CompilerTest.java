@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -132,6 +133,113 @@ class CompilerTest {
         assertTrue(second.isSuccess());
         assertEquals(0, second.getCachedFiles(),
             "changed bytes must invalidate the cache even when the timestamp is unchanged");
+    }
+
+    @Test
+    void incrementalRecompileResolvesUnchangedSiblingClasses(@TempDir Path tmp) throws Exception {
+        // Regression: only stale sources are handed to javac, so a stale file
+        // that references an unchanged sibling needs that sibling's already
+        // compiled class on the classpath. Without the output directory on the
+        // classpath this failed with "cannot find symbol" on the very first
+        // incremental rebuild - the common edit-one-file workflow.
+        Path src = Files.createDirectories(tmp.resolve("src"));
+        Path out = tmp.resolve("out");
+        Path a = src.resolve("A.java");
+        Path b = src.resolve("B.java");
+        Files.write(a, "public class A { public int v() { return 1; } }".getBytes());
+        Files.write(b, "public class B { public int v() { return new A().v() + 1; } }".getBytes());
+
+        ForgeCache cache = new ForgeCache(tmp.resolve("cache").toString());
+        Compiler compiler = new Compiler();
+        assertTrue(compiler.compileBatch(Arrays.asList(a, b), null, cache, out.toString()).isSuccess());
+
+        Files.write(b, "public class B { public int v() { return new A().v() + 2; } }".getBytes());
+
+        CompilationResult second = compiler.compileBatch(Arrays.asList(a, b), null, cache, out.toString());
+        assertTrue(second.isSuccess(),
+            "editing B must not fail resolving the unchanged sibling A");
+        assertEquals(1, second.getCachedFiles(), "A is unchanged and must stay cached");
+    }
+
+    @Test
+    void warmCacheWithSameContentNewTimestampStillHits(@TempDir Path tmp) throws Exception {
+        // A re-checkout or `rsync -a` keeps the bytes but moves the mtime. The
+        // cache key hashes content, so this must stay a hit: a timestamp check
+        // in isValid would make it a spurious miss (AGENT.md section 3).
+        Path src = Files.createDirectories(tmp.resolve("src"));
+        Path out = tmp.resolve("out");
+        Path f = src.resolve("F.java");
+        Files.write(f, "public class F { public int v() { return 1; } }".getBytes());
+
+        ForgeCache cache = new ForgeCache(tmp.resolve("cache").toString());
+        Compiler compiler = new Compiler();
+        assertTrue(compiler.compileBatch(
+            Collections.singletonList(f), null, cache, out.toString()).isSuccess());
+
+        Files.setLastModifiedTime(f, java.nio.file.attribute.FileTime.fromMillis(
+            System.currentTimeMillis() + 60_000));
+
+        CompilationResult second = compiler.compileBatch(
+            Collections.singletonList(f), null, cache, out.toString());
+        assertTrue(second.isSuccess());
+        assertEquals(1, second.getCachedFiles(),
+            "same bytes with a new mtime must still be a content cache hit");
+    }
+
+    @Test
+    void warmCacheMissingOneClassRecompiles(@TempDir Path tmp) throws Exception {
+        // Regression: the warm-cache guard accepted the cache as long as *any*
+        // .class existed, so a partial output (crash, partial remote-cache
+        // restore) produced an incomplete build that still reported success.
+        Path src = Files.createDirectories(tmp.resolve("src"));
+        Path out = tmp.resolve("out");
+        Files.write(src.resolve("A.java"), "public class A { public int v() { return 1; } }".getBytes());
+        Files.write(src.resolve("B.java"), "public class B { public int v() { return 2; } }".getBytes());
+
+        ForgeCache cache = new ForgeCache(tmp.resolve("cache").toString());
+        Compiler compiler = new Compiler();
+        List<Path> sources = Arrays.asList(src.resolve("A.java"), src.resolve("B.java"));
+        assertTrue(compiler.compileBatch(sources, null, cache, out.toString()).isSuccess());
+        assertTrue(Files.exists(out.resolve("B.class")));
+
+        // Only one class disappears; A.class remains, so a warm-cache check
+        // that only looks for *any* .class would wrongly trust the cache.
+        Files.delete(out.resolve("B.class"));
+
+        CompilationResult second = compiler.compileBatch(sources, null, cache, out.toString());
+        assertTrue(second.isSuccess());
+        assertEquals(1, second.getCachedFiles(),
+            "the unchanged file stays cached; only the lost class is recompiled");
+        assertTrue(Files.exists(out.resolve("B.class")),
+            "the missing class must be regenerated");
+    }
+
+    @Test
+    void changedFileWithPresentOutputIsAHitButLostOutputIsNot(@TempDir Path tmp) throws Exception {
+        // Mixed case: A changed on disk (content key misses) and B's class file
+        // was deleted (output misses). Both must recompile; a file whose output
+        // vanished is stale even when its bytes are unchanged.
+        Path src = Files.createDirectories(tmp.resolve("src"));
+        Path out = tmp.resolve("out");
+        Path a = src.resolve("A.java");
+        Path b = src.resolve("B.java");
+        Files.write(a, "public class A { public int v() { return 1; } }".getBytes());
+        Files.write(b, "public class B { public int v() { return 2; } }".getBytes());
+
+        ForgeCache cache = new ForgeCache(tmp.resolve("cache").toString());
+        Compiler compiler = new Compiler();
+        assertTrue(compiler.compileBatch(Arrays.asList(a, b), null, cache, out.toString()).isSuccess());
+
+        // Change A (content miss), delete B.class (output miss).
+        Files.write(a, "public class A { public int v() { return 10; } }".getBytes());
+        Files.delete(out.resolve("B.class"));
+
+        CompilationResult second = compiler.compileBatch(Arrays.asList(a, b), null, cache, out.toString());
+        assertTrue(second.isSuccess());
+        assertEquals(0, second.getCachedFiles(),
+            "both files must be recompiled: one changed, the other lost its output");
+        assertTrue(Files.exists(out.resolve("A.class")));
+        assertTrue(Files.exists(out.resolve("B.class")), "the deleted class must come back");
     }
 
     @Test
