@@ -327,9 +327,13 @@ The core module contains the essential build engine components:
 
 The cache module provides intelligent build caching:
 
-- Reduces rebuild times by caching compilation results.
-- Automatically invalidates cache entries when dependencies change.
-- Supports configurable cache expiration policies.
+- Reduces rebuild times by caching compilation results per source file.
+- Invalidates entries by **content**, never by time (AGENT.md section 3): the
+  key is a hash of the source bytes plus the dependency view, so a re-checkout
+  or an `rsync -a` (same bytes, new mtime) still hits, while changed bytes miss.
+- Distrusts a warm cache whose outputs are no longer on disk: if any expected
+  class file is missing, the affected sources are recompiled instead of
+  emitting an incomplete build.
 
 ### CLI Module
 

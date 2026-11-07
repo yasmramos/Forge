@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -71,7 +72,11 @@ public class BuildAnalyzer {
     }
     
     private List<Path> getSourceDirectories(ProjectConfig config) {
-        List<Path> directories = new ArrayList<>();
+        // A LinkedHashSet preserves declaration order while collapsing the same
+        // directory declared through both sourceDirectory and sourcePaths (the
+        // common case, since the parser fills both); scanning it twice would
+        // add every source file twice.
+        Set<Path> directories = new LinkedHashSet<>();
         
         // Use configured source directory
         if (config.getSourceDirectory() != null) {
@@ -91,7 +96,7 @@ public class BuildAnalyzer {
             directories.add(Paths.get("src/test/java"));
         }
         
-        return directories;
+        return new ArrayList<>(directories);
     }
     
     private List<Path> findJavaSourceFiles(Path directory) throws IOException {

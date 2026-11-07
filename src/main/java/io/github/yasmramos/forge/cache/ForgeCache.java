@@ -62,14 +62,16 @@ public class ForgeCache {
         return entry;
     }
     
+    /**
+     * Validity is decided by <em>content</em>, never by timestamps (AGENT.md
+     * section 3). The key already encodes a SHA-256 of the source bytes, so a
+     * present entry means "these exact bytes compiled"; comparing
+     * {@code lastModified} here would only reintroduce clock dependence and
+     * turn a re-checkout or an {@code rsync -a} (same bytes, new mtime) into a
+     * spurious cache miss.
+     */
     public boolean isValid(String key, File sourceFile) {
-        CacheEntry entry = get(key);
-        if (entry == null) {
-            return false;
-        }
-        
-        long currentLastModified = sourceFile.lastModified();
-        return currentLastModified == entry.getLastModified();
+        return get(key) != null;
     }
     
     public void clear() {

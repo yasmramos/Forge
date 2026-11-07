@@ -84,5 +84,24 @@ jobs:
           exit 1
         fi
         echo "incremental build correctly failed on broken source"
+    - name: Fire-test partial output regenerates missing classes
+      # Regression guard: the warm-cache check used to accept the cache as long
+      # as *any* .class existed, so deleting one class from a warm build left
+      # an incomplete output that still reported success.
+      run: |
+        FORGE="$PWD/bin/forge"
+        work="$(mktemp -d)"
+        mkdir -p "$work/src/main/java/p"
+        printf 'forge = "0.1"\n[project]\nname = "pc-fire"\nversion = "1.0.0"\n[toolchain]\nlanguage = "11"\n[source.main]\njava = ["src/main/java"]\n[build]\nincremental = true\ncache_enabled = true\n' > "$work/forge.toml"
+        printf 'package p;\npublic class A { public int v() { return 1; } }\n' > "$work/src/main/java/p/A.java"
+        printf 'package p;\npublic class B { public int v() { return new A().v() + 1; } }\n' > "$work/src/main/java/p/B.java"
+        ( cd "$work" && "$FORGE" build >/dev/null 2>&1 )
+        rm "$work/target/classes/p/B.class"
+        ( cd "$work" && "$FORGE" build >/dev/null 2>&1 )
+        if [ ! -f "$work/target/classes/p/B.class" ]; then
+          echo "::error::build succeeded but the missing class was not regenerated"
+          exit 1
+        fi
+        echo "missing class correctly regenerated from the warm cache"
 
 
