@@ -19,10 +19,11 @@ version = "1.0.0"
 
 # Modules of a multi-module project.
 # Module names are quoted because they contain a literal dot.
-# Each module has its own forge.toml in its directory.
-# Multi-module builds are not implemented yet (AGENT.md section 5), so this
-# repository is single-module: no [project.modules] is declared. See
-# examples/multi-module for the intended shape.
+# Each module has its own forge.toml in its directory (AGENT.md section 5).
+# Multi-module builds are implemented: `forge build [module]` drives the module
+# graph, and `forge modules` lists it. This repository is single-module, so no
+# [project.modules] is declared here. See examples/multi-module for a working
+# project.
 # [project.modules]
 # "awesome.core"    = "${project.version}"
 # "awesome.logging" = "${project.version}"

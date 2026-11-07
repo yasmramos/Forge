@@ -128,6 +128,12 @@ public final class AetherDependencyResolver {
     private final RepositorySystem repositorySystem;
     private final File localRepositoryDir;
     private final List<RemoteRepository> remoteRepositories;
+    /**
+     * Optional workspace reader exposing freshly built sibling modules so
+     * inter-module coordinates resolve before the shared cache (AGENT.md
+     * section 5). Null for single-module projects.
+     */
+    private final org.eclipse.aether.repository.WorkspaceReader workspaceReader;
 
     /**
      * Creates a resolver backed by the given local cache directory and remote repos.
@@ -137,9 +143,22 @@ public final class AetherDependencyResolver {
      * @param repositories       name -> base URL, from [repositories] in forge.toml
      */
     public AetherDependencyResolver(File localRepositoryDir, Map<String, String> repositories) {
+        this(localRepositoryDir, repositories, null);
+    }
+
+    /**
+     * Creates a resolver that also consults a multi-module workspace.
+     *
+     * @param workspaceReader consulted for module POMs/jars before the local
+     *                        cache, so a rebuilt module never resolves stale
+     *                        (AGENT.md section 5); may be null
+     */
+    public AetherDependencyResolver(File localRepositoryDir, Map<String, String> repositories,
+                                    org.eclipse.aether.repository.WorkspaceReader workspaceReader) {
         this.localRepositoryDir = localRepositoryDir;
         this.repositorySystem = newRepositorySystem();
         this.remoteRepositories = buildRemotes(repositories);
+        this.workspaceReader = workspaceReader;
     }
 
     private static RepositorySystem newRepositorySystem() {
@@ -179,6 +198,11 @@ public final class AetherDependencyResolver {
         // graph, so Forge's fail-by-default policy could never see a conflict.
         // Losers stay in the tree (marked) and are filtered off the classpath.
         session.setConfigProperty(ConflictResolver.CONFIG_PROP_VERBOSE, "true");
+        // Multi-module: expose freshly built modules so a coordinate resolves to
+        // the artifact just produced, never a stale cached copy (section 5).
+        if (workspaceReader != null) {
+            session.setWorkspaceReader(workspaceReader);
+        }
         return session;
     }
 

@@ -82,8 +82,15 @@ public final class AetherResolution {
             ".forge", "cache", "deps").toFile();
         Map<String, String> repositories = config.getRepositories() != null
             ? config.getRepositories() : Collections.emptyMap();
+        // Multi-module (AGENT.md section 5): consult the workspace so sibling
+        // modules resolve by coordinate to their freshly built artifact.
+        org.eclipse.aether.repository.WorkspaceReader workspace = null;
+        if (config.getWorkspaceDirectory() != null) {
+            workspace = new io.github.yasmramos.forge.core.multimodule.WorkspaceModuleRepository(
+                new File(config.getWorkspaceDirectory()), config.getWorkspaceModuleCoordinates());
+        }
         AetherDependencyResolver aether =
-            new AetherDependencyResolver(localCacheDir, repositories);
+            new AetherDependencyResolver(localCacheDir, repositories, workspace);
 
         AetherDependencyResolver.ResolvedGraph graph;
         try {

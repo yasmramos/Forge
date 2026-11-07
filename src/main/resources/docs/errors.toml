@@ -97,3 +97,27 @@ what = "An unexpected internal error occurred."
 why  = "This indicates a bug in Forge itself, not in your project."
 how  = "Re-run with --debug to capture details and file an issue including the structured error block."
 docs = "https://forge.dev/e/INT-0001"
+
+["FORGE-MMD-0001"]
+what = "A module dependency cycle exists in the multi-module project."
+why  = "Modules depend on each other in a loop, so no build order can exist (AGENT.md section 5)."
+how  = "Break the cycle by removing one inter-module dependency, or move the shared code into a lower module."
+docs = "https://forge.dev/e/MMD-0001"
+
+["FORGE-MMD-0002"]
+what = "A module declared in the root forge.toml has no forge.toml of its own."
+why  = "Each module must own its configuration; the root only declares which directories are modules (AGENT.md section 5)."
+how  = "Create <module-dir>/forge.toml, or fix the directory mapping in [project.modules] of the root forge.toml."
+docs = "https://forge.dev/e/MMD-0002"
+
+["FORGE-MMD-0003"]
+what = "The requested module is not declared in the root forge.toml."
+why  = "A partial build (forge build <module>) can only target modules listed under [project.modules]."
+how  = "Check the module name, or add it to [project.modules] in the root forge.toml."
+docs = "https://forge.dev/e/MMD-0003"
+
+["FORGE-MMD-0004"]
+what = "A multi-module project has no [project] group to build inter-module coordinates from."
+why  = "Modules consume each other by Maven coordinate (groupId:artifactId:version), which needs a group (AGENT.md section 5)."
+how  = "Set group = \"com.example\" under [project] in the root forge.toml."
+docs = "https://forge.dev/e/MMD-0004"

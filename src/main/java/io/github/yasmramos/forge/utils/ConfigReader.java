@@ -63,6 +63,18 @@ public class ConfigReader {
     }
 
     /**
+     * Loads a {@code forge.toml} seeding property expansion with inherited
+     * properties (used for modules, which may reference {@code ${project.version}}
+     * and other values inherited from the root, AGENT.md section 5).
+     */
+    public static ProjectConfig loadConfig(File configFile, Map<String, String> inheritedProperties)
+            throws IOException {
+        TomlParser parser = new TomlParser();
+        Config tomlConfig = parser.parse(configFile.toPath(), FileNotFoundAction.THROW_ERROR);
+        return parseConfig(tomlConfig, inheritedProperties);
+    }
+
+    /**
      * Parses an already-loaded NightConfig {@link Config} tree into a
      * {@link ProjectConfig} model.
      *
@@ -70,6 +82,15 @@ public class ConfigReader {
      * @return the parsed project configuration
      */
     static ProjectConfig parseConfig(Config root) {
+        return parseConfig(root, null);
+    }
+
+    /**
+     * Parses a TOML tree, optionally seeding property expansion with values
+     * inherited from a parent (root) configuration. Module {@code [project]}
+     * values override the inherited ones.
+     */
+    static ProjectConfig parseConfig(Config root, Map<String, String> inheritedProperties) {
         ProjectConfig config = new ProjectConfig();
 
         // Top-level `forge` key holds the configuration schema version.
@@ -79,6 +100,9 @@ public class ConfigReader {
         // [project] section: name, version, group and custom properties.
         // ------------------------------------------------------------------
         Map<String, String> properties = new LinkedHashMap<>();
+        if (inheritedProperties != null) {
+            properties.putAll(inheritedProperties);
+        }
         UnmodifiableConfig project = root.get("project");
         String projectName = project != null ? project.get("name") : null;
         String projectVersion = project != null ? project.get("version") : null;
@@ -88,7 +112,8 @@ public class ConfigReader {
         config.setVersion(projectVersion);
         config.setGroup(projectGroup);
 
-        // Built-in properties available for ${...} interpolation.
+        // Built-in properties available for ${...} interpolation. A module that
+        // omits version/group inherits the root's value through `properties`.
         if (projectName != null) {
             properties.put("project.name", projectName);
         }
@@ -116,16 +141,28 @@ public class ConfigReader {
         config.setDescription(project != null ? expand(project.get("description"), properties) : null);
 
         // Module map from [project.modules]: name -> version expression.
+        // A module entry may also be a table to override the directory:
+        //   "example.app" = { version = "${project.version}", dir = "app" }
         if (project != null) {
             UnmodifiableConfig declaredModules = project.get("modules");
             if (declaredModules != null) {
                 Map<String, String> modulesMap = new LinkedHashMap<>();
+                Map<String, String> dirsMap = new LinkedHashMap<>();
                 for (UnmodifiableConfig.Entry entry : declaredModules.entrySet()) {
-                    if (entry.getValue() instanceof String) {
-                        modulesMap.put(entry.getKey(), expand((String) entry.getValue(), properties));
+                    Object value = entry.getValue();
+                    if (value instanceof String) {
+                        modulesMap.put(entry.getKey(), expand((String) value, properties));
+                    } else if (value instanceof UnmodifiableConfig) {
+                        UnmodifiableConfig table = (UnmodifiableConfig) value;
+                        modulesMap.put(entry.getKey(), expand(table.get("version"), properties));
+                        String dir = expand(table.get("dir"), properties);
+                        if (dir != null && !dir.trim().isEmpty()) {
+                            dirsMap.put(entry.getKey(), dir);
+                        }
                     }
                 }
                 config.setModules(modulesMap);
+                config.setModuleDirectories(dirsMap);
             }
         }
 
@@ -280,6 +317,67 @@ public class ConfigReader {
         }
 
         return config;
+    }
+
+    /**
+     * Loads a module's {@code forge.toml} and applies inheritance from the root
+     * configuration (AGENT.md section 5). A module inherits shared settings
+     * (version, group, repositories, toolchain, properties) and may override
+     * anything; module-only concerns (source roots, dependencies, exec) are
+     * never inherited from the root.
+     *
+     * @param root       already-resolved root configuration
+     * @param moduleToml the module's own forge.toml
+     * @return the module configuration with root defaults filled in
+     */
+    public static ProjectConfig loadModuleConfig(ProjectConfig root, File moduleToml)
+            throws IOException {
+        ProjectConfig module = loadConfig(moduleToml, root.getProperties());
+
+        // Version and group: module wins; otherwise inherit from the root so the
+        // module's coordinate matches what the root declares.
+        if (isBlank(module.getVersion())) {
+            module.setVersion(root.getVersion());
+        }
+        if (isBlank(module.getGroup())) {
+            module.setGroup(root.getGroup());
+        }
+        if (isBlank(module.getSchemaVersion())) {
+            module.setSchemaVersion(root.getSchemaVersion());
+        }
+
+        // Repositories: root first, module overrides on key collision.
+        Map<String, String> repositories = new LinkedHashMap<>(root.getRepositories());
+        repositories.putAll(module.getRepositories());
+        module.setRepositories(repositories);
+
+        // Toolchain: module value wins when set.
+        if (isBlank(module.getSourceCompatibility())) {
+            module.setSourceCompatibility(root.getSourceCompatibility());
+        }
+        if (isBlank(module.getTargetCompatibility())) {
+            module.setTargetCompatibility(root.getTargetCompatibility());
+        }
+        if (isBlank(module.getJdkVendor())) {
+            module.setJdkVendor(root.getJdkVendor());
+        }
+        if (isBlank(module.getJdkVersion())) {
+            module.setJdkVersion(root.getJdkVersion());
+        }
+
+        // Properties: root first, module overrides. Re-expand so a module value
+        // may reference an inherited property (e.g. ${project.version}).
+        Map<String, String> properties = new LinkedHashMap<>(root.getProperties());
+        for (Map.Entry<String, String> e : module.getProperties().entrySet()) {
+            properties.put(e.getKey(), expand(e.getValue(), properties));
+        }
+        module.setProperties(properties);
+
+        return module;
+    }
+
+    private static boolean isBlank(String s) {
+        return s == null || s.trim().isEmpty();
     }
 
     /**

@@ -56,4 +56,12 @@ jobs:
       # logger, which prefixes every line with timestamp/level; match the
       # summary numbers regardless of that prefix.
       run: ../../bin/forge build 2>&1 | tee /tmp/lib.log | grep -Eq "FORGE-TESTS found=[0-9]+ passed=[1-9][0-9]* failed=0"
+    - name: Fire-test multi-module (modules + build + run)
+      working-directory: examples/multi-module
+      run: |
+        ../../bin/forge modules | grep -q "example.app"
+        ../../bin/forge build 2>&1 | grep -q "Multi-module build OK"
+        # The app module consumes example.core by coordinate, so a correct
+        # "2 + 3 = 5" proves inter-module resolution really worked.
+        ../../bin/forge run example.app 2>/dev/null | grep -q "2 + 3 = 5"
 

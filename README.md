@@ -203,6 +203,11 @@ forge resolve --explain
 # List the available task types
 forge tasks
 
+# Multi-module: list modules in build order, or build one module and its deps
+forge modules
+forge build awesome.core
+forge run awesome.app
+
 # Build through the task graph (compile -> test -> package)
 forge build graph
 
@@ -249,6 +254,51 @@ config.setBuildSettings(settings);
 ForgeEngine engine = new ForgeEngine(config);
 engine.build();
 ```
+
+### Multi-Module Projects
+
+A multi-module project keeps each module's configuration in its own `forge.toml`. The root file declares only the shared settings and the module list:
+
+```toml
+# root forge.toml
+[project]
+name    = "awesome"
+version = "1.0.0"
+group   = "com.example"
+
+[project.modules]
+"awesome.core" = "${project.version}"
+"awesome.app"  = "${project.version}"
+```
+
+Each module owns its own `forge.toml` and inherits version, group, repositories, toolchain and properties from the root. Modules depend on each other **by Maven coordinate, never by path**:
+
+```toml
+# awesome.app/forge.toml
+[project]
+name = "awesome.app"
+
+[dependencies.compile]
+"com.example:awesome.core" = "${project.version}"
+```
+
+Build order follows the inter-module dependency graph, and independent modules build in parallel:
+
+```bash
+# Show the module graph in build order
+forge modules
+
+# Build every module
+forge build
+
+# Partial build: only awesome.core and what it depends on
+forge build awesome.core
+
+# Run one module's [exec] main class
+forge run awesome.app
+```
+
+Modules that depend on each other in a cycle are rejected before anything is built (`FORGE-MMD-0001`). A module with no `forge.toml` of its own fails with `FORGE-MMD-0002`. See `examples/multi-module` for a working project.
 
 ## Modules
 

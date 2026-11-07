@@ -66,6 +66,9 @@ public class ForgeCLI {
                         tail(args), System.out);
                 case "tasks":
                     return io.github.yasmramos.forge.cli.command.TaskCommand.list(System.out);
+                case "modules":
+                    return io.github.yasmramos.forge.cli.command.ModuleCommand.list(
+                        requireEngine(engine), System.out);
                 case "help":
                     showHelp();
                     return 0;
@@ -121,6 +124,14 @@ public class ForgeCLI {
      * after "--" override the static [exec] args from forge.toml.
      */
     private int executeRun(ForgeEngine engine, String[] args) {
+        // Multi-module (AGENT.md section 5): `forge run <module>` runs a module's
+        // [exec] main class. Only the first argument can be a module name; the
+        // rest, after "--", are program arguments as usual.
+        if (!engine.getConfig().getModules().isEmpty()
+                && args.length > 1 && !"--".equals(args[1])) {
+            return executeModuleRun(engine, args[1], tail(tail(args)));
+        }
+
         java.util.List<String> userArgs = new java.util.ArrayList<>();
         boolean afterSeparator = false;
         for (int i = 1; i < args.length; i++) {
@@ -134,6 +145,49 @@ public class ForgeCLI {
         }
         try {
             return io.github.yasmramos.forge.cli.command.RunCommand.run(engine, userArgs);
+        } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
+            throw fe;
+        } catch (Exception e) {
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.RUN_0002, e.getMessage(), e);
+        }
+    }
+
+    /** Runs the [exec] main class of one module of a multi-module project. */
+    private int executeModuleRun(ForgeEngine engine, String moduleName, String[] rest) {
+        io.github.yasmramos.forge.core.multimodule.MultiModuleProject project =
+            io.github.yasmramos.forge.core.multimodule.MultiModuleProject.discover(
+                engine.getProjectRoot(), engine.getConfig());
+        io.github.yasmramos.forge.core.multimodule.ModuleDescriptor module =
+            project.module(moduleName);
+        if (module == null) {
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.MMD_0003,
+                "no module named '" + moduleName + "'");
+        }
+        java.io.File workspace = new java.io.File(engine.getProjectRoot(), ".forge/workspace");
+        java.util.Set<String> coordinates = new java.util.HashSet<>();
+        for (io.github.yasmramos.forge.core.multimodule.ModuleDescriptor m
+                : project.topologicalOrder()) {
+            coordinates.add(m.getGroup() + ":" + m.getName());
+        }
+        io.github.yasmramos.forge.model.ProjectConfig moduleConfig =
+            io.github.yasmramos.forge.core.multimodule.MultiModuleBuilder
+                .preparedConfig(module, workspace, coordinates);
+
+        java.util.List<String> userArgs = new java.util.ArrayList<>();
+        boolean afterSeparator = false;
+        for (String arg : rest) {
+            if ("--".equals(arg)) {
+                afterSeparator = true;
+                continue;
+            }
+            if (afterSeparator) {
+                userArgs.add(arg);
+            }
+        }
+        try {
+            return io.github.yasmramos.forge.cli.command.RunCommand.run(moduleConfig, userArgs);
         } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
             throw fe;
         } catch (Exception e) {
@@ -190,6 +244,12 @@ public class ForgeCLI {
     }
 
     private int executeBuild(ForgeEngine engine, String[] args) {
+        // Multi-module dispatch (AGENT.md section 5): when the root forge.toml
+        // declares [project.modules], `forge build [module]` drives the module
+        // graph instead of building the root as a single project.
+        if (!engine.getConfig().getModules().isEmpty()) {
+            return executeMultiModuleBuild(engine, args);
+        }
         if (args.length > 1) {
             String buildType = args[1].toLowerCase();
             switch (buildType) {
@@ -233,6 +293,46 @@ public class ForgeCLI {
             System.out.println("Running build...");
             return reportBuild(engine.build());
         }
+    }
+
+    /**
+     * Drives a multi-module build (AGENT.md section 5). With no extra argument
+     * every module is built; with {@code forge build <module>} only that module
+     * and its transitive dependencies are built (a partial build). Modules are
+     * ordered by their inter-module dependencies and built in parallel per level.
+     */
+    private int executeMultiModuleBuild(ForgeEngine engine, String[] args) {
+        String target = args.length > 1 ? args[1] : null;
+        // Reserved build-type words keep their single-project meaning even in a
+        // multi-module root, so `forge build graph` is never read as a module name.
+        if (target != null && ("full".equalsIgnoreCase(target)
+                || "graph".equalsIgnoreCase(target)
+                || "incremental".equalsIgnoreCase(target))) {
+            target = null;
+        }
+        io.github.yasmramos.forge.core.multimodule.MultiModuleBuilder builder =
+            new io.github.yasmramos.forge.core.multimodule.MultiModuleBuilder(
+                engine.getProjectRoot(), engine.getConfig());
+        System.out.println(target == null
+            ? "Building all modules..."
+            : "Building module '" + target + "' and its dependencies...");
+        io.github.yasmramos.forge.core.multimodule.MultiModuleBuilder.Report report =
+            builder.build(target);
+        for (io.github.yasmramos.forge.core.multimodule.MultiModuleBuilder.ModuleResult r
+                : report.getResults()) {
+            if (r.isSuccess()) {
+                System.out.println("  [OK]   " + r.getName() + " -> " + r.getJarPath());
+            } else {
+                System.err.println("  [FAIL] " + r.getName() + ": " + r.getError());
+            }
+        }
+        if (!report.isSuccess()) {
+            System.err.println("Multi-module build FAILED. See the module above that broke.");
+            return 1;
+        }
+        System.out.println("Multi-module build OK: " + report.getResults().size()
+            + " module(s) built.");
+        return 0;
     }
 
     /**
@@ -352,13 +452,14 @@ public class ForgeCLI {
         System.out.println("Forge Build System Help");
         System.out.println();
         System.out.println("Available Commands:");
-        System.out.println("  build [incremental|full|graph]  - Build the project");
+        System.out.println("  build [module]            - Build the project (or one module of a multi-module project)");
         System.out.println("  lock refresh              - Regenerate forge.lock explicitly (never done by builds)");
         System.out.println("  tree [--depth=N] [filter] - Show the resolved dependency tree");
         System.out.println("  why <coordinate>          - Explain why a dependency is in the graph");
         System.out.println("  resolve [--explain]       - Inspect the dependency graph; --explain shows version derivation");
         System.out.println("  tasks                     - List available task types");
-        System.out.println("  run [-- args...]          - Execute the [exec] main class (program owns stdout)");
+        System.out.println("  modules                   - List the modules of a multi-module project in build order");
+        System.out.println("  run [module] [-- args...] - Execute the [exec] main class (program owns stdout)");
         System.out.println("  clean                     - Clean build artifacts");
         System.out.println("  init                      - Initialize new project");
         System.out.println("  info                      - Show system information");
@@ -367,6 +468,8 @@ public class ForgeCLI {
         System.out.println();
         System.out.println("Examples:");
         System.out.println("  forge build               - Run default build");
+        System.out.println("  forge build awesome.core  - Partial build: one module and its dependencies");
+        System.out.println("  forge modules             - Show the module graph in build order");
         System.out.println("  forge build incremental   - Run incremental build");
         System.out.println("  forge build graph         - Run experimental task-graph build (opt-in cache/parallelism)");
         System.out.println("  forge build full          - Run full build");

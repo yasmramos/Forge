@@ -46,6 +46,15 @@ public class ForgeEngine {
     public ProjectConfig getConfig() {
         return config;
     }
+
+    /**
+     * Directory holding {@code forge.toml} and {@code forge.lock}. Exposed so CLI
+     * commands (e.g. the multi-module builder) resolve siblings without assuming
+     * the process working directory.
+     */
+    public File getProjectRoot() {
+        return projectRoot;
+    }
     
     public ForgeEngine(ProjectConfig config) {
         this(config, new File(System.getProperty("user.dir")));
