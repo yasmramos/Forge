@@ -49,6 +49,8 @@ public class Compiler {
     private final JavaCompiler toolCompiler;
     /** Extra classpath entries (e.g. third-party libraries) injected externally. */
     private String classpath = "";
+    /** Stable project identity (group:name) mixed into cache keys; see ForgeCache. */
+    private String projectId = "";
 
     /**
      * Create a new compiler.
@@ -77,6 +79,15 @@ public class Compiler {
      *
      * @param classpath platform-separated list of jars/directories
      */
+    /**
+     * Set the stable project identity (group:name) used to scope cache keys.
+     *
+     * @param projectId identity stable across machines; empty to disable scoping
+     */
+    public void setProjectId(String projectId) {
+        this.projectId = projectId != null ? projectId : "";
+    }
+
     public void setClasspath(String classpath) {
         this.classpath = classpath != null ? classpath : "";
     }
@@ -137,7 +148,7 @@ public class Compiler {
             ? createDependencyMap(dependencyResolution) : null;
 
         for (Path sourceFile : sourceFiles) {
-            String cacheKey = ForgeCache.generateKey(sourceFile.toFile(), depMap);
+            String cacheKey = ForgeCache.generateKey(sourceFile.toFile(), depMap, projectId);
             boolean cached = cache != null && cache.isValid(cacheKey, sourceFile.toFile());
             if (cached && compiledClassExists(sourceFile, Paths.get(outputDir))) {
                 logger.debug("Using cached compilation for: " + sourceFile);
@@ -168,7 +179,7 @@ public class Compiler {
         if (outcome.success) {
             // Cache each successfully compiled file
             for (Path sourceFile : staleFiles) {
-                String cacheKey = ForgeCache.generateKey(sourceFile.toFile(), depMap);
+                String cacheKey = ForgeCache.generateKey(sourceFile.toFile(), depMap, projectId);
                 ForgeCache.CacheEntry cacheEntry = new ForgeCache.CacheEntry(
                     sourceFile.toFile().lastModified(),
                     outcome.output.getBytes(StandardCharsets.UTF_8)

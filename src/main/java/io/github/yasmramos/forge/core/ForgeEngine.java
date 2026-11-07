@@ -75,6 +75,9 @@ public class ForgeEngine {
             Math.max(1, config.getBuildSettings().getThreads())
         );
         this.compiler = new Compiler();
+        // Scope cache keys to this project's stable coordinates so the shared
+        // ~/.forge/cache never serves another project's entry (AGENT.md 3, 17).
+        this.compiler.setProjectId(config.getGroup() + ":" + config.getName());
         // Seed the compiler with third-party libraries available on the JVM classpath
         // (SLF4J, NightConfig, ...) so javac can resolve external symbols when building sources.
         this.compiler.setClasspath(System.getProperty("java.class.path"));
