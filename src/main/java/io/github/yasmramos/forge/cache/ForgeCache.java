@@ -8,12 +8,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -157,46 +159,101 @@ public class ForgeCache {
         return null;
     }
     
+    /**
+     * Content-addressed cache key for a source file.
+     *
+     * <p>Identity comes from the file's <em>content</em> and its position
+     * relative to the project root (never an absolute path), plus a
+     * deterministic rendering of the dependency view. Two checkouts of the same
+     * project on different machines therefore yield the same key (AGENT.md
+     * section 17), and a dependency set yields the same key regardless of map
+     * iteration order.</p>
+     */
     public static String generateKey(File sourceFile, Map<String, Object> dependencies) {
+        return generateKey(sourceFile, dependencies, null);
+    }
+
+    /**
+     * As {@link #generateKey(File, Map)} but scoped to a project identity.
+     *
+     * <p>The default cache lives in {@code ~/.forge/cache} and is shared by
+     * every project on the machine, so the project identity (its stable
+     * {@code group:name} coordinates) is mixed in to stop two unrelated
+     * projects with a same-named file from sharing an entry. It is stable
+     * across machines, unlike an absolute path.</p>
+     */
+    public static String generateKey(File sourceFile, Map<String, Object> dependencies, String projectId) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            
-            // Content-based identity (AGENT.md section 3): the key mixes the
-            // absolute path with a SHA-256 of the file bytes. Hashing content
-            // instead of trusting lastModified keeps entries correct when a
-            // checkout or rsync preserves timestamps but changes bytes, and
-            // avoids false invalidation when only the timestamp moves.
-            String fileInfo;
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+            if (projectId != null && !projectId.isEmpty()) {
+                md.update(projectId.getBytes(StandardCharsets.UTF_8));
+                md.update((byte) 0);
+            }
+
+            // Content identity (AGENT.md section 3): hash the bytes, not the
+            // timestamp. The relative path disambiguates files with identical
+            // content while staying portable across machines and checkouts.
+            md.update(relativePathOf(sourceFile).getBytes(StandardCharsets.UTF_8));
+            md.update((byte) 0);
             try {
-                byte[] content = Files.readAllBytes(sourceFile.toPath());
-                MessageDigest contentMd = MessageDigest.getInstance("SHA-256");
-                fileInfo = sourceFile.getAbsolutePath() + ":sha256:" + toHex(contentMd.digest(content));
+                md.update(Files.readAllBytes(sourceFile.toPath()));
             } catch (Exception readFailure) {
-                // Unreadable file: fall back to path + timestamp so the entry
-                // simply behaves like the previous timestamp-based scheme.
-                fileInfo = sourceFile.getAbsolutePath() + ":" + sourceFile.lastModified();
+                // Unreadable file: fall back to the timestamp so the entry still
+                // changes when the file does, as the previous scheme did.
+                md.update(Long.toString(sourceFile.lastModified()).getBytes(StandardCharsets.UTF_8));
             }
-            md.update(fileInfo.getBytes());
-            
-            // Include dependency information
-            if (dependencies != null) {
-                String depInfo = dependencies.toString();
-                md.update(depInfo.getBytes());
+
+            // Deterministic dependency view: sorted by name so the same set of
+            // dependencies yields the same key whatever the map order is.
+            if (dependencies != null && !dependencies.isEmpty()) {
+                md.update((byte) 0);
+                for (String name : new TreeSet<>(dependencies.keySet())) {
+                    md.update(name.getBytes(StandardCharsets.UTF_8));
+                    md.update((byte) '=');
+                    md.update(String.valueOf(dependencies.get(name)).getBytes(StandardCharsets.UTF_8));
+                    md.update((byte) '\n');
+                }
             }
-            
-            byte[] digest = md.digest();
-            StringBuilder sb = new StringBuilder();
-            for (byte b : digest) {
-                sb.append(String.format("%02x", b));
-            }
-            
-            return sb.toString();
+
+            return toHex(md.digest());
         } catch (Exception e) {
-            // Fallback to simple key
-            return sourceFile.getAbsolutePath().hashCode() + ":" + sourceFile.lastModified();
+            // Digest algorithm unavailable: degrade to a name+timestamp key
+            // rather than throwing from a cache lookup.
+            return sourceFile.getName() + ":" + sourceFile.lastModified();
         }
     }
-    
+
+    /**
+     * Path of the file relative to the project root (the nearest ancestor
+     * holding a {@code forge.toml}), or to its own directory when no root is
+     * found. Relative so the key never depends on where the project lives.
+     */
+    private static String relativePathOf(File sourceFile) {
+        Path absolute = sourceFile.getAbsoluteFile().toPath();
+        Path root = findProjectRoot(absolute);
+        Path base = root != null ? root : absolute.getParent();
+        if (base == null) {
+            return sourceFile.getName();
+        }
+        try {
+            return base.relativize(absolute).toString().replace(File.separatorChar, '/');
+        } catch (IllegalArgumentException e) {
+            return sourceFile.getName();
+        }
+    }
+
+    private static Path findProjectRoot(Path file) {
+        Path dir = file.getParent();
+        while (dir != null) {
+            if (Files.isRegularFile(dir.resolve("forge.toml"))) {
+                return dir;
+            }
+            dir = dir.getParent();
+        }
+        return null;
+    }
+
     /** Lowercase hex representation of a digest. */
     private static String toHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder(bytes.length * 2);

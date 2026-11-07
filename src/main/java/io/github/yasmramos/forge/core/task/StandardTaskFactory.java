@@ -61,6 +61,7 @@ public class StandardTaskFactory {
                     null);
 
             Compiler compiler = new Compiler();
+            compiler.setProjectId(config.getGroup() + ":" + config.getName());
             compiler.setClasspath(System.getProperty("java.class.path"));
             CompilationResult result =
                 compiler.compileBatch(analysis.getSourceFiles(), resolution, null, classesDir.toString());
