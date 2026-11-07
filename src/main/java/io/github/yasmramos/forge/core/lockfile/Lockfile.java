@@ -78,10 +78,34 @@ public class Lockfile {
         return sha256Hex(Files.readAllBytes(forgeToml.toPath()));
     }
 
-    private static String sha256Hex(byte[] data) throws Exception {
+    /**
+     * Combined SHA-256 over several {@code forge.toml} files, keyed by a
+     * machine-independent logical name (e.g. {@code forge.toml},
+     * {@code app/forge.toml}). Used for the single root lock of a multi-module
+     * project (AGENT.md section 8bis): the lock is valid only when the root and
+     * every module configuration are byte-identical to what produced it.
+     *
+     * <p>Keys, not absolute paths, are hashed, so the digest is identical across
+     * machines and checkouts (AGENT.md section 17).</p>
+     */
+    public static String hashOf(java.util.SortedMap<String, File> namedConfigs) throws Exception {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        for (Map.Entry<String, File> e : namedConfigs.entrySet()) {
+            digest.update(e.getKey().getBytes(StandardCharsets.UTF_8));
+            digest.update((byte) 0);
+            digest.update(Files.readAllBytes(e.getValue().toPath()));
+            digest.update((byte) 0);
+        }
+        return hex(digest.digest());
+    }
+
+    private static String sha256Hex(byte[] data) throws Exception {
+        return hex(MessageDigest.getInstance("SHA-256").digest(data));
+    }
+
+    private static String hex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
-        for (byte b : digest.digest(data)) {
+        for (byte b : bytes) {
             sb.append(String.format("%02x", b));
         }
         return sb.toString();
@@ -184,6 +208,17 @@ public class Lockfile {
     public void verifyAgainst(File forgeToml) throws Exception {
         String current = hashOf(forgeToml);
         if (!current.equals(configHash)) {
+            throw new ForgeException(ErrorCode.LCK_0003,
+                "config_hash mismatch: lock was built from a different forge.toml");
+        }
+    }
+
+    /**
+     * As {@link #verifyAgainst(File)} but for a hash already computed over
+     * several configurations (multi-module root lock, AGENT.md section 8bis).
+     */
+    public void verifyAgainstHash(String currentConfigHash) {
+        if (!currentConfigHash.equals(configHash)) {
             throw new ForgeException(ErrorCode.LCK_0003,
                 "config_hash mismatch: lock was built from a different forge.toml");
         }

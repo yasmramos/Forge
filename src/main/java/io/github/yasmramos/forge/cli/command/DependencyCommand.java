@@ -3,6 +3,8 @@ package io.github.yasmramos.forge.cli.command;
 import io.github.yasmramos.forge.cli.error.ErrorCode;
 import io.github.yasmramos.forge.cli.error.ForgeException;
 import io.github.yasmramos.forge.core.DependencyScopes;
+import io.github.yasmramos.forge.core.multimodule.MultiModuleDependencies;
+import io.github.yasmramos.forge.core.multimodule.MultiModuleProject;
 import io.github.yasmramos.forge.core.resolver.AetherDependencyResolver;
 import io.github.yasmramos.forge.core.resolver.ConflictPolicy;
 import io.github.yasmramos.forge.core.resolver.DependencyTree;
@@ -148,6 +150,18 @@ public final class DependencyCommand {
         ProjectConfig config = loadConfig();
         Map<String, String> repositories = config.getRepositories().isEmpty()
             ? defaultRepositories() : config.getRepositories();
+        // Multi-module (AGENT.md section 8bis): the project's dependencies are the
+        // union of every module's, not the (empty) root's, so the graph must be
+        // aggregated or these commands would report a misleading empty result.
+        if (MultiModuleDependencies.isMultiModule(config)) {
+            try {
+                MultiModuleProject project =
+                    MultiModuleProject.discover(new File("."), config);
+                return MultiModuleDependencies.resolve(project, new File("."), repositories);
+            } catch (AetherDependencyResolver.ResolutionFailedException e) {
+                throw new ForgeException(ErrorCode.DEP_0002, e.getMessage(), e);
+            }
+        }
         AetherDependencyResolver resolver =
             new AetherDependencyResolver(new File(DEFAULT_LOCAL_REPO), repositories);
         try {

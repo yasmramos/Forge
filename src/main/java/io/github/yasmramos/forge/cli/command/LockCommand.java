@@ -3,6 +3,8 @@ package io.github.yasmramos.forge.cli.command;
 import io.github.yasmramos.forge.cli.error.ErrorCode;
 import io.github.yasmramos.forge.cli.error.ForgeException;
 import io.github.yasmramos.forge.core.lockfile.Lockfile;
+import io.github.yasmramos.forge.core.multimodule.MultiModuleDependencies;
+import io.github.yasmramos.forge.core.multimodule.MultiModuleProject;
 import io.github.yasmramos.forge.core.resolver.AetherDependencyResolver;
 import io.github.yasmramos.forge.core.resolver.ConflictPolicy;
 import io.github.yasmramos.forge.core.resolver.LockfileGenerator;
@@ -50,6 +52,20 @@ public final class LockCommand {
             Map<String, String> repositories = config.getRepositories().isEmpty()
                     ? defaultRepositories()
                     : config.getRepositories();
+
+            // Multi-module (AGENT.md sections 5 and 8bis): the single root lock
+            // covers the union of every module's dependencies, tied to a combined
+            // hash of the root and all module configs.
+            if (MultiModuleDependencies.isMultiModule(config)) {
+                MultiModuleProject project = MultiModuleProject.discover(projectRoot, config);
+                Lockfile lock = MultiModuleDependencies.generateLock(
+                        project, projectRoot, config, repositories);
+                lock.write(projectRoot);
+                stdout.println("forge.lock refreshed: " + lock.getDependencies().size()
+                        + " locked dependencies (config hash " + shortHash(lock.getConfigHash()) + ").");
+                stdout.println("Commit forge.lock so every machine and CI job builds the same graph.");
+                return 0;
+            }
 
             LockfileGenerator generator =
                     new LockfileGenerator(new File(DEFAULT_LOCAL_REPO), repositories);

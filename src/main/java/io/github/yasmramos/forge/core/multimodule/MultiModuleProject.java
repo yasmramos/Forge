@@ -139,6 +139,12 @@ public final class MultiModuleProject {
         return modules.get(name);
     }
 
+    /** Module whose {@code group:artifact} equals the coordinate, or null. */
+    public ModuleDescriptor moduleForCoordinate(String groupArtifact) {
+        String name = gaToModule.get(groupArtifact);
+        return name == null ? null : modules.get(name);
+    }
+
     /** Direct inter-module dependencies (compile scope) of the given module. */
     public Set<String> dependenciesOf(String moduleName) {
         return edges.getOrDefault(moduleName, java.util.Collections.emptySet());

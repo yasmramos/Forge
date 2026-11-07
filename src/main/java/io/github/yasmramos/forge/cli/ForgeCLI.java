@@ -166,14 +166,23 @@ public class ForgeCLI {
                 "no module named '" + moduleName + "'");
         }
         java.io.File workspace = new java.io.File(engine.getProjectRoot(), ".forge/workspace");
-        java.util.Set<String> coordinates = new java.util.HashSet<>();
-        for (io.github.yasmramos.forge.core.multimodule.ModuleDescriptor m
-                : project.topologicalOrder()) {
-            coordinates.add(m.getGroup() + ":" + m.getName());
-        }
+        java.util.Set<String> coordinates =
+            io.github.yasmramos.forge.core.multimodule.MultiModuleDependencies
+                .moduleCoordinates(project);
         io.github.yasmramos.forge.model.ProjectConfig moduleConfig =
             io.github.yasmramos.forge.core.multimodule.MultiModuleBuilder
                 .preparedConfig(module, workspace, coordinates);
+        // Reproducibility (AGENT.md sections 7bis and 8bis): running a module is
+        // still a build against the locked graph, so the root lock must be valid.
+        try {
+            io.github.yasmramos.forge.core.multimodule.MultiModuleDependencies
+                .enforceRootLock(project, engine.getProjectRoot());
+        } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
+            throw fe;
+        } catch (Exception e) {
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.INT_0001, e.getMessage(), e);
+        }
 
         java.util.List<String> userArgs = new java.util.ArrayList<>();
         boolean afterSeparator = false;

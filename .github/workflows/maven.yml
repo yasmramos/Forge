@@ -56,10 +56,14 @@ jobs:
       # logger, which prefixes every line with timestamp/level; match the
       # summary numbers regardless of that prefix.
       run: ../../bin/forge build 2>&1 | tee /tmp/lib.log | grep -Eq "FORGE-TESTS found=[0-9]+ passed=[1-9][0-9]* failed=0"
-    - name: Fire-test multi-module (modules + build + run)
+    - name: Fire-test multi-module (modules + lock + build + run)
       working-directory: examples/multi-module
       run: |
         ../../bin/forge modules | grep -q "example.app"
+        # The single root lock must cover the modules' external dependencies
+        # (AGENT.md section 8bis), not just the empty root.
+        ../../bin/forge lock refresh 2>&1 | grep -q "1 locked dependencies"
+        grep -q "org.slf4j:slf4j-api" forge.lock
         ../../bin/forge build 2>&1 | grep -q "Multi-module build OK"
         # The app module consumes example.core by coordinate, so a correct
         # "2 + 3 = 5" proves inter-module resolution really worked.

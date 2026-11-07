@@ -1,5 +1,6 @@
-# Core module: no external dependencies. Inherits repositories and toolchain
-# from the root forge.toml.
+# Core module: one external dependency, to exercise the aggregate root lock
+# (AGENT.md section 8bis). Repositories and toolchain are inherited from the
+# root forge.toml.
 
 forge = "0.1"
 
@@ -8,3 +9,6 @@ name = "example.core"
 
 [source.main]
 java = ["src/main/java"]
+
+[dependencies.compile]
+"org.slf4j:slf4j-api" = "2.0.7"

@@ -50,8 +50,18 @@ public final class LockfileGenerator {
      * @param repositories  name -> base URL from [repositories] in forge.toml
      */
     public LockfileGenerator(File localCacheDir, Map<String, String> repositories) {
+        this(localCacheDir, repositories, null);
+    }
+
+    /**
+     * As {@link #LockfileGenerator(File, Map)} but consulting a multi-module
+     * workspace reader, so inter-module coordinates in the aggregate graph
+     * resolve to freshly built modules (AGENT.md section 5).
+     */
+    public LockfileGenerator(File localCacheDir, Map<String, String> repositories,
+                             org.eclipse.aether.repository.WorkspaceReader workspaceReader) {
         this.localCacheDir = localCacheDir;
-        this.resolver = new AetherDependencyResolver(localCacheDir, repositories);
+        this.resolver = new AetherDependencyResolver(localCacheDir, repositories, workspaceReader);
     }
 
     /**
@@ -86,11 +96,26 @@ public final class LockfileGenerator {
                 existing.verifyAgainst(new File(projectRoot, ConfigReader.CONFIG_FILE_NAME));
             }
         }
-        List<String> roots = compileScopeCoordinates(config);
+        return lock(compileScopeCoordinates(config),
+                Lockfile.hashOf(new File(projectRoot, ConfigReader.CONFIG_FILE_NAME)),
+                config.getResolutions());
+    }
+
+    /**
+     * Resolves and locks an explicit root set against an explicit configuration
+     * hash. Used by the single root lock of a multi-module project, where the
+     * root set is the union of every module's compile dependencies and the hash
+     * covers the root plus all module configs (AGENT.md section 8bis).
+     *
+     * @param roots      direct compile-scope coordinates to resolve transitively
+     * @param configHash hash the lock is tied to ({@link Lockfile#hashOf(java.util.SortedMap)})
+     * @param resolutions {@code [resolutions]} overrides applied by the conflict policy
+     */
+    public Lockfile lock(List<String> roots, String configHash,
+                         Map<String, String> resolutions) throws Exception {
         if (roots.isEmpty()) {
             // Nothing to resolve: emit a valid, empty lock so builds stay reproducible.
-            return new Lockfile(Lockfile.hashOf(new File(projectRoot, ConfigReader.CONFIG_FILE_NAME)),
-                    Collections.emptyMap());
+            return new Lockfile(configHash, Collections.emptyMap());
         }
 
         AetherDependencyResolver.ResolvedGraph graph =
@@ -98,7 +123,7 @@ public final class LockfileGenerator {
 
         // Section 2bis: fail-by-default policy with [resolutions] overrides.
         Map<String, String> selected =
-                new ConflictPolicy(config.getResolutions()).enforce(graph.getRequestedVersionsByGa());
+                new ConflictPolicy(resolutions).enforce(graph.getRequestedVersionsByGa());
 
         // Build coordinate -> repository map from the resolved graph paths.
         Map<String, String> repoByCoordinate = new LinkedHashMap<>();
@@ -118,8 +143,6 @@ public final class LockfileGenerator {
                     repoByCoordinate.getOrDefault(a.getCoordinates(), LOCAL_REPOSITORY)));
         }
 
-        String configHash = Lockfile.hashOf(
-                new File(projectRoot, ConfigReader.CONFIG_FILE_NAME));
         return new Lockfile(configHash, locked);
     }
 
