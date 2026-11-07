@@ -58,4 +58,30 @@ class CLITest {
         ForgeCLI cli = new ForgeCLI(new String[] {"build", "nonsense"});
         assertEquals(1, cli.execute(null));
     }
+
+    @Test
+    void incrementalBuildReturnsNonZeroOnCompileFailure(
+            @org.junit.jupiter.api.io.TempDir java.nio.file.Path tmp) throws Exception {
+        // Regression: the CLI used to ignore the incremental BuildResult and
+        // always return 0, hiding compile failures from CI.
+        java.io.File root = tmp.toFile();
+        java.io.File toml = new java.io.File(root, "forge.toml");
+        java.nio.file.Path src = tmp.resolve("src/main/java");
+        java.nio.file.Files.createDirectories(src);
+        java.nio.file.Files.write(toml.toPath(),
+            ("forge = \"0.1\"\n[project]\nname = \"cli-inc\"\nversion = \"1.0.0\"\n")
+                .getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        java.nio.file.Files.write(src.resolve("A.java"),
+            "package p;\npublic class A { public int f() { return \"x\"; } }\n"
+                .getBytes(java.nio.charset.StandardCharsets.UTF_8));
+
+        io.github.yasmramos.forge.model.ProjectConfig config =
+            io.github.yasmramos.forge.utils.ConfigReader.loadConfig(toml);
+        config.setSourceDirectory(src.toString());
+        config.setOutputDirectory(tmp.resolve("classes").toString());
+
+        ForgeCLI cli = new ForgeCLI(new String[] {"build", "incremental"});
+        int exit = cli.execute(new io.github.yasmramos.forge.core.ForgeEngine(config, root));
+        assertEquals(1, exit, "a failing incremental build must exit non-zero");
+    }
 }
