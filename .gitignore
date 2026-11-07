@@ -829,6 +829,9 @@
 # Multi-module workspace: holds module artifacts built in this checkout.
 # Anchored with **/ so it also covers module projects under examples/.
 **/.forge/workspace/
+# Examples regenerate their lock in CI (fire-test); real projects commit
+# forge.lock (AGENT.md section 7), examples do not.
+examples/**/forge.lock
 **/.next/
 **/.nuxt/
 **/.vuepress/dist/

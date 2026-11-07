@@ -300,6 +300,8 @@ forge run awesome.app
 
 Modules that depend on each other in a cycle are rejected before anything is built (`FORGE-MMD-0001`). A module with no `forge.toml` of its own fails with `FORGE-MMD-0002`. See `examples/multi-module` for a working project.
 
+The project has a **single `forge.lock` at the root** covering the union of every module's dependencies (`forge lock refresh`), and `forge tree` / `forge why` / `forge resolve` read that same aggregate graph — so they answer for the whole project, not just the root. The lock is tied to a combined hash of the root and every module `forge.toml`: changing any of them without refreshing the lock fails the build with `FORGE-LCK-0003`.
+
 ## Modules
 
 Forge consists of several specialized modules, each responsible for a specific aspect of the build process.

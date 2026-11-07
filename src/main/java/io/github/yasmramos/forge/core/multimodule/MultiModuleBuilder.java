@@ -97,14 +97,22 @@ public final class MultiModuleBuilder {
             ? project.topologicalOrder()
             : project.partialOrder(targetModule);
 
+        // Reproducibility (AGENT.md sections 7bis and 8bis): the single root lock
+        // must match the whole multi-module configuration before anything runs.
+        try {
+            MultiModuleDependencies.enforceRootLock(project, rootDirectory);
+        } catch (io.github.yasmramos.forge.cli.error.ForgeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.INT_0001, e.getMessage(), e);
+        }
+
         File workspaceDir = new File(rootDirectory, ".forge/workspace");
         // Restrict the workspace reader to the coordinates of this build's
         // modules, so an unrelated dependency that shares an artifactId/version
         // can never be served a module's jar.
-        java.util.Set<String> moduleCoordinates = new java.util.HashSet<>();
-        for (ModuleDescriptor m : project.topologicalOrder()) {
-            moduleCoordinates.add(m.getGroup() + ":" + m.getName());
-        }
+        java.util.Set<String> moduleCoordinates = MultiModuleDependencies.moduleCoordinates(project);
         WorkspaceModuleRepository workspace =
             new WorkspaceModuleRepository(workspaceDir, moduleCoordinates);
 
