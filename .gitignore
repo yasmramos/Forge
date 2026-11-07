@@ -826,6 +826,9 @@
 /out/
 **/target/
 .forge/cache/
+# Multi-module workspace: holds module artifacts built in this checkout.
+# Anchored with **/ so it also covers module projects under examples/.
+**/.forge/workspace/
 **/.next/
 **/.nuxt/
 **/.vuepress/dist/

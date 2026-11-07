@@ -29,7 +29,29 @@ public class ProjectConfig {
     private List<String> testResourcePaths = new ArrayList<>();
     private Map<String, String> properties = new LinkedHashMap<>();
     private Map<String, String> modules = new LinkedHashMap<>();
+    /**
+     * Optional per-module directory overrides from {@code [project.modules]}
+     * (AGENT.md section 5): module name -> directory relative to the root.
+     * When absent, the directory defaults to the module name's last segment
+     * (e.g. {@code example.core} -> {@code core}).
+     */
+    private Map<String, String> moduleDirectories = new LinkedHashMap<>();
     private Map<String, String> repositories = new LinkedHashMap<>();
+    /**
+     * Directory of the multi-module workspace holding freshly built module
+     * artifacts (AGENT.md section 5). Not read from TOML: it is set by the
+     * multi-module builder so that resolving a module's configuration finds its
+     * sibling modules by coordinate. Null for single-module projects.
+     */
+    private String workspaceDirectory;
+
+    /**
+     * {@code groupId:artifactId} coordinates of every module in the multi-module
+     * project. Set together with {@link #workspaceDirectory} so the workspace
+     * reader only answers for real modules and never shadows an unrelated
+     * dependency that shares an artifactId and version (AGENT.md section 5).
+     */
+    private java.util.Set<String> workspaceModuleCoordinates = new java.util.LinkedHashSet<>();
 
     /**
      * Explicit version overrides declared in [resolutions] of forge.toml
@@ -95,12 +117,46 @@ public class ProjectConfig {
         this.modules = modules != null ? modules : new LinkedHashMap<>();
     }
 
+    /**
+     * Optional module directory overrides (module name -> relative directory).
+     * Empty means "derive the directory from the module name's last segment".
+     */
+    public Map<String, String> getModuleDirectories() {
+        return moduleDirectories;
+    }
+
+    public void setModuleDirectories(Map<String, String> moduleDirectories) {
+        this.moduleDirectories = moduleDirectories != null ? moduleDirectories : new LinkedHashMap<>();
+    }
+
     public Map<String, String> getRepositories() {
         return repositories;
     }
 
     public void setRepositories(Map<String, String> repositories) {
         this.repositories = repositories != null ? repositories : new LinkedHashMap<>();
+    }
+
+    /**
+     * Multi-module workspace directory, or null for a single-module project.
+     * Set programmatically by the multi-module builder; never read from TOML.
+     */
+    public String getWorkspaceDirectory() {
+        return workspaceDirectory;
+    }
+
+    public void setWorkspaceDirectory(String workspaceDirectory) {
+        this.workspaceDirectory = workspaceDirectory;
+    }
+
+    /** Coordinates of the modules in the multi-module workspace. */
+    public java.util.Set<String> getWorkspaceModuleCoordinates() {
+        return workspaceModuleCoordinates;
+    }
+
+    public void setWorkspaceModuleCoordinates(java.util.Set<String> workspaceModuleCoordinates) {
+        this.workspaceModuleCoordinates = workspaceModuleCoordinates != null
+            ? workspaceModuleCoordinates : new java.util.LinkedHashSet<>();
     }
 
     public Map<String, String> getResolutions() {

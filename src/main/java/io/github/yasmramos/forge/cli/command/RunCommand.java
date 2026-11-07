@@ -34,8 +34,20 @@ public final class RunCommand {
      * @return exit code of the launched process
      */
     public static int run(ForgeEngine engine, List<String> userArgs) throws IOException, InterruptedException {
-        ProjectConfig config = engine.getConfig();
+        return run(engine.getConfig(), userArgs);
+    }
 
+    /**
+     * Runs the configured main class with the given project configuration. This
+     * overload lets the multi-module path run one module's [exec] main without
+     * wrapping it in a throwaway engine (AGENT.md section 5).
+     *
+     * @param config   the (module) configuration whose [exec] and classpath apply
+     * @param userArgs extra arguments passed after "--" on the CLI; they take
+     *                 precedence over the static [exec] args
+     * @return exit code of the launched process
+     */
+    public static int run(ProjectConfig config, List<String> userArgs) throws IOException, InterruptedException {
         String mainClass = config.getMainClass();
         if (mainClass == null || mainClass.trim().isEmpty()) {
             throw new io.github.yasmramos.forge.cli.error.ForgeException(
@@ -126,9 +138,16 @@ public final class RunCommand {
         }
         File localCacheDir = Paths.get(System.getProperty("user.home"),
             ".forge", "cache", "deps").toFile();
+        // Multi-module (AGENT.md section 5): consult the workspace so a sibling
+        // module resolves by coordinate at run time, not just at build time.
+        org.eclipse.aether.repository.WorkspaceReader workspace = null;
+        if (config.getWorkspaceDirectory() != null) {
+            workspace = new io.github.yasmramos.forge.core.multimodule.WorkspaceModuleRepository(
+                new File(config.getWorkspaceDirectory()));
+        }
         io.github.yasmramos.forge.core.resolver.AetherDependencyResolver aether =
             new io.github.yasmramos.forge.core.resolver.AetherDependencyResolver(
-                localCacheDir, config.getRepositories());
+                localCacheDir, config.getRepositories(), workspace);
         io.github.yasmramos.forge.core.resolver.AetherDependencyResolver.ResolvedGraph graph =
             aether.resolveTransitive(roots);
         for (io.github.yasmramos.forge.core.resolver.AetherDependencyResolver.ResolvedArtifact artifact

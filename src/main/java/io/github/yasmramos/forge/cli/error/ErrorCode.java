@@ -140,6 +140,28 @@ public final class ErrorCode {
         "Report the behavior to the plugin author, or enable strict mode with [build] reproducible_strict = true to fail instead of warn.",
         "https://forge.dev/e/RPR-0001");
 
+    // --- Multi-module (MMD) ---
+    public static final Entry MMD_0001 = register("FORGE-MMD-0001",
+        "A module dependency cycle exists in the multi-module project.",
+        "Modules depend on each other in a loop, so no build order can exist (AGENT.md section 5).",
+        "Break the cycle by removing one inter-module dependency, or move the shared code into a lower module.",
+        "https://forge.dev/e/MMD-0001");
+    public static final Entry MMD_0002 = register("FORGE-MMD-0002",
+        "A module declared in the root forge.toml has no forge.toml of its own.",
+        "Each module must own its configuration; the root only declares which directories are modules (AGENT.md section 5).",
+        "Create <module-dir>/forge.toml, or fix the directory mapping in [project.modules] of the root forge.toml.",
+        "https://forge.dev/e/MMD-0002");
+    public static final Entry MMD_0003 = register("FORGE-MMD-0003",
+        "The requested module is not declared in the root forge.toml.",
+        "A partial build (forge build <module>) can only target modules listed under [project.modules].",
+        "Check the module name, or add it to [project.modules] in the root forge.toml.",
+        "https://forge.dev/e/MMD-0003");
+    public static final Entry MMD_0004 = register("FORGE-MMD-0004",
+        "A multi-module project has no [project] group to build inter-module coordinates from.",
+        "Modules consume each other by Maven coordinate (groupId:artifactId:version), which needs a group (AGENT.md section 5).",
+        "Set group = \"com.example\" under [project] in the root forge.toml.",
+        "https://forge.dev/e/MMD-0004");
+
     // --- Internal (INT) ---
     public static final Entry INT_0001 = register("FORGE-INT-0001",
         "An unexpected internal error occurred.",
