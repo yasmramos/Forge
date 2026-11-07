@@ -264,8 +264,7 @@ public class ForgeCLI {
             switch (buildType) {
                 case "incremental":
                     System.out.println("Running incremental build...");
-                    engine.buildIncremental();
-                    return 0;
+                    return reportBuild(engine.buildIncremental());
                 case "full":
                     System.out.println("Running full build...");
                     return reportBuild(engine.build());

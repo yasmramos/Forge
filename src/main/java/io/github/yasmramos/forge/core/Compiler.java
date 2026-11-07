@@ -179,12 +179,6 @@ public class Compiler {
         }
     }
 
-    public CompilationResult compileIncremental(List<Path> changedSources, ForgeCache cache) {
-        logger.info("Incremental compilation of " + changedSources.size() + " changed files");
-        // Delegate to the batch compiler so cross-file symbol references resolve
-        return compileBatch(changedSources, null, cache, new File("target/classes").getAbsolutePath());
-    }
-
     /**
      * True when {@code outputDir} holds at least one compiled class file.
      * Used to distrust a warm cache whose outputs were removed (a clean build

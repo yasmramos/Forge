@@ -109,6 +109,32 @@ class CompilerTest {
     }
 
     @Test
+    void cacheInvalidatesOnContentChangeNotTimestamp(@TempDir Path tmp) throws Exception {
+        Path src = Files.createDirectories(tmp.resolve("src"));
+        Path out = tmp.resolve("out");
+        Path f = src.resolve("E.java");
+        Files.write(f, "public class E { public int v() { return 1; } }".getBytes());
+
+        ForgeCache cache = new ForgeCache(tmp.resolve("cache").toString());
+        Compiler compiler = new Compiler();
+        assertTrue(compiler.compileBatch(
+            Collections.singletonList(f), null, cache, out.toString()).isSuccess());
+
+        // Rewrite the bytes but keep the previous mtime: a timestamp-based cache
+        // would wrongly serve the stale class, while a content-based one must
+        // recompile (AGENT.md section 3: content, never time).
+        long mtime = Files.getLastModifiedTime(f).toMillis();
+        Files.write(f, "public class E { public int v() { return 2; } }".getBytes());
+        Files.setLastModifiedTime(f, java.nio.file.attribute.FileTime.fromMillis(mtime));
+
+        CompilationResult second = compiler.compileBatch(
+            Collections.singletonList(f), null, cache, out.toString());
+        assertTrue(second.isSuccess());
+        assertEquals(0, second.getCachedFiles(),
+            "changed bytes must invalidate the cache even when the timestamp is unchanged");
+    }
+
+    @Test
     void warmCacheWithoutClassesRecompiles(@TempDir Path tmp) throws Exception {
         Path src = Files.createDirectories(tmp.resolve("src"));
         Path out = tmp.resolve("out");

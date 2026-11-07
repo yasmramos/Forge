@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,31 +60,13 @@ public class BuildAnalyzer {
     
     public ProjectAnalysis analyzeChanges(ProjectConfig config) {
         logger.info("Analyzing project changes...");
-        
-        ProjectAnalysis analysis = new ProjectAnalysis();
-        
-        try {
-            // Get last build timestamp
-            long lastBuildTime = getLastBuildTime();
-            
-            // Find changed files since last build
-            List<Path> sourceDirectories = getSourceDirectories(config);
-            
-            for (Path sourceDir : sourceDirectories) {
-                if (Files.exists(sourceDir)) {
-                    List<Path> changedFiles = findChangedFiles(sourceDir, lastBuildTime);
-                    analysis.setChangedSources(changedFiles);
-                    
-                    if (!changedFiles.isEmpty()) {
-                        logger.info("Found " + changedFiles.size() + " changed files");
-                    }
-                }
-            }
-            
-        } catch (Exception e) {
-            logger.error("Failed to analyze changes", e);
-        }
-        
+
+        // Content, not timestamps (AGENT.md section 3): staleness is no longer
+        // guessed from lastModifiedTime. The full source set is returned and the
+        // per-file content cache in the compiler decides what to recompile, so
+        // results are identical across checkouts and machines.
+        ProjectAnalysis analysis = analyzeProject(config);
+        analysis.setChangedSources(new ArrayList<>(analysis.getSourceFiles()));
         return analysis;
     }
     
@@ -123,22 +104,6 @@ public class BuildAnalyzer {
         }
     }
     
-    private List<Path> findChangedFiles(Path directory, long sinceTimestamp) throws IOException {
-        List<Path> changedFiles = new ArrayList<>();
-        
-        try (Stream<Path> files = Files.walk(directory)) {
-            for (Path file : (Iterable<Path>) files::iterator) {
-                if (Files.isRegularFile(file) && file.toString().endsWith(".java")) {
-                    BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
-                    if (attrs.lastModifiedTime().toMillis() > sinceTimestamp) {
-                        changedFiles.add(file);
-                    }
-                }
-            }
-        }
-        
-        return changedFiles;
-    }
     
     private void analyzeProjectStructure(ProjectAnalysis analysis) {
         // Analyze package structure
@@ -339,9 +304,4 @@ public class BuildAnalyzer {
         return baseTime + complexityTime;
     }
     
-    private long getLastBuildTime() {
-        // TODO: Implement actual last build time tracking
-        // This would read from build metadata or cache timestamps
-        return 0; // For now, assume no previous build
-    }
 }

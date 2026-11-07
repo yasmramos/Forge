@@ -120,6 +120,33 @@ class ForgeEngineTest {
             .enforceExistingLock(tmp.toFile()));
     }
 
+    @Test
+    void incrementalBuildFailsOnBrokenSource(@TempDir Path tmp) throws Exception {
+        // Regression: `forge build incremental` used to report success even when
+        // compilation failed (BuildResult(true, ...) was hardcoded), so CI went
+        // green on broken code. It must propagate the failure.
+        java.io.File root = tmp.toFile();
+        java.io.File toml = new java.io.File(root, "forge.toml");
+        Path src = tmp.resolve("src/main/java");
+        java.nio.file.Files.createDirectories(src);
+        write(toml, "forge = \"0.1\"\n[project]\nname = \"inc\"\nversion = \"1.0.0\"\n");
+
+        ProjectConfig config = io.github.yasmramos.forge.utils.ConfigReader.loadConfig(toml);
+        config.setSourceDirectory(src.toString());
+        config.setOutputDirectory(tmp.resolve("classes").toString());
+
+        // Positive control: valid source compiles.
+        write(src.resolve("A.java").toFile(), "package p;\npublic class A { public int f() { return 1; } }\n");
+        assertTrue(new ForgeEngine(config, root).buildIncremental().isSuccess(),
+            "valid source must build");
+
+        // Broken source must fail the incremental build.
+        write(src.resolve("A.java").toFile(),
+            "package p;\npublic class A { public int f() { return \"x\"; } }\n");
+        assertFalse(new ForgeEngine(config, root).buildIncremental().isSuccess(),
+            "broken source must fail the incremental build");
+    }
+
     private static void write(java.io.File file, String content) throws Exception {
         java.nio.file.Files.write(file.toPath(),
             content.getBytes(java.nio.charset.StandardCharsets.UTF_8));

@@ -68,4 +68,21 @@ jobs:
         # The app module consumes example.core by coordinate, so a correct
         # "2 + 3 = 5" proves inter-module resolution really worked.
         ../../bin/forge run example.app 2>/dev/null | grep -q "2 + 3 = 5"
+    - name: Fire-test incremental build fails on broken source
+      # Regression guard: `forge build incremental` used to exit 0 even when
+      # compilation failed, so CI stayed green on broken code.
+      run: |
+        FORGE="$PWD/bin/forge"
+        work="$(mktemp -d)"
+        mkdir -p "$work/src/main/java/p"
+        printf 'forge = "0.1"\n[project]\nname = "inc-fire"\nversion = "1.0.0"\ngroup = "p"\n[toolchain]\nlanguage = "11"\n' > "$work/forge.toml"
+        printf 'package p;\npublic class A { public int f() { return 1; } }\n' > "$work/src/main/java/p/A.java"
+        ( cd "$work" && "$FORGE" build incremental )
+        printf 'package p;\npublic class A { public int f() { return "not an int"; } }\n' > "$work/src/main/java/p/A.java"
+        if ( cd "$work" && "$FORGE" build incremental ); then
+          echo "::error::incremental build reported success on broken source"
+          exit 1
+        fi
+        echo "incremental build correctly failed on broken source"
+
 

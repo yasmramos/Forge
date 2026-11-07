@@ -143,36 +143,44 @@ public class ForgeEngine {
     }
     
     /**
-     * Execute incremental build
+     * Incremental build (AGENT.md section 3): same compile path as a full build,
+     * but staleness is decided by content. The whole source set goes to the batch
+     * compiler, whose per-file content cache skips unchanged files; a failing
+     * compilation fails the build and the process exit code.
      */
     public BuildResult buildIncremental() {
         logger.info("Starting incremental build...");
-        
+
         try {
-            // Analyze changed files
+            // Lock enforcement (AGENT.md section 7bis), identical to a full build.
+            io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(
+                projectRoot);
+
             ProjectAnalysis analysis = analyzer.analyzeChanges(config);
-            
-            if (!analysis.hasChanges()) {
-                logger.info("No changes detected, build skipped");
-                return new BuildResult(true, null, null);
+
+            DependencyResolution dependencyResult = resolveWithAether();
+            CompilationResult compilationResult = compiler.compileBatch(
+                analysis.getSourceFiles(), dependencyResult, cache,
+                resolveClassesDir().toString());
+
+            if (!compilationResult.isSuccess()) {
+                logger.error("Incremental compilation failed: "
+                    + compilationResult.getCompiledFiles() + "/"
+                    + compilationResult.getTotalFiles() + " files compiled successfully");
+                return new BuildResult(false, null, null);
             }
-            
-            // Incremental compilation
-            CompilationResult compilationResult = compiler.compileIncremental(
-                analysis.getChangedSources(), 
-                cache
-            );
-            
+
             PackageResult packageResult = new PackageResult(
-                compilationResult.isSuccess(), 
-                "incremental", 
-                compilationResult.getCompiledFiles()
-            );
+                true, "incremental", compilationResult.getCompiledFiles());
             return new BuildResult(true, packageResult, null);
-            
+
+        } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
+            return new BuildResult(false, null, null, fe);
         } catch (Exception e) {
             logger.error("Incremental build failed", e);
             return new BuildResult(false, null, null);
+        } finally {
+            shutdown();
         }
     }
     

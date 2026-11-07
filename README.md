@@ -241,7 +241,15 @@ int filesCompiled = compilation.getCompiledFiles().size();
 
 ### Incremental Builds
 
-Forge's incremental build feature significantly speeds up rebuilds by only processing changed files:
+`forge build incremental` recompiles only what actually changed. Staleness is
+decided by **content**, never by timestamps (AGENT.md section 3): each source
+file's bytes are hashed, so a checkout, an rsync that preserves mtimes, or a
+touch that only moves the clock never fool the cache. A failing compilation
+fails the build and the process exit code, exactly like a full build.
+
+```bash
+forge build incremental   # recompile changed sources; exit != 0 on failure
+```
 
 ```java
 // Enable incremental compilation (default: true)
@@ -250,7 +258,7 @@ ProjectConfig.BuildSettings settings = new ProjectConfig.BuildSettings();
 settings.setIncremental(true);
 config.setBuildSettings(settings);
 
-// The engine will track file changes and only recompile what's necessary
+// The engine recompiles only files whose content hash changed
 ForgeEngine engine = new ForgeEngine(config);
 engine.build();
 ```
