@@ -92,6 +92,13 @@ public class ForgeCLI {
                 case "doctor":
                     return io.github.yasmramos.forge.cli.command.DoctorCommand.run(
                         engine, options.isJson(), System.out);
+                case "config":
+                    // AGENT.md sections 8/8bis/15: show the resolved configuration
+                    // (base + selected variant, and per-module inheritance).
+                    return io.github.yasmramos.forge.cli.command.ConfigCommand.run(
+                        requireEngine(engine).getConfig(),
+                        requireEngine(engine).getProjectRoot(),
+                        options.getVariant(), tail(args), System.out);
                 case "sbom":
                     return io.github.yasmramos.forge.cli.command.SbomCommand.run(
                         engine, tail(args), System.out);
@@ -524,6 +531,7 @@ public class ForgeCLI {
         System.out.println("  tasks                     - List available task types");
         System.out.println("  modules                   - List the modules of a multi-module project in build order");
         System.out.println("  doctor                    - Diagnose environment and project problems (exit 2 on failure)");
+        System.out.println("  config [--show-resolved <module>] - Show the resolved configuration (base + variant + inheritance)");
         System.out.println("  sbom [--output=<path>]    - Generate a CycloneDX SBOM (default target/sbom.json)");
         System.out.println("  publish [--skip-build] [--upload] - Stage (and optionally upload) release artifacts");
         System.out.println("  run [module] [-- args...] - Execute the [exec] main class (program owns stdout)");

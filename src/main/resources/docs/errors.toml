@@ -124,7 +124,7 @@ docs = "https://forge.dev/e/MMD-0002"
 
 ["FORGE-MMD-0003"]
 what = "The requested module is not declared in the root forge.toml."
-why  = "A partial build (forge build <module>) can only target modules listed under [project.modules]."
+why  = "A partial build (forge build <module>) or 'forge config --show-resolved <module>' can only target modules listed under [project.modules]."
 how  = "Check the module name, or add it to [project.modules] in the root forge.toml."
 docs = "https://forge.dev/e/MMD-0003"
 

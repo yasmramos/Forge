@@ -48,6 +48,7 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
 | CLI dispatch | `cli/ForgeCLI.java`, `cli/command/` |
 | Error catalog (stable codes) | `cli/error/ErrorCode.java` |
 | Config variants (8/8bis) | `utils/ConfigReader.java` (`parseConfig(root, props, variant)`) |
+| Resolved-config inspection | `cli/command/ConfigCommand.java` (`forge config`) |
 
 ## Non-obvious invariants
 
@@ -75,6 +76,6 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
 
 ## Current state
 
-Sections 22 (resources), 23 (annotation processors) and 8/8bis (variants) are
-implemented and committed. Section 10's command table is still missing
-`forge import`, `forge audit`, `forge config` and `forge build --scan`.
+Sections 22 (resources), 23 (annotation processors), 8/8bis (variants) and the
+`forge config` command are implemented and committed. Section 10's command table
+is still missing `forge import`, `forge audit` and `forge build --scan`.

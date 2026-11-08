@@ -339,6 +339,12 @@ forge tasks
 forge doctor
 forge doctor --format=json
 
+# Show the configuration Forge actually resolved (base + selected variant)
+forge config
+
+# Show one module's fully merged configuration (inheritance + variant)
+forge config --show-resolved awesome.app
+
 # Generate a CycloneDX SBOM of the resolved dependency graph
 forge sbom
 forge sbom --output=build/bom.json
