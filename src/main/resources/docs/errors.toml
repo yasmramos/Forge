@@ -175,3 +175,9 @@ what = "A plugin's declared entry point could not be loaded."
 why  = "The [plugin] main class named in forge-plugin.toml is missing, does not implement ForgePlugin, or failed to instantiate."
 how  = "Fix the 'plugin.main' class in forge-plugin.toml so it implements io.github.yasmramos.forge.plugin.ForgePlugin, then rebuild the plugin."
 docs = "https://forge.dev/e/PLG-0009"
+
+["FORGE-PLG-0010"]
+what = "A plugin-contributed task is invalid: it has no name, duplicates another task, or would shadow a built-in task."
+why  = "Task names are unique in the graph; a plugin must not collide with a built-in task (compile, test, package, javaExec, clean, resolve) or with another plugin task."
+how  = "Rename the offending plugin task in its factory, or remove the duplicate contribution."
+docs = "https://forge.dev/e/PLG-0010"

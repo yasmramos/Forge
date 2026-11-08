@@ -20,6 +20,14 @@ public interface PluginContext {
      */
     void registerTaskType(String name);
 
+    /**
+     * Registers a new task type together with the factory that produces its
+     * instances for the build graph (sections 1 and 4). Prefer this overload:
+     * a type registered without a factory can be listed but cannot contribute
+     * tasks. Fails on the same collisions as {@link #registerTaskType(String)}.
+     */
+    void registerTaskType(String name, PluginTaskFactory factory);
+
     /** Registers a compiler for a language, keyed by language id. */
     void registerCompiler(String language);
 

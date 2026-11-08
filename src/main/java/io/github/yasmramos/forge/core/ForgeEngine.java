@@ -219,17 +219,37 @@ public class ForgeEngine {
         // the task cache key (section 3).
         io.github.yasmramos.forge.core.plugin.LoadedPlugins plugins =
             io.github.yasmramos.forge.core.plugin.PluginBootstrap.forProject(config).load();
+        io.github.yasmramos.forge.core.task.BuildEnvironment environment = null;
         if (!plugins.isEmpty()) {
             logger.info("Loaded " + plugins.catalog().size() + " plugin(s): "
                 + plugins.idVersions());
-            factory.setEnvironment(
-                io.github.yasmramos.forge.core.task.BuildEnvironment.forPlugins(plugins.idVersions()));
+            environment = io.github.yasmramos.forge.core.task.BuildEnvironment
+                .forPlugins(plugins.idVersions());
+            factory.setEnvironment(environment);
         }
 
         TaskGraph graph = new TaskGraph();
         graph.add(factory.compile());
         graph.add(factory.test());
         graph.add(factory.packageTask());
+
+        // Plugin-contributed tasks (AGENT.md sections 1 and 4): every task type
+        // a plugin registered with a factory contributes its instances here, at
+        // configure time, before the graph is validated. A bad contribution
+        // (duplicate name, built-in shadowing) fails now, never mid-build.
+        if (!plugins.isEmpty()) {
+            io.github.yasmramos.forge.core.plugin.PluginTaskContributor contributor =
+                new io.github.yasmramos.forge.core.plugin.PluginTaskContributor(
+                    plugins, config, projectRoot,
+                    environment != null ? environment
+                        : io.github.yasmramos.forge.core.task.BuildEnvironment
+                            .forPlugins(plugins.idVersions()));
+            for (ForgeTask t : contributor.tasks()) {
+                graph.add(t);
+                logger.info("Plugin task registered: " + t.getName()
+                    + " (" + t.getType() + ")");
+            }
+        }
 
         // Configure time: validate dangling references and cycles first.
         graph.validate();

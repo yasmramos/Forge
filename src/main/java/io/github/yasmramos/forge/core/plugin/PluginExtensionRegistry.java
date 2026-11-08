@@ -29,6 +29,8 @@ public final class PluginExtensionRegistry {
     private final Map<String, String> compilers = new LinkedHashMap<>();
     private final Map<String, String> testRunners = new LinkedHashMap<>();
     private final Map<String, String> packagingTypes = new LinkedHashMap<>();
+    private final Map<String, io.github.yasmramos.forge.plugin.PluginTaskFactory> taskFactories =
+        new LinkedHashMap<>();
 
     /** Records a task type registered by {@code pluginId}. */
     public void registerTaskType(String pluginId, String name) {
@@ -37,6 +39,20 @@ public final class PluginExtensionRegistry {
                 "plugin '" + pluginId + "' tried to replace built-in task type '" + name + "'");
         }
         put(taskTypes, pluginId, name, "task-type");
+    }
+
+    /**
+     * Records a task type together with the factory that produces its
+     * instances (AGENT.md sections 1 and 4). The factory is what lets the type
+     * contribute tasks to the graph; a type registered without one is listed
+     * but contributes nothing.
+     */
+    public void registerTaskType(String pluginId, String name,
+                                 io.github.yasmramos.forge.plugin.PluginTaskFactory factory) {
+        registerTaskType(pluginId, name);
+        if (factory != null) {
+            taskFactories.put(name, factory);
+        }
     }
 
     public void registerCompiler(String pluginId, String language) {
@@ -91,5 +107,15 @@ public final class PluginExtensionRegistry {
 
     public Set<String> taskTypes() {
         return Collections.unmodifiableSet(new LinkedHashSet<>(taskTypes.keySet()));
+    }
+
+    /** Task types that declared a factory, i.e. that can contribute tasks. */
+    public Set<String> taskTypesWithFactories() {
+        return Collections.unmodifiableSet(new LinkedHashSet<>(taskFactories.keySet()));
+    }
+
+    /** The factory registered for {@code taskType}, or {@code null}. */
+    public io.github.yasmramos.forge.plugin.PluginTaskFactory taskFactory(String taskType) {
+        return taskFactories.get(taskType);
     }
 }

@@ -208,6 +208,11 @@ public final class ErrorCode {
         "The [plugin] main class named in forge-plugin.toml is missing, does not implement ForgePlugin, or failed to instantiate.",
         "Fix the 'plugin.main' class in forge-plugin.toml so it implements io.github.yasmramos.forge.plugin.ForgePlugin, then rebuild the plugin.",
         "https://forge.dev/e/PLG-0009");
+    public static final Entry PLG_0010 = register("FORGE-PLG-0010",
+        "A plugin-contributed task is invalid: it has no name, duplicates another task, or would shadow a built-in task.",
+        "Task names are unique in the graph; a plugin must not collide with a built-in task (compile, test, package, javaExec, clean, resolve) or with another plugin task.",
+        "Rename the offending plugin task in its factory, or remove the duplicate contribution.",
+        "https://forge.dev/e/PLG-0010");
 
     // --- Internal (INT) ---
     public static final Entry INT_0001 = register("FORGE-INT-0001",

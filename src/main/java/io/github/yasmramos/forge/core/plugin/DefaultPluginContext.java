@@ -28,6 +28,12 @@ final class DefaultPluginContext implements PluginContext {
     }
 
     @Override
+    public void registerTaskType(String name,
+                                 io.github.yasmramos.forge.plugin.PluginTaskFactory factory) {
+        registry.registerTaskType(descriptor.getId(), name, factory);
+    }
+
+    @Override
     public void registerCompiler(String language) {
         registry.registerCompiler(descriptor.getId(), language);
     }
