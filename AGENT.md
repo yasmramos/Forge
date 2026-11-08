@@ -8,7 +8,7 @@ Each section states the decision and the reasoning behind it. Some decisions are
 
 ## Conventions (non-negotiable)
 
-- **Code, comments, Javadoc, and documentation are always written in English.**
+- **Everything written for this repository is in English. No exceptions.** This covers source code, identifiers, comments, Javadoc, `AGENT.md` and every other document, configuration and its comments, test names and messages, error messages, log messages, CLI help and output, commit messages, branch names, pull request titles and descriptions, code review comments, issue reports, and any other artifact committed to the repository or posted to its review and collaboration tools. If it will be read by another contributor, it is written in English.
 - **Commit messages are in English and follow Conventional Commits**: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:` (with optional scope, e.g. `refactor(config): ...`).
 - Work happens on the `develop` branch.
 - Configuration format is **TOML** (`forge.toml`), parsed with **NightConfig**. JSON configuration is fully migrated away; do not reintroduce it.
