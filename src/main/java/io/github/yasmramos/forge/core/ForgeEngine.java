@@ -78,7 +78,7 @@ public class ForgeEngine {
         this.compiler = new Compiler();
         // Scope cache keys to this project's stable coordinates so the shared
         // ~/.forge/cache never serves another project's entry (AGENT.md 3, 17).
-        this.compiler.setProjectId(config.getGroup() + ":" + config.getName());
+        this.compiler.setProjectId(config.getCacheScopeId());
         // Seed the compiler with third-party libraries available on the JVM classpath
         // (SLF4J, NightConfig, ...) so javac can resolve external symbols when building sources.
         this.compiler.setClasspath(System.getProperty("java.class.path"));
@@ -102,7 +102,7 @@ public class ForgeEngine {
             // touching any output. A missing lock is allowed for now
             // (bootstrap); the graph path already enforces it identically.
             io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(
-                projectRoot);
+                projectRoot, config.getSelectedVariant());
 
             // Phase 1: Analyze project structure
             logger.info("Analyzing project structure...");
@@ -165,7 +165,7 @@ public class ForgeEngine {
         try {
             // Lock enforcement (AGENT.md section 7bis), identical to a build.
             io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(
-                projectRoot);
+                projectRoot, config.getSelectedVariant());
 
             ProjectAnalysis analysis = analyzer.analyzeProject(config);
             DependencyResolution dependencyResult = resolveWithAether();
@@ -205,7 +205,7 @@ public class ForgeEngine {
         try {
             // Lock enforcement (AGENT.md section 7bis), identical to a full build.
             io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(
-                projectRoot);
+                projectRoot, config.getSelectedVariant());
 
             ProjectAnalysis analysis = analyzer.analyzeChanges(config);
 
@@ -254,7 +254,8 @@ public class ForgeEngine {
         // re-resolves dependencies. If forge.lock exists it must match the
         // current forge.toml (config hash) and be internally intact; otherwise
         // the build fails with an actionable error before touching outputs.
-        io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(projectRoot);
+        io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(
+            projectRoot, config.getSelectedVariant());
 
         TaskCache taskCache = new TaskCache(projectRoot, remoteCache());
         TaskContext context = new TaskContext(projectRoot);

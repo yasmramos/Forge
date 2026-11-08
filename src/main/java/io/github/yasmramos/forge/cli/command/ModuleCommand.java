@@ -28,7 +28,8 @@ public final class ModuleCommand {
                 "no [project.modules] declared; this is not a multi-module project");
         }
         MultiModuleProject project = MultiModuleProject.discover(
-            engine.getProjectRoot(), engine.getConfig());
+            engine.getProjectRoot(), engine.getConfig(),
+            engine.getConfig().getSelectedVariant());
 
         List<ModuleDescriptor> ordered = project.topologicalOrder();
         out.println("Modules (build order):");

@@ -457,6 +457,35 @@ Modules that depend on each other in a cycle are rejected before anything is bui
 
 The project has a **single `forge.lock` at the root** covering the union of every module's dependencies (`forge lock refresh`), and `forge tree` / `forge why` / `forge resolve` read that same aggregate graph — so they answer for the whole project, not just the root. The lock is tied to a combined hash of the root and every module `forge.toml`: changing any of them without refreshing the lock fails the build with `FORGE-LCK-0003`.
 
+### Variants
+
+A **variant** is an explicitly selected overlay over the base configuration. There are no implicit profiles: a variant is applied only when you name it with `--variant=<name>` or the `FORGE_VARIANT` environment variable.
+
+```toml
+# forge.toml
+[toolchain]
+language = "11"
+
+[variant.prod]
+[variant.prod.toolchain]
+language = "17"
+
+[variant.prod.compile]
+args = ["-Xlint:all", "-Werror"]
+```
+
+Application is deterministic: the selected `[variant.<name>]` table is merged over the base before parsing. Scalars and lists are **replaced**; tables are merged key by key, so a variant overrides only what it declares.
+
+```bash
+forge build --variant=prod
+FORGE_VARIANT=prod forge test
+forge lock refresh --variant=prod
+```
+
+In a multi-module project a variant is declared as `[variant.<name>]` in **any** `forge.toml` (root or module). Selection is global for the whole build, and module-level overrides win over inherited root values. A module that does not declare the selected variant still builds, with its base configuration, and Forge prints a notice listing it. If the variant is declared nowhere, the build fails with `FORGE-VRT-0001`.
+
+Switching variants is not free by design: the variant name is folded into the lockfile `config_hash` and into the compile cache scope, so a build under one variant can never be served a lock or a cached artifact produced under another (`FORGE-LCK-0003`).
+
 ## Modules
 
 Forge consists of several specialized modules, each responsible for a specific aspect of the build process.

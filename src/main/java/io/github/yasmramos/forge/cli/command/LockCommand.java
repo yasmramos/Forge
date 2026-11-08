@@ -41,6 +41,16 @@ public final class LockCommand {
      *         uniformly and honours {@code --format=json}.
      */
     public int refresh(PrintStream stdout) {
+        return refresh(stdout, null);
+    }
+
+    /**
+     * As {@link #refresh(PrintStream)} but for an explicitly selected variant
+     * (AGENT.md sections 8 and 8bis): the regenerated lock records the variant
+     * in its {@code config_hash}, so a later build under a different variant
+     * fails loudly instead of resolving differently.
+     */
+    public int refresh(PrintStream stdout, String variant) {
         File projectRoot = new File(".");
         File configFile = new File(projectRoot, ConfigReader.CONFIG_FILE_NAME);
         if (!configFile.isFile()) {
@@ -48,7 +58,7 @@ public final class LockCommand {
                 "no forge.toml found in " + projectRoot.getAbsolutePath());
         }
         try {
-            ProjectConfig config = ConfigReader.loadConfig(configFile);
+            ProjectConfig config = ConfigReader.loadConfig(configFile, null, variant);
             Map<String, String> repositories = config.getRepositories().isEmpty()
                     ? defaultRepositories()
                     : config.getRepositories();
@@ -57,7 +67,7 @@ public final class LockCommand {
             // covers the union of every module's dependencies, tied to a combined
             // hash of the root and all module configs.
             if (MultiModuleDependencies.isMultiModule(config)) {
-                MultiModuleProject project = MultiModuleProject.discover(projectRoot, config);
+                MultiModuleProject project = MultiModuleProject.discover(projectRoot, config, variant);
                 Lockfile lock = MultiModuleDependencies.generateLock(
                         project, projectRoot, config, repositories);
                 lock.write(projectRoot);

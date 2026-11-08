@@ -146,6 +146,13 @@ public final class ErrorCode {
         "Report the behavior to the plugin author, or enable strict mode with [build] reproducible = 'strict' to fail instead of warn.",
         "https://forge.dev/e/RPR-0001");
 
+    // --- Variants (VRT) ---
+    public static final Entry VRT_0001 = register("FORGE-VRT-0001",
+        "The selected variant is not declared by any forge.toml in the project.",
+        "A variant must be declared as [variant.<name>] in the root or in at least one module; selection is explicit, never magic (AGENT.md section 8).",
+        "Declare [variant.<name>] in forge.toml, or select one of the declared variants.",
+        "https://forge.dev/e/VRT-0001");
+
     // --- Multi-module (MMD) ---
     public static final Entry MMD_0001 = register("FORGE-MMD-0001",
         "A module dependency cycle exists in the multi-module project.",

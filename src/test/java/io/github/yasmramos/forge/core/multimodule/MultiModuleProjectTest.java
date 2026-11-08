@@ -152,4 +152,78 @@ class MultiModuleProjectTest {
         assertTrue(core.getDirectory().getPath().endsWith("modules/core"),
             core.getDirectory().getPath());
     }
+
+    // --- Variants in multi-module projects (AGENT.md section 8bis) ---
+
+    @Test
+    void moduleVariantOverridesWinOverInheritedRootVariant(@TempDir Path tmp) throws Exception {
+        File root = tmp.toFile();
+        writeRoot(root, "[project.modules]\n\"example.core\" = \"${project.version}\"\n"
+            + "[variant.prod]\n[variant.prod.toolchain]\nlanguage = \"17\"\n");
+        // The module declares the same variant with a different toolchain: its
+        // own overlay must win over the inherited root variant value.
+        write(new File(root, "core/forge.toml"),
+            "forge = \"0.1\"\n[project]\nname = \"example.core\"\n"
+                + "[variant.prod]\n[variant.prod.toolchain]\nlanguage = \"21\"\n");
+
+        MultiModuleProject project = MultiModuleProject.discover(
+            root, ConfigReader.loadConfig(new File(root, "forge.toml"), null, "prod"), "prod");
+        ProjectConfig core = project.module("example.core").getConfig();
+
+        assertEquals("21", core.getSourceCompatibility());
+        assertEquals("prod", core.getSelectedVariant());
+        assertTrue(project.modulesIgnoringVariant().isEmpty());
+    }
+
+    @Test
+    void moduleWithoutVariantBuildsBaseAndIsReported(@TempDir Path tmp) throws Exception {
+        File root = tmp.toFile();
+        writeRoot(root, "[project.modules]\n\"example.core\" = \"${project.version}\"\n"
+            + "\"example.app\" = \"${project.version}\"\n"
+            + "[variant.prod]\n[variant.prod.toolchain]\nlanguage = \"17\"\n");
+        write(new File(root, "core/forge.toml"),
+            "forge = \"0.1\"\n[project]\nname = \"example.core\"\n");
+        write(new File(root, "app/forge.toml"),
+            "forge = \"0.1\"\n[project]\nname = \"example.app\"\n"
+                + "[dependencies.compile]\n\"com.example:example.core\" = \"${project.version}\"\n");
+
+        MultiModuleProject project = MultiModuleProject.discover(
+            root, ConfigReader.loadConfig(new File(root, "forge.toml"), null, "prod"), "prod");
+
+        // Neither module declares the variant: both still inherit the root's
+        // resolved-with-variant values, but the caller is told they declared
+        // nothing of their own, never left in silence (section 8bis).
+        assertEquals(java.util.Arrays.asList("example.app", "example.core"),
+            project.modulesIgnoringVariant());
+    }
+
+    @Test
+    void unknownVariantFailsWhenDeclaredNowhere(@TempDir Path tmp) throws Exception {
+        File root = tmp.toFile();
+        writeRoot(root, "[project.modules]\n\"example.core\" = \"${project.version}\"\n");
+        write(new File(root, "core/forge.toml"),
+            "forge = \"0.1\"\n[project]\nname = \"example.core\"\n");
+
+        ForgeException ex = assertThrows(ForgeException.class,
+            () -> MultiModuleProject.discover(root, rootConfig(root), "benchmark"));
+        assertEquals("FORGE-VRT-0001", ex.getCode());
+    }
+
+    @Test
+    void variantDeclaredOnlyInAModuleIsAccepted(@TempDir Path tmp) throws Exception {
+        File root = tmp.toFile();
+        writeRoot(root, "[project.modules]\n\"example.core\" = \"${project.version}\"\n");
+        // A module-specific variant (e.g. benchmark on one hot module) is
+        // legitimate even when the root knows nothing about it (section 8bis).
+        write(new File(root, "core/forge.toml"),
+            "forge = \"0.1\"\n[project]\nname = \"example.core\"\n"
+                + "[variant.benchmark]\n[variant.benchmark.toolchain]\nlanguage = \"17\"\n");
+
+        MultiModuleProject project = MultiModuleProject.discover(
+            root, ConfigReader.loadConfig(new File(root, "forge.toml"), null, "benchmark"),
+            "benchmark");
+
+        assertEquals("17", project.module("example.core").getConfig().getSourceCompatibility());
+        assertTrue(project.modulesIgnoringVariant().isEmpty());
+    }
 }

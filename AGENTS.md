@@ -47,6 +47,7 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
 | Annotation processors | `core/processor/AnnotationProcessors.java` |
 | CLI dispatch | `cli/ForgeCLI.java`, `cli/command/` |
 | Error catalog (stable codes) | `cli/error/ErrorCode.java` |
+| Config variants (8/8bis) | `utils/ConfigReader.java` (`parseConfig(root, props, variant)`) |
 
 ## Non-obvious invariants
 
@@ -59,6 +60,14 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
   A mismatch is `FORGE-LCK-0003` at build time; locks are never auto-repaired.
 - **Cache validity is content-based, never time-based** (section 3). Never add a
   timestamp comparison to invalidation logic.
+- **The selected variant must invalidate lock and cache** (sections 8bis/3).
+  The variant name is folded into `Lockfile.hashOf(..., variant)` (→ `config_hash`)
+  and into `ProjectConfig.getCacheScopeId()` (→ compiler `projectId`). A cached
+  artifact or a lock produced under one variant must never be reused under
+  another. Both use logical names only, never paths, so hashes stay portable.
+- **Variant merge order is fixed** (section 8bis): inherit(root resolved-with-
+  variant) → module base overrides → module `[variant.<name>]`. `[variant.*]` is
+  selection metadata and is stripped before parsing the effective config.
 - **Hashes must be portable** (section 17): relative paths only, no absolute
   paths or variable metadata in cache keys or artifacts.
 - **Error codes are public API.** Add new ones to `cli/error/ErrorCode.java`
@@ -66,6 +75,6 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
 
 ## Current state
 
-Sections 22 (resources) and 23 (annotation processors) are implemented and
-committed. Section 10's command table is missing `forge import`, `forge audit`,
-`forge config` and `forge build --scan`; variants (8/8bis) are not parsed yet.
+Sections 22 (resources), 23 (annotation processors) and 8/8bis (variants) are
+implemented and committed. Section 10's command table is still missing
+`forge import`, `forge audit`, `forge config` and `forge build --scan`.

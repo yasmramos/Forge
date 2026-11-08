@@ -25,6 +25,16 @@ public class ForgeCLI {
     }
 
     /**
+     * Selected variant from {@code --variant} or {@code FORGE_VARIANT}, or null
+     * for the base configuration (AGENT.md sections 8 and 24). Exposed so the
+     * entry point can resolve the configuration with the variant applied before
+     * the engine is constructed.
+     */
+    public String getVariant() {
+        return options.getVariant();
+    }
+
+    /**
      * Executes the requested command and returns the process exit code
      * (AGENT.md section 10bis): 0 on success, 1 user/config error, 2 environment
      * error, 3 internal bug. Errors are rendered through ErrorRenderer so
@@ -156,7 +166,8 @@ public class ForgeCLI {
                 io.github.yasmramos.forge.cli.error.ErrorCode.CFG_0002,
                 "unknown lock subcommand '" + sub + "'; expected 'refresh'");
         }
-        new io.github.yasmramos.forge.cli.command.LockCommand().refresh(System.out);
+        new io.github.yasmramos.forge.cli.command.LockCommand()
+            .refresh(System.out, options.getVariant());
         return 0;
     }
 
@@ -534,6 +545,7 @@ public class ForgeCLI {
         System.out.println("Global flags (AGENT.md section 10bis):");
         System.out.println("  --format=json             - Emit structured errors as JSON (for CI)");
         System.out.println("  --debug                   - Append Java stack traces to errors");
+        System.out.println("  --variant=<name>          - Select a declared [variant.<name>] (also FORGE_VARIANT)");
         System.out.println();
         System.out.println("Exit codes: 0 success, 1 user/config error, 2 environment error, 3 internal bug");
         System.out.println();

@@ -33,16 +33,21 @@ public final class MultiModuleProject {
 
     private final File rootDirectory;
     private final ProjectConfig rootConfig;
+    /** Selected variant name, or null for the base configuration (section 8bis). */
+    private final String variant;
     /** Modules in declaration order (name -> descriptor). */
     private final Map<String, ModuleDescriptor> modules = new LinkedHashMap<>();
     /** Module group:artifact -> module name, for edge derivation. */
     private final Map<String, String> gaToModule = new LinkedHashMap<>();
     /** Module name -> names of the modules it depends on (compile scope). */
     private final Map<String, Set<String>> edges = new LinkedHashMap<>();
+    /** Modules that do not declare the selected variant, sorted (section 8bis). */
+    private final List<String> modulesIgnoringVariant = new ArrayList<>();
 
-    private MultiModuleProject(File rootDirectory, ProjectConfig rootConfig) {
+    private MultiModuleProject(File rootDirectory, ProjectConfig rootConfig, String variant) {
         this.rootDirectory = rootDirectory;
         this.rootConfig = rootConfig;
+        this.variant = variant;
     }
 
     /**
@@ -53,8 +58,24 @@ public final class MultiModuleProject {
      *                        root declares no group to build coordinates from
      */
     public static MultiModuleProject discover(File rootDirectory, ProjectConfig rootConfig) {
-        MultiModuleProject project = new MultiModuleProject(rootDirectory, rootConfig);
+        return discover(rootDirectory, rootConfig, null);
+    }
+
+    /**
+     * Discovers every module, applying an explicitly selected variant (AGENT.md
+     * section 8bis). Selection is global: one variant name applies to the whole
+     * build. A module that does not declare it keeps its base configuration and
+     * is recorded in {@link #modulesIgnoringVariant()}, so the caller can print
+     * the mandatory notice instead of silently ignoring the selection.
+     *
+     * @throws ForgeException {@code FORGE-VRT-0001} when no module (nor the root)
+     *                        declares the selected variant
+     */
+    public static MultiModuleProject discover(File rootDirectory, ProjectConfig rootConfig,
+                                              String variant) {
+        MultiModuleProject project = new MultiModuleProject(rootDirectory, rootConfig, variant);
         project.load();
+        project.checkVariantKnown();
         return project;
     }
 
@@ -79,10 +100,17 @@ public final class MultiModuleProject {
             }
             ProjectConfig moduleConfig;
             try {
-                moduleConfig = ConfigReader.loadModuleConfig(rootConfig, moduleToml);
+                moduleConfig = ConfigReader.loadModuleConfig(rootConfig, moduleToml, variant);
             } catch (IOException e) {
                 throw new ForgeException(ErrorCode.CFG_0001,
                     "could not read module configuration for '" + name + "': " + e.getMessage(), e);
+            }
+
+            // Section 8bis: a module that does not declare the selected variant
+            // builds with its base configuration and must be reported, never
+            // silently skipped.
+            if (variant != null && !moduleConfig.getVariantNames().contains(variant)) {
+                modulesIgnoringVariant.add(name);
             }
 
             String group = firstNonBlank(moduleConfig.getGroup(), rootConfig.getGroup());
@@ -95,6 +123,53 @@ public final class MultiModuleProject {
         }
 
         deriveEdges();
+    }
+
+    /**
+     * Fails when the selected variant is declared nowhere (AGENT.md section
+     * 8bis: {@code FORGE-VRT-0001}). Declaring it in the root counts, since the
+     * root's variant values are inherited by every module.
+     */
+    private void checkVariantKnown() {
+        if (variant == null || modules.isEmpty()) {
+            return;
+        }
+        if (rootConfig.getVariantNames().contains(variant)) {
+            return;
+        }
+        for (ModuleDescriptor m : modules.values()) {
+            if (m.getConfig().getVariantNames().contains(variant)) {
+                return;
+            }
+        }
+        throw new ForgeException(ErrorCode.VRT_0001,
+            "no forge.toml declares [variant." + variant + "]; declared variants: "
+                + declaredVariantNames());
+    }
+
+    /** Every variant name declared by the root or any module, sorted. */
+    private java.util.Set<String> declaredVariantNames() {
+        java.util.Set<String> names = new java.util.TreeSet<>(rootConfig.getVariantNames());
+        for (ModuleDescriptor m : modules.values()) {
+            names.addAll(m.getConfig().getVariantNames());
+        }
+        return names;
+    }
+
+    /**
+     * Modules that do not declare the selected variant and therefore build with
+     * their base configuration (AGENT.md section 8bis). Sorted for a stable
+     * notice. Empty when no variant is selected or every module declares it.
+     */
+    public List<String> modulesIgnoringVariant() {
+        List<String> sorted = new ArrayList<>(modulesIgnoringVariant);
+        java.util.Collections.sort(sorted);
+        return sorted;
+    }
+
+    /** Selected variant name, or null for the base configuration. */
+    public String getVariant() {
+        return variant;
     }
 
     /** Resolves a module's directory: explicit {@code dir} override, else the name's last segment. */

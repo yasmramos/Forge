@@ -76,7 +76,7 @@ public class StandardTaskFactory {
                     null);
 
             Compiler compiler = new Compiler();
-            compiler.setProjectId(config.getGroup() + ":" + config.getName());
+            compiler.setProjectId(config.getCacheScopeId());
             compiler.setClasspath(System.getProperty("java.class.path"));
             compiler.setProcessorNames(config.getProcessors());
             CompilationResult result =

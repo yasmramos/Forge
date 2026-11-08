@@ -182,7 +182,7 @@ public final class DependencyCommand {
         if (MultiModuleDependencies.isMultiModule(config)) {
             try {
                 MultiModuleProject project =
-                    MultiModuleProject.discover(new File("."), config);
+                    MultiModuleProject.discover(new File("."), config, config.getSelectedVariant());
                 return MultiModuleDependencies.resolve(project, new File("."), repositories);
             } catch (AetherDependencyResolver.ResolutionFailedException e) {
                 throw new ForgeException(ErrorCode.DEP_0002, e.getMessage(), e);
@@ -204,7 +204,9 @@ public final class DependencyCommand {
                 "no forge.toml found in " + configFile.getAbsolutePath());
         }
         try {
-            return ConfigReader.loadConfig(configFile);
+            // Honour FORGE_VARIANT so `forge tree`/`why`/`resolve` answer for the
+            // same configuration a `--variant` build would use (sections 8, 24).
+            return ConfigReader.loadConfig(configFile, null, System.getenv("FORGE_VARIANT"));
         } catch (Exception e) {
             throw new ForgeException(ErrorCode.CFG_0001, e.getMessage(), e);
         }
