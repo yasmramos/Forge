@@ -39,6 +39,12 @@ final class DefaultPluginContext implements PluginContext {
     }
 
     @Override
+    public void registerCompiler(String language,
+                                 io.github.yasmramos.forge.plugin.PluginCompiler compiler) {
+        registry.registerCompiler(descriptor.getId(), language, compiler);
+    }
+
+    @Override
     public void registerTestRunner(String id) {
         registry.registerTestRunner(descriptor.getId(), id);
     }

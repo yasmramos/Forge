@@ -249,6 +249,22 @@ public class ForgeEngine {
                 logger.info("Plugin task registered: " + t.getName()
                     + " (" + t.getType() + ")");
             }
+
+            // Plugin compilers (AGENT.md section 4: "register compilers for
+            // languages"). Each registered language contributes a compile task
+            // that discovers its own sources and feeds the same classes
+            // directory, so Kotlin/Scala land where the Java compile does.
+            io.github.yasmramos.forge.core.plugin.PluginCompilationContributor compilers =
+                new io.github.yasmramos.forge.core.plugin.PluginCompilationContributor(
+                    plugins, config, projectRoot, resolveClassesDir(),
+                    environment != null ? environment
+                        : io.github.yasmramos.forge.core.task.BuildEnvironment
+                            .forPlugins(plugins.idVersions()));
+            for (ForgeTask t : compilers.tasks()) {
+                graph.add(t);
+                logger.info("Plugin compiler task registered: " + t.getName()
+                    + " (" + t.getType() + ")");
+            }
         }
 
         // Configure time: validate dangling references and cycles first.

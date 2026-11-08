@@ -181,3 +181,9 @@ what = "A plugin-contributed task is invalid: it has no name, duplicates another
 why  = "Task names are unique in the graph; a plugin must not collide with a built-in task (compile, test, package, javaExec, clean, resolve) or with another plugin task."
 how  = "Rename the offending plugin task in its factory, or remove the duplicate contribution."
 docs = "https://forge.dev/e/PLG-0010"
+
+["FORGE-PLG-0011"]
+what = "The source directory for a plugin compiler's language could not be scanned."
+why  = "The configured source directory is unreadable or disappeared while the build was gathering sources for a plugin-registered language."
+how  = "Check the source directory permissions and that it exists, then rebuild."
+docs = "https://forge.dev/e/PLG-0011"

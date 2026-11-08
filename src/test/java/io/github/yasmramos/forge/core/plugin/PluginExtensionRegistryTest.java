@@ -63,4 +63,26 @@ class PluginExtensionRegistryTest {
         assertNotNull(registry.taskFactory("withFactory"));
         assertNull(registry.taskFactory("listedOnly"));
     }
+
+    @Test
+    void compilerLanguagesTrackWhichCanCompile() {
+        PluginExtensionRegistry registry = new PluginExtensionRegistry();
+        registry.registerCompiler("io.example.p", "listedOnly");
+        io.github.yasmramos.forge.plugin.PluginCompiler impl =
+            new io.github.yasmramos.forge.plugin.PluginCompiler() {
+                public String sourceExtension() { return "kt"; }
+                public io.github.yasmramos.forge.plugin.PluginCompilationResult compile(
+                    io.github.yasmramos.forge.plugin.PluginCompilationRequest r) {
+                    return io.github.yasmramos.forge.plugin.PluginCompilationResult.success();
+                }
+            };
+        registry.registerCompiler("io.example.p", "kotlin", impl);
+
+        // Both are listed as extension points; only one can actually compile.
+        assertTrue(registry.compilers().contains("listedOnly"));
+        assertTrue(registry.compilers().contains("kotlin"));
+        assertEquals(java.util.Collections.singleton("kotlin"), registry.compilerLanguages());
+        assertSame(impl, registry.compiler("kotlin"));
+        assertNull(registry.compiler("listedOnly"));
+    }
 }
