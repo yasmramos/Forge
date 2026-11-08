@@ -243,6 +243,10 @@ forge resolve --explain
 # List the available task types
 forge tasks
 
+# Diagnose environment and project problems (exit 2 when a check fails)
+forge doctor
+forge doctor --format=json
+
 # Multi-module: list modules in build order, or build one module and its deps
 forge modules
 forge build awesome.core
