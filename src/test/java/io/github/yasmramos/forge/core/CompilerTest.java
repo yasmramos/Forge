@@ -136,6 +136,35 @@ class CompilerTest {
     }
 
     @Test
+    void lostNestedClassIsRegeneratedFromWarmCache(@TempDir Path tmp) throws Exception {
+        // Regression: the presence check must cover nested/anonymous classes,
+        // not just the top-level name. Losing Outer$Inner.class while Outer.class
+        // survives must not be a silent cache hit that yields an incomplete
+        // build (the failure mode the per-file presence check prevents).
+        Path src = Files.createDirectories(tmp.resolve("src"));
+        Path out = tmp.resolve("out");
+        Path outer = src.resolve("Outer.java");
+        Files.write(outer, ("public class Outer {"
+            + " static class Inner {}"
+            + " public int v() { return new Inner().hashCode(); } }").getBytes());
+
+        ForgeCache cache = new ForgeCache(tmp.resolve("cache").toString());
+        Compiler compiler = new Compiler();
+        assertTrue(compiler.compileBatch(Arrays.asList(outer), null, cache, out.toString()).isSuccess());
+        Path innerClass = out.resolve("Outer$Inner.class");
+        assertTrue(Files.isRegularFile(innerClass), "nested class must be compiled");
+
+        Files.delete(innerClass);
+
+        CompilationResult second = compiler.compileBatch(Arrays.asList(outer), null, cache, out.toString());
+        assertTrue(second.isSuccess());
+        assertEquals(0, second.getCachedFiles(),
+            "a missing nested class must invalidate the cache hit");
+        assertTrue(Files.isRegularFile(innerClass),
+            "the nested class must be regenerated");
+    }
+
+    @Test
     void incrementalRecompileResolvesUnchangedSiblingClasses(@TempDir Path tmp) throws Exception {
         // Regression: only stale sources are handed to javac, so a stale file
         // that references an unchanged sibling needs that sibling's already

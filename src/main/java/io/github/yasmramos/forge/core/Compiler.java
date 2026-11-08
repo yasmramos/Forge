@@ -150,7 +150,7 @@ public class Compiler {
         for (Path sourceFile : sourceFiles) {
             String cacheKey = ForgeCache.generateKey(sourceFile.toFile(), depMap, projectId);
             boolean cached = cache != null && cache.isValid(cacheKey, sourceFile.toFile());
-            if (cached && compiledClassExists(sourceFile, Paths.get(outputDir))) {
+            if (cached && compiledOutputPresent(sourceFile, Paths.get(outputDir), cache.get(cacheKey))) {
                 logger.debug("Using cached compilation for: " + sourceFile);
                 cachedCount++;
             } else {
@@ -177,13 +177,19 @@ public class Compiler {
             : executeJavac(staleFiles, dependencyResolution, outputDir);
 
         if (outcome.success) {
-            // Cache each successfully compiled file
+            // Cache each successfully compiled file, recording every class it
+            // produced so a later hit can prove the whole output is still there.
+            Path outputPath = Paths.get(outputDir);
             for (Path sourceFile : staleFiles) {
                 String cacheKey = ForgeCache.generateKey(sourceFile.toFile(), depMap, projectId);
                 ForgeCache.CacheEntry cacheEntry = new ForgeCache.CacheEntry(
                     sourceFile.toFile().lastModified(),
                     outcome.output.getBytes(StandardCharsets.UTF_8)
                 );
+                List<String> produced = producedClasses(sourceFile, outputPath);
+                if (!produced.isEmpty()) {
+                    cacheEntry.getMetadata().put(CLASSES_METADATA_KEY, String.join("\n", produced));
+                }
                 if (cache != null) {
                     cache.put(cacheKey, cacheEntry);
                 }
@@ -197,12 +203,71 @@ public class Compiler {
         }
     }
 
+    /** Metadata key holding the class files a cache entry stands for. */
+    private static final String CLASSES_METADATA_KEY = "classes";
+
     /**
-     * True when a source file's compiled form is on disk. The top-level class
-     * name matches the source file name and lives in its package directory
-     * (JLS 7.6); nested classes share the {@code Outer$Inner.class} prefix, so
-     * a match on {@code Package/Name.class} is enough to tell whether the file
-     * was compiled.
+     * True when every class file a cache entry claims to have produced is
+     * still on disk.
+     *
+     * <p>The top-level class alone is not enough: losing {@code Outer$Inner.class}
+     * while {@code Outer.class} survives would otherwise be a silent cache hit
+     * and an incomplete build - the same failure mode the per-file presence
+     * check exists to prevent. When the entry carries the recorded class list
+     * (every entry written since that list was introduced) all of them are
+     * checked; legacy entries without it fall back to the top-level name.</p>
+     */
+    private static boolean compiledOutputPresent(Path sourceFile, Path outputDir,
+                                                 ForgeCache.CacheEntry entry) {
+        String recorded = entry != null ? entry.getMetadata().get(CLASSES_METADATA_KEY) : null;
+        if (recorded == null || recorded.isEmpty()) {
+            return compiledClassExists(sourceFile, outputDir);
+        }
+        for (String relative : recorded.split("\n")) {
+            if (!relative.isEmpty() && !Files.isRegularFile(outputDir.resolve(relative))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Class files produced by compiling {@code sourceFile}: the top-level class
+     * plus its nested and anonymous classes ({@code Name$*.class}), as paths
+     * relative to {@code outputDir}. Empty when none are found (e.g. the file
+     * declares only package-private types under another name).
+     */
+    private static List<String> producedClasses(Path sourceFile, Path outputDir) {
+        String fileName = sourceFile.getFileName().toString();
+        String baseName = fileName.endsWith(".java")
+            ? fileName.substring(0, fileName.length() - ".java".length())
+            : fileName;
+        String packagePath = readPackagePath(sourceFile);
+        Path packageDir = packagePath.isEmpty() ? outputDir : outputDir.resolve(packagePath);
+        if (!Files.isDirectory(packageDir)) {
+            return java.util.Collections.emptyList();
+        }
+        List<String> classes = new ArrayList<>();
+        try (java.util.stream.Stream<Path> entries = Files.list(packageDir)) {
+            entries.filter(Files::isRegularFile)
+                .filter(p -> {
+                    String n = p.getFileName().toString();
+                    return n.endsWith(".class")
+                        && (n.equals(baseName + ".class") || n.startsWith(baseName + "$"));
+                })
+                .sorted()
+                .forEach(p -> classes.add(outputDir.relativize(p).toString().replace(File.separatorChar, '/')));
+        } catch (java.io.IOException e) {
+            // Unreadable output: record nothing and let the top-level check stand.
+            return java.util.Collections.emptyList();
+        }
+        return classes;
+    }
+
+    /**
+     * Fallback presence check for cache entries written before the produced
+     * class list was recorded: the top-level class name matches the source file
+     * name and lives in its package directory (JLS 7.6).
      */
     private static boolean compiledClassExists(Path sourceFile, Path outputDir) {
         String fileName = sourceFile.getFileName().toString();
