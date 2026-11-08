@@ -127,7 +127,7 @@ public class ForgeEngine {
 
             // Phase 5: Run tests after packaging, regardless of parallel/sequential mode
             logger.info("Running tests...");
-            TestResult testResult = runTests(packageResult);
+            TestResult testResult = executeTests(packageResult);
 
             boolean buildSuccess = packageResult.isSuccess() && testResult.isSuccess();
             return new BuildResult(buildSuccess, packageResult, testResult);
@@ -145,6 +145,42 @@ public class ForgeEngine {
         }
     }
     
+    /**
+     * Test-only pipeline (AGENT.md section 10, {@code forge test}): compile the
+     * main sources, then compile and run the tests, without packaging. Shares the
+     * exact compile and {@link io.github.yasmramos.forge.core.test.TestExecutor}
+     * paths a full build uses, so {@code forge test} can never disagree with
+     * {@code forge build} about whether the tests pass.
+     */
+    public BuildResult runTests() {
+        logger.info("Running tests for project: " + config.getName());
+        try {
+            // Lock enforcement (AGENT.md section 7bis), identical to a build.
+            io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(
+                projectRoot);
+
+            ProjectAnalysis analysis = analyzer.analyzeProject(config);
+            DependencyResolution dependencyResult = resolveWithAether();
+            CompilationResult compilationResult = compileSources(analysis, dependencyResult);
+
+            if (!compilationResult.isSuccess()) {
+                logger.error("Compilation failed: " + compilationResult.getCompiledFiles()
+                    + "/" + compilationResult.getTotalFiles() + " files compiled successfully");
+                return new BuildResult(false, null, null);
+            }
+
+            TestResult testResult = executeTests(null);
+            return new BuildResult(testResult.isSuccess(), null, testResult);
+        } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
+            return new BuildResult(false, null, null, fe);
+        } catch (Exception e) {
+            logger.error("Test run failed", e);
+            return new BuildResult(false, null, null);
+        } finally {
+            shutdown();
+        }
+    }
+
     /**
      * Incremental build (AGENT.md section 3): same compile path as a full build,
      * but staleness is decided by content. The whole source set goes to the batch
@@ -592,7 +628,7 @@ public class ForgeEngine {
         }
     }
     
-    private TestResult runTests(PackageResult packageResult) {
+    private TestResult executeTests(PackageResult packageResult) {
         logger.info("Running tests...");
         io.github.yasmramos.forge.core.test.TestExecutor.Result result =
             io.github.yasmramos.forge.core.test.TestExecutor.execute(

@@ -279,6 +279,9 @@ forge help
 # Build the project
 forge build
 
+# Compile and run the tests without packaging
+forge test
+
 # Clean all build artifacts
 forge clean
 
@@ -290,6 +293,7 @@ forge run
 
 # Regenerate forge.lock from forge.toml (never done by a build)
 forge lock refresh
+forge update
 
 # Show the resolved dependency tree (optionally filtered / depth-limited)
 forge tree
