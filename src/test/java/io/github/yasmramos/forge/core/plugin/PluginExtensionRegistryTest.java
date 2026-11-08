@@ -107,4 +107,26 @@ class PluginExtensionRegistryTest {
         assertSame(impl, registry.testRunner("kotlin"));
         assertNull(registry.testRunner("listedOnly"));
     }
+
+    @Test
+    void packagingTypesTrackWhichCanPackage() {
+        PluginExtensionRegistry registry = new PluginExtensionRegistry();
+        registry.registerPackagingType("io.example.p", "listedOnly");
+        io.github.yasmramos.forge.plugin.PluginPackagingType impl =
+            new io.github.yasmramos.forge.plugin.PluginPackagingType() {
+                public String id() { return "war"; }
+                public String artifactFileName() { return "forge-main.war"; }
+                public io.github.yasmramos.forge.plugin.PluginPackagingResult packageArtifact(
+                    io.github.yasmramos.forge.plugin.PluginPackagingRequest r) {
+                    return io.github.yasmramos.forge.plugin.PluginPackagingResult.success();
+                }
+            };
+        registry.registerPackagingType("io.example.p", "war", impl);
+
+        assertTrue(registry.packagingTypes().contains("listedOnly"));
+        assertTrue(registry.packagingTypes().contains("war"));
+        assertEquals(java.util.Collections.singleton("war"), registry.packagingTypesWithImpl());
+        assertSame(impl, registry.packagingType("war"));
+        assertNull(registry.packagingType("listedOnly"));
+    }
 }

@@ -139,6 +139,7 @@ public class ConfigReader {
         config.setProperties(properties);
 
         config.setDescription(project != null ? expand(project.get("description"), properties) : null);
+        config.setPackaging(project != null ? expand(project.get("packaging"), properties) : null);
 
         // Module map from [project.modules]: name -> version expression.
         // A module entry may also be a table to override the directory:

@@ -219,19 +219,35 @@ public class ForgeEngine {
         // the task cache key (section 3).
         io.github.yasmramos.forge.core.plugin.LoadedPlugins plugins =
             io.github.yasmramos.forge.core.plugin.PluginBootstrap.forProject(config).load();
-        io.github.yasmramos.forge.core.task.BuildEnvironment environment = null;
+        io.github.yasmramos.forge.core.task.BuildEnvironment environment =
+            io.github.yasmramos.forge.core.task.BuildEnvironment.forPlugins(plugins.idVersions());
         if (!plugins.isEmpty()) {
             logger.info("Loaded " + plugins.catalog().size() + " plugin(s): "
                 + plugins.idVersions());
-            environment = io.github.yasmramos.forge.core.task.BuildEnvironment
-                .forPlugins(plugins.idVersions());
             factory.setEnvironment(environment);
         }
 
         TaskGraph graph = new TaskGraph();
         graph.add(factory.compile());
         graph.add(factory.test());
-        graph.add(factory.packageTask());
+
+        // Packaging (AGENT.md section 4: "register packaging types"). A project
+        // selecting a plugin-provided type produces its artifact through the
+        // plugin instead of the built-in jar; selecting a type no loaded plugin
+        // provides fails here, at configure time, never by silently producing a
+        // jar the project did not ask for.
+        io.github.yasmramos.forge.core.plugin.PluginPackagingContributor packaging =
+            new io.github.yasmramos.forge.core.plugin.PluginPackagingContributor(
+                plugins, config, projectRoot, resolveClassesDir(), environment);
+        if ("jar".equals(packaging.selectedType())) {
+            graph.add(factory.packageTask());
+        } else {
+            for (ForgeTask t : packaging.tasks()) {
+                graph.add(t);
+                logger.info("Plugin packaging task registered: " + t.getName()
+                    + " (" + t.getType() + ")");
+            }
+        }
 
         // Plugin-contributed tasks (AGENT.md sections 1 and 4): every task type
         // a plugin registered with a factory contributes its instances here, at
@@ -240,10 +256,7 @@ public class ForgeEngine {
         if (!plugins.isEmpty()) {
             io.github.yasmramos.forge.core.plugin.PluginTaskContributor contributor =
                 new io.github.yasmramos.forge.core.plugin.PluginTaskContributor(
-                    plugins, config, projectRoot,
-                    environment != null ? environment
-                        : io.github.yasmramos.forge.core.task.BuildEnvironment
-                            .forPlugins(plugins.idVersions()));
+                    plugins, config, projectRoot, environment);
             for (ForgeTask t : contributor.tasks()) {
                 graph.add(t);
                 logger.info("Plugin task registered: " + t.getName()
@@ -256,10 +269,7 @@ public class ForgeEngine {
             // directory, so Kotlin/Scala land where the Java compile does.
             io.github.yasmramos.forge.core.plugin.PluginCompilationContributor compilers =
                 new io.github.yasmramos.forge.core.plugin.PluginCompilationContributor(
-                    plugins, config, projectRoot, resolveClassesDir(),
-                    environment != null ? environment
-                        : io.github.yasmramos.forge.core.task.BuildEnvironment
-                            .forPlugins(plugins.idVersions()));
+                    plugins, config, projectRoot, resolveClassesDir(), environment);
             for (ForgeTask t : compilers.tasks()) {
                 graph.add(t);
                 logger.info("Plugin compiler task registered: " + t.getName()
@@ -271,10 +281,7 @@ public class ForgeEngine {
             // claims by extension and depends on the built-in test task.
             io.github.yasmramos.forge.core.plugin.PluginTestContributor testRunners =
                 new io.github.yasmramos.forge.core.plugin.PluginTestContributor(
-                    plugins, config, projectRoot, resolveClassesDir(),
-                    environment != null ? environment
-                        : io.github.yasmramos.forge.core.task.BuildEnvironment
-                            .forPlugins(plugins.idVersions()));
+                    plugins, config, projectRoot, resolveClassesDir(), environment);
             for (ForgeTask t : testRunners.tasks()) {
                 graph.add(t);
                 logger.info("Plugin test runner task registered: " + t.getName()

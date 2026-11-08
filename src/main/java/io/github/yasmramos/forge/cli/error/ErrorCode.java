@@ -223,6 +223,11 @@ public final class ErrorCode {
         "A test source directory is unreadable or disappeared while the build was gathering tests for a plugin-registered runner.",
         "Check the test directory permissions and that it exists, then rebuild.",
         "https://forge.dev/e/PLG-0012");
+    public static final Entry PLG_0013 = register("FORGE-PLG-0013",
+        "The packaging type selected in [project] is not provided by any loaded plugin.",
+        "A project selects a packaging type through 'packaging' in [project]; Forge found no loaded plugin that registered an implementation for it, so it cannot produce that artifact.",
+        "Declare the plugin providing the type in [plugins] of forge.toml, fix the type name, or set packaging = \"jar\" for the built-in packaging.",
+        "https://forge.dev/e/PLG-0013");
 
     // --- Internal (INT) ---
     public static final Entry INT_0001 = register("FORGE-INT-0001",

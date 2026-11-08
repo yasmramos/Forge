@@ -54,4 +54,13 @@ public interface PluginContext {
 
     /** Registers a packaging type, keyed by its id. */
     void registerPackagingType(String id);
+
+    /**
+     * Registers a packaging type together with its implementation (section 4).
+     * Prefer this overload: a project that selects this type through
+     * {@code packaging} in {@code [project]} has its artifact produced by the
+     * implementation. Fails on the same collisions as
+     * {@link #registerPackagingType(String)}.
+     */
+    void registerPackagingType(String id, PluginPackagingType packagingType);
 }
