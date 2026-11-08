@@ -78,6 +78,12 @@ public class ProjectConfig {
     private Map<String, Object> dependencies;
     private Map<String, Object> plugins;
     private List<String> compilerArgs = new ArrayList<>();
+    /**
+     * Explicit annotation processors from {@code [compile].processors}
+     * (AGENT.md section 23). Empty means the compiler discovers them from the
+     * compile classpath via {@code META-INF/services}.
+     */
+    private List<String> processors = new ArrayList<>();
     private String mainClass;
     private List<String> execArgs = new ArrayList<>();
     private List<String> jvmArgs = new ArrayList<>();
@@ -272,6 +278,15 @@ public class ProjectConfig {
 
     public void setCompilerArgs(List<String> compilerArgs) {
         this.compilerArgs = compilerArgs != null ? compilerArgs : new ArrayList<>();
+    }
+
+    /** Explicit annotation processors (section 23); empty means auto-discovery. */
+    public List<String> getProcessors() {
+        return processors;
+    }
+
+    public void setProcessors(List<String> processors) {
+        this.processors = processors != null ? new ArrayList<>(processors) : new ArrayList<>();
     }
 
     public String getMainClass() {

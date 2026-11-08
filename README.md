@@ -135,7 +135,7 @@ Configuration files use TOML format with the following sections:
 | `[constraints]` | Forced versions: `"group:artifact" = "version"`; win over transitive, below `[resolutions]` |
 | `[resolutions]` | Per-coordinate pins that win over everything: `"group:artifact" = "version"` |
 | `[build]` | Build behavior options (see below) |
-| `[compile]` | Compiler options: `encoding`, `debug`, `args` |
+| `[compile]` | Compiler options: `encoding`, `debug`, `args`, `processors` |
 | `[exec]` | Run configuration: `main`, `args`, `jvm_args` |
 | `[publish]` | Release metadata and target repository for `forge publish` (see below) |
 
@@ -157,6 +157,24 @@ into the packaged jar. Copying is content-based: an unchanged resource is never
 rewritten. Filtering is **opt-in** — enable `resource_filtering` to expand
 `${...}` placeholders using `[project.properties]` plus `project.name`,
 `project.version` and `project.group`.
+
+#### Annotation processors
+
+Forge supports annotation processors (AGENT.md section 23). By default they are
+discovered from the compile classpath: any resolved jar or directory carrying
+`META-INF/services/javax.annotation.processing.Processor` declares its
+processors, and declaring the dependency (Lombok, MapStruct, Dagger) is already
+the intent to run them. Processors run with a dedicated `-processorpath`, kept
+separate from the compile classpath. When the classpath declares none, Forge
+compiles with `-proc:none`, so unrelated libraries never trigger accidental
+discovery.
+
+To run a processor that is *not* auto-declared, list it explicitly:
+
+```toml
+[compile]
+processors = ["com.example.MyProcessor"]
+```
 
 #### Remote build cache
 

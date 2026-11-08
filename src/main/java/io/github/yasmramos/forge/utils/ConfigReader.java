@@ -386,6 +386,9 @@ public class ConfigReader {
                 settings.setDebug(bool(compile.get("debug")));
             }
             config.setCompilerArgs(getStringList(root, "compile", "args", properties));
+            // Annotation processors (section 23): optional explicit list; when
+            // absent the compiler discovers them from the compile classpath.
+            config.setProcessors(getStringList(root, "compile", "processors", properties));
         }
 
         // ------------------------------------------------------------------

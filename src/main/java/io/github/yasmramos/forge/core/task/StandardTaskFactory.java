@@ -61,6 +61,7 @@ public class StandardTaskFactory {
             .input(new TaskInput.ValueInput("toolchain", String.valueOf(config.getSourceCompatibility())))
             .input(new TaskInput.ValueInput("resource-filtering", String.valueOf(
                 config.getBuildSettings().isResourceFiltering())))
+            .input(new TaskInput.ValueInput("processors", String.valueOf(config.getProcessors())))
             .output(new TaskOutput("classes", Collections.singletonList(relative(classesDir))));
 
         task.action(context -> {
@@ -77,6 +78,7 @@ public class StandardTaskFactory {
             Compiler compiler = new Compiler();
             compiler.setProjectId(config.getGroup() + ":" + config.getName());
             compiler.setClasspath(System.getProperty("java.class.path"));
+            compiler.setProcessorNames(config.getProcessors());
             CompilationResult result =
                 compiler.compileBatch(analysis.getSourceFiles(), resolution, null, classesDir.toString());
             if (!result.isSuccess()) {
