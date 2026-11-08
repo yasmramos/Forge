@@ -86,6 +86,12 @@ why  = "The local cache entry was corrupted on disk."
 how  = "Run 'forge clean-cache' (or delete .forge/cache) to discard the damaged entry; the next build repopulates it."
 docs = "https://forge.dev/e/CCH-0001"
 
+["FORGE-CCH-0002"]
+what = "The configured remote cache URL is invalid."
+why  = "The remote cache URL set in [build] remote_cache or FORGE_REMOTE_CACHE is empty, malformed, or does not use http/https."
+how  = "Fix the URL to a base like https://cache.example/forge, or remove it to build with a local-only cache."
+docs = "https://forge.dev/e/CCH-0002"
+
 ["FORGE-RPR-0001"]
 what = "A plugin produced outputs that differ between two identical builds."
 why  = "Bit-for-bit reproducibility is guaranteed for core tasks only; plugins are best-effort (AGENT.md section 17)."

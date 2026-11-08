@@ -144,6 +144,21 @@ Supported `[build]` keys (snake_case):
 | `parallel` | boolean | `true` | Use parallel processing where applicable |
 | `cache_enabled` | boolean | `true` | Enable the on-disk build cache (`.forge-cache`) |
 | `threads` | number | `0` (auto) | Worker thread count; `0` means available CPUs |
+| `remote_cache` | string | unset | Base URL of a remote build cache; also settable via `FORGE_REMOTE_CACHE` |
+
+#### Remote build cache
+
+Set `remote_cache` (or the `FORGE_REMOTE_CACHE` env var) to a base URL and Forge
+mirrors the local task cache there, so CI runners and machines reuse each
+other's work. The protocol is deliberately small, so anyone can run a server:
+
+- `GET <base>/<hash>` — `200` with the entry bytes on a hit, `404` on a miss.
+- `PUT <base>/<hash>` with the entry bytes — `2xx` stores it.
+
+Entries are content-addressed by the task hash (which already covers every
+input, toolchain, Forge and plugin version) and immutable: a `PUT` for an
+existing hash is a no-op, so concurrent uploads of identical content are always
+safe. A miss or an outage degrades to a local build; it never fails the build.
 
 ### Programmatic Configuration
 
@@ -182,6 +197,9 @@ forge build
 
 # Clean all build artifacts
 forge clean
+
+# Discard the local build cache (content-addressed, always safe to drop)
+forge cache clean
 
 # Run the project's main class ([exec] main in forge.toml)
 forge run

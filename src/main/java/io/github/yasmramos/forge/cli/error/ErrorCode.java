@@ -132,6 +132,11 @@ public final class ErrorCode {
         "The local cache entry was corrupted on disk.",
         "Run 'forge clean-cache' (or delete .forge/cache) to discard the damaged entry; the next build repopulates it.",
         "https://forge.dev/e/CCH-0001");
+    public static final Entry CCH_0002 = register("FORGE-CCH-0002",
+        "The configured remote cache URL is invalid.",
+        "The remote cache URL set in [build] remote_cache or FORGE_REMOTE_CACHE is empty, malformed, or does not use http/https.",
+        "Fix the URL to a base like https://cache.example/forge, or remove it to build with a local-only cache.",
+        "https://forge.dev/e/CCH-0002");
 
     // --- Reproducibility (RPR) ---
     public static final Entry RPR_0001 = register("FORGE-RPR-0001",
