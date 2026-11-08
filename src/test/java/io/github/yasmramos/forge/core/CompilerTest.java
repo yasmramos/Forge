@@ -374,6 +374,62 @@ class CompilerTest {
             "Classes must be back in place after a clean");
     }
 
+    // --- Toolchain language level and [compile].args (sections 20, 10) ---
+
+    @Test
+    void toolchainLanguageDrivesSourceAndTarget(@TempDir Path tmp) throws Exception {
+        Path src = Files.createDirectories(tmp.resolve("src"));
+        Files.write(src.resolve("T.java"), "public class T {}".getBytes());
+
+        // Explicit level: bytecode must be emitted for that release.
+        Path out8 = tmp.resolve("out8");
+        Compiler compiler = new Compiler();
+        compiler.setToolchain("8", "8");
+        assertTrue(compiler.compileBatch(
+            Collections.singletonList(src.resolve("T.java")), null, null, out8.toString()).isSuccess());
+        assertEquals(52, classMajorVersion(out8.resolve("T.class")),
+            "-source/-target 8 must produce Java 8 bytecode (major 52)");
+
+        // No declared toolchain: javac's own default (the running JDK) applies,
+        // so projects that never set [toolchain] are unaffected.
+        Path outDefault = tmp.resolve("out-default");
+        new Compiler().compileBatch(
+            Collections.singletonList(src.resolve("T.java")), null, null, outDefault.toString());
+        assertEquals(44 + Runtime.version().feature(), classMajorVersion(outDefault.resolve("T.class")),
+            "an undeclared toolchain must keep javac's default level");
+    }
+
+    @Test
+    void compilerArgsReachJavac(@TempDir Path tmp) throws Exception {
+        Path src = Files.createDirectories(tmp.resolve("src"));
+        // Raw ArrayList assigned to a parameterized type: a mandatory
+        // "unchecked" warning, valid Java.
+        Files.write(src.resolve("Warn.java"),
+            ("import java.util.ArrayList;\nimport java.util.List;\n"
+                + "public class Warn { List<String> l = new ArrayList(); }").getBytes());
+
+        // Control: the warning does not fail a normal compile.
+        Path outOk = tmp.resolve("out-ok");
+        assertTrue(new Compiler().compileBatch(
+            Collections.singletonList(src.resolve("Warn.java")), null, null, outOk.toString()).isSuccess(),
+            "a warning alone must not fail the build");
+
+        // With -Xlint:unchecked -Werror the very same source must fail, proving
+        // both arguments reached javac (and are appended last).
+        Path outErr = tmp.resolve("out-err");
+        Compiler strict = new Compiler();
+        strict.setCompilerArgs(Arrays.asList("-Xlint:unchecked", "-Werror"));
+        assertFalse(strict.compileBatch(
+            Collections.singletonList(src.resolve("Warn.java")), null, null, outErr.toString()).isSuccess(),
+            "-Xlint:unchecked -Werror must turn the warning into a failure");
+    }
+
+    /** Class file major version, from bytes 6-7 of the header. */
+    private static int classMajorVersion(Path classFile) throws Exception {
+        byte[] header = Files.readAllBytes(classFile);
+        return ((header[6] & 0xff) << 8) | (header[7] & 0xff);
+    }
+
     private static void deleteRecursively(Path p) throws Exception {
         if (!Files.exists(p)) return;
         try (var stream = Files.walk(p)) {

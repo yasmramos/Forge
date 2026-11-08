@@ -62,6 +62,7 @@ public class StandardTaskFactory {
             .input(new TaskInput.ValueInput("resource-filtering", String.valueOf(
                 config.getBuildSettings().isResourceFiltering())))
             .input(new TaskInput.ValueInput("processors", String.valueOf(config.getProcessors())))
+            .input(new TaskInput.ValueInput("compiler-args", String.valueOf(config.getCompilerArgs())))
             .output(new TaskOutput("classes", Collections.singletonList(relative(classesDir))));
 
         task.action(context -> {
@@ -79,6 +80,8 @@ public class StandardTaskFactory {
             compiler.setProjectId(config.getCacheScopeId());
             compiler.setClasspath(System.getProperty("java.class.path"));
             compiler.setProcessorNames(config.getProcessors());
+            compiler.setToolchain(config.getSourceCompatibility(), config.getTargetCompatibility());
+            compiler.setCompilerArgs(config.getCompilerArgs());
             CompilationResult result =
                 compiler.compileBatch(analysis.getSourceFiles(), resolution, null, classesDir.toString());
             if (!result.isSuccess()) {

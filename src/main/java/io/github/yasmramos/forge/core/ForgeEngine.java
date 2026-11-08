@@ -85,6 +85,10 @@ public class ForgeEngine {
         // Explicit annotation processors, when declared (section 23); otherwise
         // the compiler discovers them from the resolved compile classpath.
         this.compiler.setProcessorNames(config.getProcessors());
+        // [toolchain].language drives -source/-target (section 20) and
+        // [compile].args are extra javac flags (section 10).
+        this.compiler.setToolchain(config.getSourceCompatibility(), config.getTargetCompatibility());
+        this.compiler.setCompilerArgs(config.getCompilerArgs());
         this.analyzer = new BuildAnalyzer();
     }
     

@@ -59,6 +59,20 @@ public class Compiler {
      * classpath", which is the default.
      */
     private List<String> processorNames = new ArrayList<>();
+    /**
+     * Release level passed to javac as {@code -source}/{@code -target}
+     * ({@code [toolchain].language}, AGENT.md section 20). Empty means "let
+     * javac use its own default", i.e. the JDK running Forge.
+     */
+    private String sourceCompatibility = "";
+    /** Target release level; see {@link #sourceCompatibility}. */
+    private String targetCompatibility = "";
+    /**
+     * Extra javac arguments from {@code [compile].args} (section 10), e.g.
+     * {@code -Xlint:all}. Appended last so a user argument can override an
+     * option Forge emitted earlier.
+     */
+    private List<String> compilerArgs = new ArrayList<>();
 
     /**
      * Create a new compiler.
@@ -109,6 +123,31 @@ public class Compiler {
      */
     public void setProcessorNames(List<String> processorNames) {
         this.processorNames = processorNames != null ? new ArrayList<>(processorNames)
+            : new ArrayList<>();
+    }
+
+    /**
+     * Set the language level from {@code [toolchain].language} (section 20).
+     * Values are passed to javac as {@code -source}/{@code -target}; blank
+     * values leave javac's own default in place.
+     *
+     * @param source source level, e.g. {@code "17"}; blank to use the default
+     * @param target target level, e.g. {@code "17"}; blank to use the default
+     */
+    public void setToolchain(String source, String target) {
+        this.sourceCompatibility = source != null ? source.trim() : "";
+        this.targetCompatibility = target != null ? target.trim() : "";
+    }
+
+    /**
+     * Declare extra javac arguments from {@code [compile].args} (section 10).
+     * They are appended after Forge's own options, so an explicit user argument
+     * wins over a Forge default (e.g. a user {@code -proc:only}).
+     *
+     * @param compilerArgs raw javac arguments; null to clear
+     */
+    public void setCompilerArgs(List<String> compilerArgs) {
+        this.compilerArgs = compilerArgs != null ? new ArrayList<>(compilerArgs)
             : new ArrayList<>();
     }
 
@@ -361,6 +400,9 @@ public class Compiler {
                     fileManager.getJavaFileObjectsFromFiles(toFileList(sourceFiles));
 
             List<String> options = buildProcessorOptions(dependencyResolution, classpath, fileManager);
+            // [compile].args go last so an explicit user argument overrides a
+            // Forge default (section 10).
+            options.addAll(compilerArgs);
 
             JavaCompiler.CompilationTask task = toolCompiler.getTask(
                     null, fileManager, diagnostics, options, null, compilationUnits);
@@ -410,6 +452,10 @@ public class Compiler {
             // only when the classpath declares none, so unrelated libraries
             // do not trigger accidental processor discovery.
             command.addAll(buildProcessorCommandOptions(dependencyResolution, classpath));
+
+            // [compile].args last, so an explicit user argument overrides a
+            // Forge default (section 10).
+            command.addAll(compilerArgs);
 
             // Pass every source file in one invocation so interdependent classes resolve
             for (Path sourceFile : sourceFiles) {
@@ -514,6 +560,7 @@ public class Compiler {
         List<String> options = new ArrayList<>();
         options.add("-encoding");
         options.add("UTF-8");
+        options.addAll(buildLanguageOptions());
 
         if (!processorNames.isEmpty()) {
             options.add("-processor");
@@ -539,6 +586,7 @@ public class Compiler {
     private List<String> buildProcessorCommandOptions(DependencyResolution dependencyResolution,
                                                       String classpath) {
         List<String> options = new ArrayList<>();
+        options.addAll(buildLanguageOptions());
         if (!processorNames.isEmpty()) {
             options.add("-processor");
             options.add(String.join(",", processorNames));
@@ -557,6 +605,25 @@ public class Compiler {
         options.add(String.join(",", discovery.getNames()));
         options.add("-processorpath");
         options.add(join(discovery.getProcessorPath()));
+        return options;
+    }
+
+    /**
+     * {@code -source}/{@code -target} from {@code [toolchain].language}
+     * (section 20). Emitted only when declared, so an undeclared toolchain
+     * keeps javac's own default and Forge stays predictable for projects that
+     * never set it.
+     */
+    private List<String> buildLanguageOptions() {
+        List<String> options = new ArrayList<>();
+        if (!sourceCompatibility.isEmpty()) {
+            options.add("-source");
+            options.add(sourceCompatibility);
+        }
+        if (!targetCompatibility.isEmpty()) {
+            options.add("-target");
+            options.add(targetCompatibility);
+        }
         return options;
     }
 

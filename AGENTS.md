@@ -49,6 +49,7 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
 | Error catalog (stable codes) | `cli/error/ErrorCode.java` |
 | Config variants (8/8bis) | `utils/ConfigReader.java` (`parseConfig(root, props, variant)`) |
 | Resolved-config inspection | `cli/command/ConfigCommand.java` (`forge config`) |
+| Toolchain language + `[compile].args` | `core/Compiler.java` (`setToolchain`, `setCompilerArgs`) |
 
 ## Non-obvious invariants
 
@@ -71,11 +72,18 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
   selection metadata and is stripped before parsing the effective config.
 - **Hashes must be portable** (section 17): relative paths only, no absolute
   paths or variable metadata in cache keys or artifacts.
+- **`[toolchain].language` drives `-source`/`-target`** (section 20), and
+  `[compile].args` are extra javac flags appended *after* Forge's own options so
+  an explicit user argument wins. Both are emitted only when declared; an empty
+  toolchain leaves javac's default (the running JDK) untouched. `[compile].args`
+  is a declared task input, so changing it re-runs the compile instead of
+  restoring a stale cached output (section 3).
 - **Error codes are public API.** Add new ones to `cli/error/ErrorCode.java`
   with what/why/how/docs; never reuse or renumber a shipped code.
 
 ## Current state
 
-Sections 22 (resources), 23 (annotation processors), 8/8bis (variants) and the
-`forge config` command are implemented and committed. Section 10's command table
-is still missing `forge import`, `forge audit` and `forge build --scan`.
+Sections 22 (resources), 23 (annotation processors), 8/8bis (variants), the
+`forge config` command and the `[toolchain].language` → `-source`/`-target`
+wiring are implemented and committed. Section 10's command table is still
+missing `forge import`, `forge audit` and `forge build --scan`.
