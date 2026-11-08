@@ -205,3 +205,33 @@ what = "The packaging type selected in [project] is not provided by any loaded p
 why  = "A project selects a packaging type through 'packaging' in [project]; Forge found no loaded plugin that registered an implementation for it, so it cannot produce that artifact."
 how  = "Declare the plugin providing the type in [plugins] of forge.toml, fix the type name, or set packaging = \"jar\" for the built-in packaging."
 docs = "https://forge.dev/e/PLG-0013"
+
+["FORGE-PUB-0001"]
+what = "The project is missing metadata Maven Central requires for publishing."
+why  = "Maven Central rejects artifacts without a license, developer, project URL and SCM section (AGENT.md section 6)."
+how  = "Add the missing keys under [publish] in forge.toml (license, license_url, developers, developer_names, url, scm), then retry."
+docs = "https://forge.dev/e/PUB-0001"
+
+["FORGE-PUB-0002"]
+what = "The project coordinates required to publish are incomplete."
+why  = "Publishing needs a groupId, artifactId and version, taken from [project] group, name and version."
+how  = "Set group, name and version under [project] in forge.toml, then retry."
+docs = "https://forge.dev/e/PUB-0002"
+
+["FORGE-PUB-0003"]
+what = "Forge could not write the staged publish artifacts to disk."
+why  = "The staging directory is not writable, or the disk is full."
+how  = "Check write permissions on the staging directory (default target/forge-publish) and free disk space, then retry."
+docs = "https://forge.dev/e/PUB-0003"
+
+["FORGE-PUB-0004"]
+what = "The main artifact to publish was not found."
+why  = "forge publish stages the packaged JAR, but no build output exists under target/forge-output."
+how  = "Run 'forge build' before 'forge publish'."
+docs = "https://forge.dev/e/PUB-0004"
+
+["FORGE-PUB-0005"]
+what = "The target repository for publishing is not declared in [repositories]."
+why  = "forge publish uploads to a repository key from [publish] repository, which must resolve against [repositories] in forge.toml."
+how  = "Declare the repository URL under [repositories] in forge.toml, or point [publish] repository at an existing key."
+docs = "https://forge.dev/e/PUB-0005"

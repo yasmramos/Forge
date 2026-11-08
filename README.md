@@ -137,6 +137,7 @@ Configuration files use TOML format with the following sections:
 | `[build]` | Build behavior options (see below) |
 | `[compile]` | Compiler options: `encoding`, `debug`, `args` |
 | `[exec]` | Run configuration: `main`, `args`, `jvm_args` |
+| `[publish]` | Release metadata and target repository for `forge publish` (see below) |
 
 Supported `[build]` keys (snake_case):
 
@@ -181,6 +182,45 @@ a second time and compares the output trees by content hash. A mismatch reports
 
 Verification doubles the cost of the checked tasks, so a project that does not
 need the guarantee can set `off`.
+
+#### Publishing metadata
+
+`forge publish` stages everything a release needs and validates it against the
+fields Maven Central requires. Those fields live under `[publish]`:
+
+| Key | Description |
+| --- | --- |
+| `license` | SPDX license id (e.g. `Apache-2.0`) — required |
+| `license_url` | License URL |
+| `developers` | Comma-separated developer ids |
+| `developer_names` | Comma-separated developer names |
+| `developer_emails` | Comma-separated developer emails |
+| `url` | Project URL — required |
+| `scm` | SCM connection, e.g. `scm:git:https://github.com/me/repo.git` — required |
+| `repository` | Target repository key from `[repositories]` (default `central`) |
+| `sign` | GPG-sign artifacts before upload (default `true`) |
+| `sbom` | Generate a CycloneDX SBOM during publish (default `true`) |
+
+A release snapshot is routed to `[publish.snapshot] repository` instead of the
+release repository when the version ends in `-SNAPSHOT`. Credentials are never
+read from `forge.toml`; they belong in `~/.forge/credentials.toml`.
+
+```toml
+[publish]
+license = "Apache-2.0"
+license_url = "https://www.apache.org/licenses/LICENSE-2.0"
+developers = "jdoe"
+developer_names = "Jane Doe"
+developer_emails = "jane@example.com"
+url = "https://example.io/awesome"
+scm = "scm:git:https://github.com/example/awesome.git"
+
+[publish.snapshot]
+repository = "ossrh-snapshots"
+```
+
+Missing required metadata fails at configure time with `FORGE-PUB-0001` naming
+the exact keys, rather than being rejected by the repository mid-upload.
 
 ### Programmatic Configuration
 
@@ -250,6 +290,10 @@ forge doctor --format=json
 # Generate a CycloneDX SBOM of the resolved dependency graph
 forge sbom
 forge sbom --output=build/bom.json
+
+# Stage release artifacts (POM, Gradle Module Metadata, jars, SBOM)
+forge publish
+forge publish --skip-build
 
 # Multi-module: list modules in build order, or build one module and its deps
 forge modules

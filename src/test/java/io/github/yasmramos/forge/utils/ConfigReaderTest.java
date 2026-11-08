@@ -258,4 +258,40 @@ class ConfigReaderTest {
         ProjectConfig config = ConfigReader.parseConfig(root);
         assertTrue(config.getPlugins().isEmpty());
     }
+
+    @Test
+    void testParsesPublishSection() {
+        Config root = Config.inMemory();
+        root.set("publish", Config.inMemory());
+        root.set(java.util.Arrays.asList("publish", "license"), "Apache-2.0");
+        root.set(java.util.Arrays.asList("publish", "license_url"),
+            "https://www.apache.org/licenses/LICENSE-2.0");
+        root.set(java.util.Arrays.asList("publish", "developers"), "jdoe");
+        root.set(java.util.Arrays.asList("publish", "developer_names"), "Jane Doe");
+        root.set(java.util.Arrays.asList("publish", "scm"),
+            "scm:git:https://github.com/example/awesome.git");
+        root.set(java.util.Arrays.asList("publish", "url"), "https://example.io/awesome");
+        root.set(java.util.Arrays.asList("publish", "sign"), false);
+        root.set("publish.snapshot", Config.inMemory());
+        root.set(java.util.Arrays.asList("publish", "snapshot", "repository"), "ossrh-snapshots");
+
+        ProjectConfig config = ConfigReader.parseConfig(root);
+
+        assertEquals("Apache-2.0", config.getPublishSettings().getLicenseName());
+        assertEquals("jdoe", config.getPublishSettings().getDeveloperIds());
+        assertEquals("Jane Doe", config.getPublishSettings().getDeveloperNames());
+        assertEquals("https://example.io/awesome", config.getPublishSettings().getUrl());
+        assertFalse(config.getPublishSettings().isSign());
+        assertEquals("ossrh-snapshots", config.getPublishSettings().getSnapshotRepository());
+    }
+
+    @Test
+    void testPublishDefaultsWhenAbsent() {
+        Config root = Config.inMemory();
+        ProjectConfig config = ConfigReader.parseConfig(root);
+
+        assertEquals("central", config.getPublishSettings().getRepository());
+        assertTrue(config.getPublishSettings().isSign());
+        assertTrue(config.getPublishSettings().isSbom());
+    }
 }
