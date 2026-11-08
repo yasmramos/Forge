@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -117,6 +118,22 @@ public class ForgeCache {
             byte[] metaBytes = metaBuffer.toByteArray();
             out.writeInt(metaBytes.length);
             out.write(metaBytes);
+
+            // Stored outputs: each class file the compilation produced, as
+            // relative path + bytes. Section 3 requires outputs to be stored and
+            // put back in position on a hit; without this a hit only proved a
+            // file with the right name existed, which served a stale class after
+            // the same key was reached again by a different edit (e.g. a
+            // constant toggled back and forth).
+            out.writeInt(entry.getOutputs().size());
+            for (Map.Entry<String, byte[]> output : new TreeMap<>(entry.getOutputs()).entrySet()) {
+                byte[] pathBytes = output.getKey().getBytes(StandardCharsets.UTF_8);
+                out.writeInt(pathBytes.length);
+                out.write(pathBytes);
+                byte[] content = output.getValue() != null ? output.getValue() : new byte[0];
+                out.writeInt(content.length);
+                out.write(content);
+            }
             out.flush();
 
             Files.write(cacheFile, buffer.toByteArray());
@@ -150,8 +167,24 @@ public class ForgeCache {
                     metadata.put(name, props.getProperty(name));
                 }
 
+                CacheEntry entry = new CacheEntry(lastModified, data, metadata);
+
+                // Entries written before outputs were stored simply end here.
+                if (in.available() > 0) {
+                    int outputCount = in.readInt();
+                    for (int i = 0; i < outputCount; i++) {
+                        int pathLen = in.readInt();
+                        byte[] pathBytes = new byte[pathLen];
+                        in.readFully(pathBytes);
+                        int contentLen = in.readInt();
+                        byte[] content = new byte[contentLen];
+                        in.readFully(content);
+                        entry.putOutput(new String(pathBytes, StandardCharsets.UTF_8), content);
+                    }
+                }
+
                 logger.debug("Loaded cache entry from disk: " + key);
-                return new CacheEntry(lastModified, data, metadata);
+                return entry;
             }
         } catch (Exception e) {
             logger.debug("Failed to load cache entry from disk", e);
@@ -183,6 +216,21 @@ public class ForgeCache {
      * across machines, unlike an absolute path.</p>
      */
     public static String generateKey(File sourceFile, Map<String, Object> dependencies, String projectId) {
+        return generateKey(sourceFile, dependencies, projectId, null);
+    }
+
+    /**
+     * As {@link #generateKey(File, Map, String)} but with a caller-supplied
+     * content hash.
+     *
+     * <p>Compilation passes the file's <em>effective</em> hash - its own content
+     * folded together with its transitive source dependencies - so a change in a
+     * dependency cascades into this file's key even when its own bytes are
+     * unchanged (AGENT.md sections 3 and 17). When {@code contentHash} is null
+     * the file's own bytes are hashed, as before.</p>
+     */
+    public static String generateKey(File sourceFile, Map<String, Object> dependencies, String projectId,
+                                     String contentHash) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
 
@@ -196,12 +244,16 @@ public class ForgeCache {
             // content while staying portable across machines and checkouts.
             md.update(relativePathOf(sourceFile).getBytes(StandardCharsets.UTF_8));
             md.update((byte) 0);
-            try {
-                md.update(Files.readAllBytes(sourceFile.toPath()));
-            } catch (Exception readFailure) {
-                // Unreadable file: fall back to the timestamp so the entry still
-                // changes when the file does, as the previous scheme did.
-                md.update(Long.toString(sourceFile.lastModified()).getBytes(StandardCharsets.UTF_8));
+            if (contentHash != null) {
+                md.update(contentHash.getBytes(StandardCharsets.UTF_8));
+            } else {
+                try {
+                    md.update(Files.readAllBytes(sourceFile.toPath()));
+                } catch (Exception readFailure) {
+                    // Unreadable file: fall back to the timestamp so the entry
+                    // still changes when the file does, as before.
+                    md.update(Long.toString(sourceFile.lastModified()).getBytes(StandardCharsets.UTF_8));
+                }
             }
 
             // Deterministic dependency view: sorted by name so the same set of
@@ -267,17 +319,20 @@ public class ForgeCache {
         private final long lastModified;
         private final byte[] compiledData;
         private final Map<String, String> metadata;
+        private final Map<String, byte[]> outputs;
         
         public CacheEntry(long lastModified, byte[] compiledData) {
             this.lastModified = lastModified;
             this.compiledData = compiledData;
             this.metadata = new ConcurrentHashMap<>();
+            this.outputs = new ConcurrentHashMap<>();
         }
         
         public CacheEntry(long lastModified, byte[] compiledData, Map<String, String> metadata) {
             this.lastModified = lastModified;
             this.compiledData = compiledData;
             this.metadata = metadata;
+            this.outputs = new ConcurrentHashMap<>();
         }
         
         public long getLastModified() {
@@ -298,6 +353,15 @@ public class ForgeCache {
         
         public String getMetadata(String key) {
             return metadata.get(key);
+        }
+
+        /** Class files this entry stands for, keyed by path relative to the output dir. */
+        public Map<String, byte[]> getOutputs() {
+            return outputs;
+        }
+
+        public void putOutput(String relativePath, byte[] content) {
+            outputs.put(relativePath, content);
         }
     }
 }

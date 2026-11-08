@@ -126,6 +126,22 @@ public class Compiler {
      */
     public CompilationResult compileBatch(List<Path> sourceFiles, DependencyResolution dependencyResolution,
                                           ForgeCache cache, String outputDir) {
+        return compileBatch(sourceFiles, dependencyResolution, cache, outputDir, null);
+    }
+
+    /**
+     * Compile all sources in a single batch, cascading cache invalidation.
+     *
+     * @param sourceFiles          all source files to compile together
+     * @param dependencyResolution resolved external dependencies (may be null)
+     * @param cache                build cache; entries are keyed per source file
+     * @param outputDir            directory where class files are emitted
+     * @param sourceHashes         per-file effective hashes folding in transitive
+     *                             source dependencies; computed here when null
+     * @return aggregated compilation result
+     */
+    public CompilationResult compileBatch(List<Path> sourceFiles, DependencyResolution dependencyResolution,
+                                          ForgeCache cache, String outputDir, Map<Path, String> sourceHashes) {
         if (sourceFiles == null || sourceFiles.isEmpty()) {
             return new CompilationResult(true, 0, 0);
         }
@@ -135,22 +151,28 @@ public class Compiler {
         // inflate the file count and make javac report the same file twice.
         sourceFiles = new ArrayList<>(new LinkedHashSet<>(sourceFiles));
 
-        // A file is a cache hit only if its content is cached AND its compiled
-        // output is still on disk. Validity is content-based (AGENT.md section
-        // 3); the presence check stops a warm cache from emitting an incomplete
-        // build when outputs were lost (a clean, a partial remote-cache restore,
-        // or a crash mid-write keeps ~/.forge/cache but loses class files). It
-        // is per file, so a single lost class is regenerated even when the other
-        // sources are unchanged.
+        // Effective hash per file: own content plus its transitive source
+        // dependencies. Keying on this instead of the raw content is what makes
+        // a change in A.java invalidate the cached B.class that inlined A's
+        // constants or linked against A's API (AGENT.md sections 3 and 17).
+        Map<Path, String> effectiveHashes = sourceHashes != null
+            ? sourceHashes : SourceDependencies.effectiveHashes(sourceFiles);
+
+        // A file is a hit only if an entry exists and its stored outputs can be
+        // put back in place. Validity is content-based (AGENT.md section 3);
+        // restoring the outputs (rather than trusting whatever class files sit
+        // on disk) keeps a clean, a partial remote-cache restore, or a crash
+        // mid-write from producing an incomplete build.
         List<Path> staleFiles = new ArrayList<>();
         int cachedCount = 0;
         Map<String, Object> depMap = dependencyResolution != null && !dependencyResolution.getDependencies().isEmpty()
             ? createDependencyMap(dependencyResolution) : null;
 
         for (Path sourceFile : sourceFiles) {
-            String cacheKey = ForgeCache.generateKey(sourceFile.toFile(), depMap, projectId);
+            String cacheKey = ForgeCache.generateKey(
+                sourceFile.toFile(), depMap, projectId, effectiveHashes.get(sourceFile));
             boolean cached = cache != null && cache.isValid(cacheKey, sourceFile.toFile());
-            if (cached && compiledOutputPresent(sourceFile, Paths.get(outputDir), cache.get(cacheKey))) {
+            if (cached && restoreOutputs(cache.get(cacheKey), Paths.get(outputDir))) {
                 logger.debug("Using cached compilation for: " + sourceFile);
                 cachedCount++;
             } else {
@@ -181,14 +203,23 @@ public class Compiler {
             // produced so a later hit can prove the whole output is still there.
             Path outputPath = Paths.get(outputDir);
             for (Path sourceFile : staleFiles) {
-                String cacheKey = ForgeCache.generateKey(sourceFile.toFile(), depMap, projectId);
+                String cacheKey = ForgeCache.generateKey(
+                    sourceFile.toFile(), depMap, projectId, effectiveHashes.get(sourceFile));
                 ForgeCache.CacheEntry cacheEntry = new ForgeCache.CacheEntry(
                     sourceFile.toFile().lastModified(),
                     outcome.output.getBytes(StandardCharsets.UTF_8)
                 );
                 List<String> produced = producedClasses(sourceFile, outputPath);
                 if (!produced.isEmpty()) {
-                    cacheEntry.getMetadata().put(CLASSES_METADATA_KEY, String.join("\n", produced));
+                    for (String relative : produced) {
+                        try {
+                            cacheEntry.putOutput(relative, Files.readAllBytes(outputPath.resolve(relative)));
+                        } catch (java.io.IOException e) {
+                            // Output vanished between compile and caching: drop it
+                            // from the list so the entry is not trusted later.
+                            logger.debug("Could not read produced class " + relative, e);
+                        }
+                    }
                 }
                 if (cache != null) {
                     cache.put(cacheKey, cacheEntry);
@@ -203,32 +234,34 @@ public class Compiler {
         }
     }
 
-    /** Metadata key holding the class files a cache entry stands for. */
-    private static final String CLASSES_METADATA_KEY = "classes";
-
     /**
-     * True when every class file a cache entry claims to have produced is
-     * still on disk.
+     * Put a cache entry's stored class files back in position, returning whether
+     * the entry could be trusted as a hit.
      *
-     * <p>The top-level class alone is not enough: losing {@code Outer$Inner.class}
-     * while {@code Outer.class} survives would otherwise be a silent cache hit
-     * and an incomplete build - the same failure mode the per-file presence
-     * check exists to prevent. When the entry carries the recorded class list
-     * (every entry written since that list was introduced) all of them are
-     * checked; legacy entries without it fall back to the top-level name.</p>
+     * <p>Outputs are stored and restored rather than merely checked for presence
+     * (AGENT.md section 3): the same key can be reached again after an edit that
+     * changed the compiled bytes, so a hit must write the cached class files
+     * back, not assume whatever is on disk belongs to this key.</p>
      */
-    private static boolean compiledOutputPresent(Path sourceFile, Path outputDir,
-                                                 ForgeCache.CacheEntry entry) {
-        String recorded = entry != null ? entry.getMetadata().get(CLASSES_METADATA_KEY) : null;
-        if (recorded == null || recorded.isEmpty()) {
-            return compiledClassExists(sourceFile, outputDir);
+    private boolean restoreOutputs(ForgeCache.CacheEntry entry, Path outputDir) {
+        if (entry == null || entry.getOutputs().isEmpty()) {
+            // No stored outputs (an entry from before they were kept, or a file
+            // that produced none): treat as a miss so correctness never depends
+            // on whatever class file happens to sit on disk. The recompile
+            // rewrites the entry with its outputs.
+            return false;
         }
-        for (String relative : recorded.split("\n")) {
-            if (!relative.isEmpty() && !Files.isRegularFile(outputDir.resolve(relative))) {
-                return false;
+        try {
+            for (Map.Entry<String, byte[]> output : entry.getOutputs().entrySet()) {
+                Path target = outputDir.resolve(output.getKey());
+                Files.createDirectories(target.getParent());
+                Files.write(target, output.getValue());
             }
+            return true;
+        } catch (java.io.IOException e) {
+            logger.debug("Failed to restore cached outputs", e);
+            return false;
         }
-        return true;
     }
 
     /**
@@ -262,23 +295,6 @@ public class Compiler {
             return java.util.Collections.emptyList();
         }
         return classes;
-    }
-
-    /**
-     * Fallback presence check for cache entries written before the produced
-     * class list was recorded: the top-level class name matches the source file
-     * name and lives in its package directory (JLS 7.6).
-     */
-    private static boolean compiledClassExists(Path sourceFile, Path outputDir) {
-        String fileName = sourceFile.getFileName().toString();
-        String baseName = fileName.endsWith(".java")
-            ? fileName.substring(0, fileName.length() - ".java".length())
-            : fileName;
-        String packagePath = readPackagePath(sourceFile);
-        Path classFile = packagePath.isEmpty()
-            ? outputDir.resolve(baseName + ".class")
-            : outputDir.resolve(packagePath).resolve(baseName + ".class");
-        return Files.isRegularFile(classFile);
     }
 
     /** Directory form of the {@code package} declaration, or "" for the default package. */
