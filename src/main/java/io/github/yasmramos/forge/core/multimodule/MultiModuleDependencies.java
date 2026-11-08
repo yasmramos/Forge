@@ -119,7 +119,8 @@ public final class MultiModuleDependencies {
             new WorkspaceModuleRepository(workspaceDir, moduleCoordinates(project));
         LockfileGenerator generator = new LockfileGenerator(
             localCacheDir(), repositories, workspace);
-        return generator.lock(compileRoots(project), configHash, rootConfig.getResolutions());
+        return generator.lock(compileRoots(project), configHash,
+            rootConfig.getResolutions(), rootConfig.getConstraints());
     }
 
     /**

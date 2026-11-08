@@ -137,6 +137,26 @@ class ConfigReaderTest {
     }
 
     @Test
+    void constraintsAreParsed() {
+        Config root = Config.inMemory();
+        root.set(java.util.Arrays.asList("constraints", "com.google.guava:guava"), "32.1.3-jre");
+
+        ProjectConfig config = ConfigReader.parseConfig(root);
+
+        assertEquals("32.1.3-jre", config.getConstraints().get("com.google.guava:guava"));
+    }
+
+    @Test
+    void constraintsDefaultToEmpty() {
+        Config root = Config.inMemory();
+        root.set("build", Config.inMemory());
+
+        ProjectConfig config = ConfigReader.parseConfig(root);
+
+        assertTrue(config.getConstraints().isEmpty());
+    }
+
+    @Test
     void reproducibleDefaultsToWarn() {
         Config root = Config.inMemory();
         root.set("build", Config.inMemory());

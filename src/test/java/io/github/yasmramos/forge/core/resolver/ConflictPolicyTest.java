@@ -10,6 +10,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -97,5 +98,71 @@ class ConflictPolicyTest {
         Map<String, String> chosen = policy.enforce(
                 versions("x:x", Collections.singletonList("1.0")));
         assertEquals("1.0", chosen.get("x:x"));
+    }
+
+    @Test
+    void constraintsForceVersionsBelowResolutions() {
+        // AGENT.md section 2bis: [constraints] win over transitive requests but
+        // stay below [resolutions].
+        Map<String, String> constraints = new LinkedHashMap<>();
+        constraints.put("com.google.guava:guava", "32.1.3-jre");
+        ConflictPolicy policy = new ConflictPolicy(Collections.emptyMap(), constraints);
+
+        Map<String, String> chosen = policy.enforce(versions(
+                "com.google.guava:guava", Arrays.asList("31.1-jre", "30.0-jre")));
+
+        assertEquals("32.1.3-jre", chosen.get("com.google.guava:guava"));
+        assertEquals("[constraints]", policy.lever("com.google.guava:guava"));
+    }
+
+    @Test
+    void resolutionsWinOverConstraints() {
+        Map<String, String> resolutions = new LinkedHashMap<>();
+        resolutions.put("com.google.guava:guava", "33.0.0-jre");
+        Map<String, String> constraints = new LinkedHashMap<>();
+        constraints.put("com.google.guava:guava", "32.1.3-jre");
+        ConflictPolicy policy = new ConflictPolicy(resolutions, constraints);
+
+        Map<String, String> chosen = policy.enforce(versions(
+                "com.google.guava:guava", Arrays.asList("31.1-jre", "30.0-jre")));
+
+        assertEquals("33.0.0-jre", chosen.get("com.google.guava:guava"));
+        assertEquals("[resolutions]", policy.lever("com.google.guava:guava"));
+    }
+
+    @Test
+    void leverIsNullWhenNoOverrideApplies() {
+        ConflictPolicy policy = ConflictPolicy.strict();
+        assertNull(policy.lever("org.slf4j:slf4j-api"));
+        assertNull(policy.effectiveForced("org.slf4j:slf4j-api"));
+    }
+
+    @Test
+    void errorCarriesTheCondensedDerivation() {
+        // AGENT.md section 2bis: the conflict error embeds the derivation, so
+        // "fail by default" is guidance, not just friction.
+        ConflictPolicy policy = ConflictPolicy.strict();
+        ConflictPolicy.ConflictException ex = assertThrows(
+                ConflictPolicy.ConflictException.class,
+                () -> policy.enforce(versions("a:a", Arrays.asList("1", "2"))));
+
+        io.github.yasmramos.forge.cli.error.ForgeException forge =
+                ex.toForgeException("a:a requested in [1, 2] (1 by x; 2 by y)");
+        assertEquals("FORGE-DEP-0001", forge.getCode());
+        // The derivation replaces the plain conflict list in the detail.
+        assertTrue(forge.getMessage().contains("1 by x"));
+        assertTrue(forge.getMessage().contains("2 by y"));
+    }
+
+    @Test
+    void errorFallsBackToPlainConflictListWithoutDerivation() {
+        ConflictPolicy policy = ConflictPolicy.strict();
+        ConflictPolicy.ConflictException ex = assertThrows(
+                ConflictPolicy.ConflictException.class,
+                () -> policy.enforce(versions("a:a", Arrays.asList("1", "2"))));
+
+        io.github.yasmramos.forge.cli.error.ForgeException forge = ex.toForgeException();
+        assertEquals("FORGE-DEP-0001", forge.getCode());
+        assertTrue(forge.getMessage().contains("a:a requested in versions [1, 2]"));
     }
 }

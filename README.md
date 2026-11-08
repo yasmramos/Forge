@@ -132,6 +132,8 @@ Configuration files use TOML format with the following sections:
 | `[toolchain]` | Single source of truth for the Java version: `language`, optional `jdk_vendor` / `jdk_version` |
 | `[source.main]` / `[source.test]` | Source roots per scope: `java` and `resources` arrays |
 | `[dependencies.compile\|runtime\|test\|provided]` | Scoped dependencies: `"group:artifact" = "version"` |
+| `[constraints]` | Forced versions: `"group:artifact" = "version"`; win over transitive, below `[resolutions]` |
+| `[resolutions]` | Per-coordinate pins that win over everything: `"group:artifact" = "version"` |
 | `[build]` | Build behavior options (see below) |
 | `[compile]` | Compiler options: `encoding`, `debug`, `args` |
 | `[exec]` | Run configuration: `main`, `args`, `jvm_args` |

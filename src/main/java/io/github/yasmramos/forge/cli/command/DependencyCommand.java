@@ -6,6 +6,7 @@ import io.github.yasmramos.forge.core.DependencyScopes;
 import io.github.yasmramos.forge.core.multimodule.MultiModuleDependencies;
 import io.github.yasmramos.forge.core.multimodule.MultiModuleProject;
 import io.github.yasmramos.forge.core.resolver.AetherDependencyResolver;
+import io.github.yasmramos.forge.core.resolver.ConflictDerivation;
 import io.github.yasmramos.forge.core.resolver.ConflictPolicy;
 import io.github.yasmramos.forge.core.resolver.DependencyTree;
 import io.github.yasmramos.forge.core.resolver.DependencyTreeRenderer;
@@ -15,7 +16,6 @@ import io.github.yasmramos.forge.utils.ConfigReader;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +61,8 @@ public final class DependencyCommand {
                 "usage: forge why <group:artifact[:version]|artifactId>");
         }
         AetherDependencyResolver.ResolvedGraph graph = resolveCompileGraph();
+        ProjectConfig config = loadConfig();
+        ConflictPolicy policy = new ConflictPolicy(config.getResolutions(), config.getConstraints());
         List<List<DependencyTree.Node>> paths = graph.getTree().pathsTo(query);
         if (paths.isEmpty()) {
             out.println("'" + query + "' is not in the resolved graph.");
@@ -78,9 +80,18 @@ public final class DependencyCommand {
             }
             out.println(sb);
         }
+        // An override must never hide (AGENT.md section 2bis): if a lever forces
+        // this artifact's version, say so, even when it matches the graph.
+        String ga = paths.get(paths.size() - 1).get(paths.get(paths.size() - 1).size() - 1)
+            .getGroupArtifact();
+        if (policy.lever(ga) != null) {
+            out.println();
+            out.println(policy.lever(ga) + " overrides " + ga + " to "
+                + policy.effectiveForced(ga) + " at lock time.");
+        }
         out.println();
         out.println("The lockfile pins exactly one version per artifact; [resolutions]");
-        out.println("in forge.toml overrides every path above at lock time.");
+        out.println("overrides every path above at lock time.");
         out.println("Run 'forge resolve --explain' to see the full version derivation.");
         return 0;
     }
@@ -99,7 +110,7 @@ public final class DependencyCommand {
         AetherDependencyResolver.ResolvedGraph graph = resolveCompileGraph();
         Map<String, List<String>> versionsByGa = graph.getRequestedVersionsByGa();
         ProjectConfig config = loadConfig();
-        ConflictPolicy policy = new ConflictPolicy(config.getResolutions());
+        ConflictPolicy policy = new ConflictPolicy(config.getResolutions(), config.getConstraints());
         List<String> conflicts = conflictedGAs(versionsByGa);
 
         if (!explain) {
@@ -107,11 +118,13 @@ public final class DependencyCommand {
             // unresolved conflicts, exactly like a lock refresh would. Convert to
             // the structured FORGE-DEP-0001 error so the CLI renders what/why/how
             // instead of leaking a stack trace (AGENT.md sections 2bis and 10bis).
+            // The message embeds a condensed derivation so "fail by default" is
+            // guidance, not just friction.
             Map<String, String> chosen;
             try {
                 chosen = policy.enforce(versionsByGa);
             } catch (ConflictPolicy.ConflictException e) {
-                throw e.toForgeException();
+                throw e.toForgeException(condensedDerivation(graph.getTree(), versionsByGa, policy));
             }
             out.println("Resolved " + chosen.size() + " artifact(s) for the compile classpath.");
             return 0;
@@ -127,21 +140,34 @@ public final class DependencyCommand {
         }
         for (String ga : conflicts) {
             TreeSet<String> versions = new TreeSet<>(versionsByGa.get(ga));
-            String forced = policy.forcedVersion(ga);
+            String forced = policy.effectiveForced(ga);
             out.println(ga + " requested in " + versions);
             for (String v : versions) {
                 out.println("  " + v + " requested by: " + describeRequesters(graph.getTree(), ga, v));
             }
             if (forced != null) {
-                out.println("  -> [resolutions] pins " + forced + " (explicit user decision wins)");
+                out.println("  -> " + policy.lever(ga) + " pins " + forced
+                    + " (explicit user decision wins)");
             } else {
                 out.println("  -> no winner: Forge fails by default instead of picking one");
                 out.println("     fix: add \"" + ga + "\" = \"<version>\" under [resolutions]"
-                    + " in forge.toml, or align versions via a BOM, then run 'forge lock refresh'");
+                    + " or [constraints] in forge.toml, or align versions via a BOM,"
+                    + " then run 'forge lock refresh'");
             }
             out.println();
         }
         return 0;
+    }
+
+    /**
+     * Condensed version of the {@code --explain} derivation, embedded in the
+     * FORGE-DEP-0001 error so a failed resolution already answers who requests
+     * what and which lever would fix it (AGENT.md section 2bis).
+     */
+    private static String condensedDerivation(DependencyTree tree,
+                                              Map<String, List<String>> versionsByGa,
+                                              ConflictPolicy policy) {
+        return ConflictDerivation.condense(tree, versionsByGa, policy);
     }
 
     // --- shared plumbing ---
@@ -199,31 +225,11 @@ public final class DependencyCommand {
     }
 
     private static List<String> conflictedGAs(Map<String, List<String>> versionsByGa) {
-        List<String> out = new ArrayList<>();
-        for (Map.Entry<String, List<String>> e : versionsByGa.entrySet()) {
-            if (new TreeSet<>(e.getValue()).size() > 1) {
-                out.add(e.getKey());
-            }
-        }
-        Collections.sort(out);
-        return out;
+        return ConflictDerivation.conflictedGAs(versionsByGa);
     }
 
     private static String describeRequesters(DependencyTree tree, String ga, String version) {
-        List<String> parents = new ArrayList<>();
-        for (List<DependencyTree.Node> path : tree.pathsTo(ga)) {
-            DependencyTree.Node leaf = path.get(path.size() - 1);
-            if (!version.equals(leaf.getVersion())) {
-                continue;
-            }
-            String parent = path.size() >= 2
-                ? path.get(path.size() - 2).getCoordinate()
-                : "(direct)";
-            if (!parents.contains(parent)) {
-                parents.add(parent);
-            }
-        }
-        return parents.isEmpty() ? "(direct)" : String.join(", ", parents);
+        return ConflictDerivation.describeRequesters(tree, ga, version);
     }
 
     private static boolean hasMatch(DependencyTree tree, String filter) {
