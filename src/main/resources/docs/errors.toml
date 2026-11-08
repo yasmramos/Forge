@@ -151,3 +151,27 @@ what = "A plugin's [[provides]] declaration disagrees with what it registers at 
 why  = "Drift between the declared descriptor and actual behavior is exactly the kind of surprise Forge exists to eliminate."
 how  = "Update forge-plugin.toml to match the runtime registrations, or fix the plugin's registration code."
 docs = "https://forge.dev/e/PLG-0005"
+
+["FORGE-PLG-0006"]
+what = "Two plugins register the same extension point."
+why  = "Task types, compilers, test runners and packaging types are unique names; two owners make behavior ambiguous."
+how  = "Rename one extension point, or remove one of the plugins that registers it."
+docs = "https://forge.dev/e/PLG-0006"
+
+["FORGE-PLG-0007"]
+what = "A plugin tried to replace a built-in task type."
+why  = "Plugins may add new types but never shadow built-ins (AGENT.md section 4)."
+how  = "Rename the plugin task type; built-ins are reserved."
+docs = "https://forge.dev/e/PLG-0007"
+
+["FORGE-PLG-0008"]
+what = "A plugin dependency declared in forge-plugin.toml could not be resolved."
+why  = "The coordinate or version is wrong, or every configured repository was unreachable."
+how  = "Check the [dependencies] entries in forge-plugin.toml and the [repositories] in forge.toml, then retry."
+docs = "https://forge.dev/e/PLG-0008"
+
+["FORGE-PLG-0009"]
+what = "A plugin's declared entry point could not be loaded."
+why  = "The [plugin] main class named in forge-plugin.toml is missing, does not implement ForgePlugin, or failed to instantiate."
+how  = "Fix the 'plugin.main' class in forge-plugin.toml so it implements io.github.yasmramos.forge.plugin.ForgePlugin, then rebuild the plugin."
+docs = "https://forge.dev/e/PLG-0009"
