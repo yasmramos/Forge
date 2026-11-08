@@ -91,6 +91,21 @@ class BuildEnvironmentTest {
         assertTrue(BuildEnvironment.forgeVersionHash().matches("[0-9a-f]{64}"));
     }
 
+    @Test
+    void forPluginsUsesLoadedIdentityNotDeclaredCoordinate() {
+        // The cache key folds in the loaded plugin identity (id:version), so a
+        // plugin bump is a cache miss (AGENT.md sections 3 and 4bis).
+        BuildEnvironment before = BuildEnvironment.forPlugins(
+            Collections.singletonList("io.example.forge.kotlin:1.2.0"));
+        BuildEnvironment after = BuildEnvironment.forPlugins(
+            Collections.singletonList("io.example.forge.kotlin:1.9.0"));
+
+        assertNotEquals(before.getPluginsHash(), after.getPluginsHash());
+        assertEquals(BuildEnvironment.forPlugins(Collections.emptyList()).getPluginsHash(),
+            BuildEnvironment.forProject(Collections.emptyMap()).getPluginsHash(),
+            "no loaded plugins must hash the same as no declared plugins");
+    }
+
     private static BuildEnvironment env(String jdkVersion, String forgeVersion, java.util.List<String> plugins) {
         return new BuildEnvironment(
             BuildEnvironment.toolchainHash("OpenJDK 64-Bit Server VM", jdkVersion, "Eclipse Adoptium"),
