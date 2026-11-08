@@ -359,6 +359,13 @@ public class ProjectConfig {
         private boolean debug = true;
         /** [build] reproducible_timestamp: fixed artifact timestamp (ADR 17). */
         private String reproducibleTimestamp;
+        /**
+         * [build] remote_cache: base URL of the remote build cache (section 3),
+         * or null for a local-only cache. Overridden by the FORGE_REMOTE_CACHE
+         * environment variable, so CI can point at a cache without editing
+         * forge.toml (section 24).
+         */
+        private String remoteCacheUrl;
         
         public boolean isIncremental() {
             return incremental;
@@ -423,6 +430,15 @@ public class ProjectConfig {
 
         public void setReproducibleTimestamp(String reproducibleTimestamp) {
             this.reproducibleTimestamp = reproducibleTimestamp;
+        }
+
+        /** [build] remote_cache base URL, or null when unset. */
+        public String getRemoteCacheUrl() {
+            return remoteCacheUrl;
+        }
+
+        public void setRemoteCacheUrl(String remoteCacheUrl) {
+            this.remoteCacheUrl = remoteCacheUrl;
         }
     }
 }

@@ -110,6 +110,33 @@ class ConfigReaderTest {
     }
 
     @Test
+    void testBuildSectionParsesRemoteCacheUrl() {
+        Config root = Config.inMemory();
+        root.set("build", Config.inMemory());
+        root.set(java.util.Arrays.asList("build", "remote_cache"), "https://cache.example/forge");
+
+        ProjectConfig config = ConfigReader.parseConfig(root);
+
+        assertEquals("https://cache.example/forge",
+            config.getBuildSettings().getRemoteCacheUrl());
+    }
+
+    @Test
+    void testRemoteCacheUrlIsUnsetByDefault() {
+        // FORGE_REMOTE_CACHE overrides the file (section 24); skip if the CI
+        // environment sets it, otherwise the default must be null.
+        String env = System.getenv("FORGE_REMOTE_CACHE");
+        org.junit.jupiter.api.Assumptions.assumeTrue(env == null || env.trim().isEmpty());
+
+        Config root = Config.inMemory();
+        root.set("build", Config.inMemory());
+
+        ProjectConfig config = ConfigReader.parseConfig(root);
+
+        assertNull(config.getBuildSettings().getRemoteCacheUrl());
+    }
+
+    @Test
     void testZeroThreadsMeansAuto() {
         Config root = Config.inMemory();
         root.set("build", Config.inMemory());

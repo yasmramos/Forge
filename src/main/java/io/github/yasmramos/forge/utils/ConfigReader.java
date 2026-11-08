@@ -310,6 +310,16 @@ public class ConfigReader {
                 settings.setReproducibleTimestamp(
                     expand(build.get("reproducible_timestamp"), properties));
             }
+            if (build.contains("remote_cache")) {
+                settings.setRemoteCacheUrl(expand(build.get("remote_cache"), properties));
+            }
+        }
+
+        // FORGE_REMOTE_CACHE overrides the URL from forge.toml so CI can point
+        // at a cache without editing the file (AGENT.md sections 3 and 24).
+        String envRemoteCache = System.getenv("FORGE_REMOTE_CACHE");
+        if (envRemoteCache != null && !envRemoteCache.trim().isEmpty()) {
+            settings.setRemoteCacheUrl(envRemoteCache.trim());
         }
 
         // ------------------------------------------------------------------

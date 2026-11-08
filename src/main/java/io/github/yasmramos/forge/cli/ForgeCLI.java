@@ -45,6 +45,8 @@ public class ForgeCLI {
                 case "clean":
                     requireEngine(engine).clean();
                     return 0;
+                case "cache":
+                    return executeCache(engine, args);
                 case "init":
                     initializeProject();
                     return 0;
@@ -99,6 +101,30 @@ public class ForgeCLI {
     /** Arguments after the command word (i.e. dropping {@code args[0]}). */
     private static String[] tail(String[] args) {
         return java.util.Arrays.copyOfRange(args, 1, args.length);
+    }
+
+    /**
+     * {@code forge cache clean} - discard the local build cache (AGENT.md
+     * section 3). Entries are content-addressed and immutable, so clearing is
+     * always safe: the next build repopulates what it needs.
+     */
+    private int executeCache(ForgeEngine engine, String[] args) {
+        String sub = args.length > 1 ? args[1].toLowerCase() : "";
+        if (!"clean".equals(sub)) {
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.CFG_0002,
+                "unknown cache subcommand '" + sub + "'; expected 'clean'");
+        }
+        try {
+            new io.github.yasmramos.forge.core.cache.TaskCache(
+                requireEngine(engine).getProjectRoot()).clear();
+            System.out.println("Local build cache cleared.");
+            return 0;
+        } catch (java.io.IOException e) {
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.CCH_0001,
+                "could not clear the local build cache: " + e.getMessage(), e);
+        }
     }
 
     /**

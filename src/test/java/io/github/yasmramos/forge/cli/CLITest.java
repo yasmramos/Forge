@@ -60,6 +60,33 @@ class CLITest {
     }
 
     @Test
+    void cacheCleanDiscardsTheLocalCache(
+            @org.junit.jupiter.api.io.TempDir java.nio.file.Path tmp) throws Exception {
+        java.io.File root = tmp.toFile();
+        // Simulate a populated local cache: <root>/.forge/cache/<hash>/outputs.tar.gz
+        java.nio.file.Path entry = tmp.resolve(".forge/cache/deadbeef/outputs.tar.gz");
+        java.nio.file.Files.createDirectories(entry.getParent());
+        java.nio.file.Files.write(entry, new byte[] {1, 2, 3});
+
+        io.github.yasmramos.forge.model.ProjectConfig config =
+            new io.github.yasmramos.forge.model.ProjectConfig();
+        config.setName("cache-test");
+        config.setVersion("1.0.0");
+
+        ForgeCLI cli = new ForgeCLI(new String[] {"cache", "clean"});
+        int exit = cli.execute(new io.github.yasmramos.forge.core.ForgeEngine(config, root));
+        assertEquals(0, exit);
+        assertFalse(java.nio.file.Files.exists(tmp.resolve(".forge/cache")),
+            "the local cache directory must be gone");
+    }
+
+    @Test
+    void badCacheSubcommandReturnsUsageError() {
+        ForgeCLI cli = new ForgeCLI(new String[] {"cache", "frobnicate"});
+        assertEquals(1, cli.execute(null), "unknown cache subcommand is a usage error");
+    }
+
+    @Test
     void incrementalBuildReturnsNonZeroOnCompileFailure(
             @org.junit.jupiter.api.io.TempDir java.nio.file.Path tmp) throws Exception {
         // Regression: the CLI used to ignore the incremental BuildResult and

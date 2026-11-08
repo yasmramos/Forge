@@ -206,7 +206,7 @@ public class ForgeEngine {
         // the build fails with an actionable error before touching outputs.
         io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(projectRoot);
 
-        TaskCache taskCache = new TaskCache(projectRoot);
+        TaskCache taskCache = new TaskCache(projectRoot, remoteCache());
         TaskContext context = new TaskContext(projectRoot);
 
         StandardTaskFactory factory =
@@ -299,9 +299,27 @@ public class ForgeEngine {
         for (ForgeTask t : graph.topoOrder()) {
             logger.info("[" + t.getName() + "] " + report.outcomes.get(t.getName()));
         }
+        // End-of-build upload (AGENT.md section 16bis): only after the whole
+        // build succeeded, so a failed build uploads nothing.
+        if (!report.failed()) {
+            taskCache.flushRemote();
+        }
         logger.info("Task-graph build finished: " + report.cacheHits() + " cache hits, "
             + report.executed() + " executed");
         return report;
+    }
+
+    /**
+     * The remote cache client for this project, or {@code null} for a local-only
+     * cache (AGENT.md section 3). Configured through {@code [build] remote_cache}
+     * in forge.toml or the {@code FORGE_REMOTE_CACHE} environment variable.
+     */
+    private io.github.yasmramos.forge.core.cache.RemoteCache remoteCache() {
+        String url = config.getBuildSettings().getRemoteCacheUrl();
+        if (url == null || url.trim().isEmpty()) {
+            return null;
+        }
+        return new io.github.yasmramos.forge.core.cache.RemoteCache(url);
     }
 
     /**
