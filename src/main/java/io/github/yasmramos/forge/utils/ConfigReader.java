@@ -313,6 +313,9 @@ public class ConfigReader {
             if (build.contains("remote_cache")) {
                 settings.setRemoteCacheUrl(expand(build.get("remote_cache"), properties));
             }
+            if (build.contains("reproducible")) {
+                settings.setReproducible(expand(build.get("reproducible"), properties));
+            }
         }
 
         // FORGE_REMOTE_CACHE overrides the URL from forge.toml so CI can point

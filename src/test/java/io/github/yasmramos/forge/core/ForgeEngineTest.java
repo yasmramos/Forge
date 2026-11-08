@@ -178,7 +178,36 @@ class ForgeEngineTest {
             "the error must name the plugin that failed to resolve: " + ex.getMessage());
     }
 
-    
+    @Test
+    void executedTasksExcludesCacheHits(@TempDir Path tmp) {
+        // Reproducibility verification must only re-run tasks that executed this
+        // build (AGENT.md section 17): a cache hit's outputs came from the cache,
+        // not from the plugin, so re-running it would not test determinism.
+        io.github.yasmramos.forge.core.task.ForgeTask ran =
+            new io.github.yasmramos.forge.core.task.ForgeTask("gen",
+                new io.github.yasmramos.forge.core.task.TaskType("gen"));
+        io.github.yasmramos.forge.core.task.ForgeTask cached =
+            new io.github.yasmramos.forge.core.task.ForgeTask("cached",
+                new io.github.yasmramos.forge.core.task.TaskType("gen"));
+        io.github.yasmramos.forge.core.graph.TaskGraph graph =
+            new io.github.yasmramos.forge.core.graph.TaskGraph();
+        graph.add(ran);
+        graph.add(cached);
+        graph.validate();
+
+        java.util.Map<String, io.github.yasmramos.forge.core.graph.TaskScheduler.Outcome> outcomes =
+            new java.util.LinkedHashMap<>();
+        outcomes.put("gen", io.github.yasmramos.forge.core.graph.TaskScheduler.Outcome.EXECUTED);
+        outcomes.put("cached", io.github.yasmramos.forge.core.graph.TaskScheduler.Outcome.CACHE_HIT);
+        io.github.yasmramos.forge.core.graph.TaskScheduler.Report report =
+            new io.github.yasmramos.forge.core.graph.TaskScheduler.Report(outcomes);
+
+        java.util.List<io.github.yasmramos.forge.core.task.ForgeTask> executed =
+            ForgeEngine.executedTasks(graph, report);
+        assertEquals(1, executed.size());
+        assertEquals("gen", executed.get(0).getName());
+    }
+
     private ProjectConfig createMockConfig() {
         ProjectConfig config = new ProjectConfig();
         config.setName("test-project");

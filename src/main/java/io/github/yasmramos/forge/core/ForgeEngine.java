@@ -299,6 +299,13 @@ public class ForgeEngine {
         for (ForgeTask t : graph.topoOrder()) {
             logger.info("[" + t.getName() + "] " + report.outcomes.get(t.getName()));
         }
+        // Reproducibility verification (AGENT.md section 17): for plugins that
+        // declare reproducible = true, double-run their tasks and compare
+        // outputs. Default is to warn; strict mode fails; "off" skips the check.
+        if (!report.failed() && !config.getBuildSettings().isReproducibleOff()) {
+            verifyPluginReproducibility(graph, report, plugins);
+        }
+
         // End-of-build upload (AGENT.md section 16bis): only after the whole
         // build succeeded, so a failed build uploads nothing.
         if (!report.failed()) {
@@ -307,6 +314,35 @@ public class ForgeEngine {
         logger.info("Task-graph build finished: " + report.cacheHits() + " cache hits, "
             + report.executed() + " executed");
         return report;
+    }
+
+    /**
+     * Double-runs the plugin tasks that were actually executed this build and
+     * compares their outputs (AGENT.md section 17). The verifier applies the
+     * policy: warn by default, fail in strict mode. Cache hits are skipped:
+     * their outputs came from the cache, not from the plugin, so re-running them
+     * would not test the plugin's determinism.
+     */
+    private void verifyPluginReproducibility(TaskGraph graph, TaskScheduler.Report report,
+                                             io.github.yasmramos.forge.core.plugin.LoadedPlugins plugins) {
+        new io.github.yasmramos.forge.core.packageinfo.ReproducibilityVerifier(
+            plugins, projectRoot, config.getBuildSettings().isReproducibleStrict())
+            .verify(executedTasks(graph, report));
+    }
+
+    /**
+     * The tasks that actually executed this build, in topological order. Cache
+     * hits are excluded: their outputs came from the cache, not from the plugin,
+     * so re-running them would not test the plugin's determinism (section 17).
+     */
+    static java.util.List<ForgeTask> executedTasks(TaskGraph graph, TaskScheduler.Report report) {
+        java.util.List<ForgeTask> executed = new java.util.ArrayList<>();
+        for (ForgeTask t : graph.topoOrder()) {
+            if (report.outcomes.get(t.getName()) == TaskScheduler.Outcome.EXECUTED) {
+                executed.add(t);
+            }
+        }
+        return executed;
     }
 
     /**

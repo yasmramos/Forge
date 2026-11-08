@@ -145,6 +145,7 @@ Supported `[build]` keys (snake_case):
 | `cache_enabled` | boolean | `true` | Enable the on-disk build cache (`.forge-cache`) |
 | `threads` | number | `0` (auto) | Worker thread count; `0` means available CPUs |
 | `remote_cache` | string | unset | Base URL of a remote build cache; also settable via `FORGE_REMOTE_CACHE` |
+| `reproducible` | string | `warn` | Reproducibility policy for plugins: `warn`, `strict`, or `off` |
 
 #### Remote build cache
 
@@ -159,6 +160,25 @@ Entries are content-addressed by the task hash (which already covers every
 input, toolchain, Forge and plugin version) and immutable: a `PUT` for an
 existing hash is a no-op, so concurrent uploads of identical content are always
 safe. A miss or an outage degrades to a local build; it never fails the build.
+
+#### Reproducibility policy
+
+Reproducibility is guaranteed for core tasks; plugins are best-effort (§17). A
+plugin declares `[compatibility] reproducible = true` in its `forge-plugin.toml`,
+and Forge does not take that claim on faith: it runs each of that plugin's tasks
+a second time and compares the output trees by content hash. A mismatch reports
+`FORGE-RPR-0001` naming the plugin and task.
+
+`[build] reproducible` selects the policy:
+
+| Value | Behavior on a mismatch |
+| --- | --- |
+| `warn` (default) | Log the mismatch loudly; the build succeeds |
+| `strict` | Fail the build with `FORGE-RPR-0001` |
+| `off` | Skip the check entirely (no second run) |
+
+Verification doubles the cost of the checked tasks, so a project that does not
+need the guarantee can set `off`.
 
 ### Programmatic Configuration
 

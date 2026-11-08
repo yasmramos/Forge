@@ -366,6 +366,14 @@ public class ProjectConfig {
          * forge.toml (section 24).
          */
         private String remoteCacheUrl;
+        /**
+         * [build] reproducible: {@code "warn"} (default), {@code "strict"} or
+         * {@code "off"} (AGENT.md section 17). Plugins that declare
+         * {@code reproducible = true} are verified by double-run sampling; a
+         * mismatch warns in "warn" mode, fails the build in "strict" mode, and
+         * is not checked at all in "off" mode.
+         */
+        private String reproducible = "warn";
         
         public boolean isIncremental() {
             return incremental;
@@ -439,6 +447,25 @@ public class ProjectConfig {
 
         public void setRemoteCacheUrl(String remoteCacheUrl) {
             this.remoteCacheUrl = remoteCacheUrl;
+        }
+
+        /** [build] reproducible: {@code "warn"} (default) or {@code "strict"}. */
+        public String getReproducible() {
+            return reproducible;
+        }
+
+        public void setReproducible(String reproducible) {
+            this.reproducible = reproducible;
+        }
+
+        /** True when strict reproducibility is requested (section 17). */
+        public boolean isReproducibleStrict() {
+            return reproducible != null && "strict".equalsIgnoreCase(reproducible.trim());
+        }
+
+        /** True when reproducibility verification is disabled (section 17). */
+        public boolean isReproducibleOff() {
+            return reproducible != null && "off".equalsIgnoreCase(reproducible.trim());
         }
     }
 }
