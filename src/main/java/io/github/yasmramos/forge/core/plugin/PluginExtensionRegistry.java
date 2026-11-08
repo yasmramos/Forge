@@ -35,6 +35,8 @@ public final class PluginExtensionRegistry {
         new LinkedHashMap<>();
     private final Map<String, io.github.yasmramos.forge.plugin.PluginTestRunner> testRunnerImpls =
         new LinkedHashMap<>();
+    private final Map<String, io.github.yasmramos.forge.plugin.PluginPackagingType> packagingImpls =
+        new LinkedHashMap<>();
 
     /** Records a task type registered by {@code pluginId}. */
     public void registerTaskType(String pluginId, String name) {
@@ -95,6 +97,19 @@ public final class PluginExtensionRegistry {
 
     public void registerPackagingType(String pluginId, String id) {
         put(packagingTypes, pluginId, id, "packaging-type");
+    }
+
+    /**
+     * Records a packaging type implementation for an id (AGENT.md section 4).
+     * The implementation is what lets the build produce that artifact; a
+     * packaging type registered without one is listed but cannot package.
+     */
+    public void registerPackagingType(String pluginId, String id,
+                                      io.github.yasmramos.forge.plugin.PluginPackagingType packagingType) {
+        registerPackagingType(pluginId, id);
+        if (packagingType != null) {
+            packagingImpls.put(id, packagingType);
+        }
     }
 
     private static void put(Map<String, String> map, String pluginId, String name, String kind) {
@@ -177,5 +192,20 @@ public final class PluginExtensionRegistry {
     /** The test runner registered for {@code id}, or {@code null}. */
     public io.github.yasmramos.forge.plugin.PluginTestRunner testRunner(String id) {
         return testRunnerImpls.get(id);
+    }
+
+    /** Packaging types that declared an implementation. */
+    public Set<String> packagingTypesWithImpl() {
+        return Collections.unmodifiableSet(new LinkedHashSet<>(packagingImpls.keySet()));
+    }
+
+    /** All registered packaging type ids, whether or not they have an implementation. */
+    public Set<String> packagingTypes() {
+        return Collections.unmodifiableSet(new LinkedHashSet<>(packagingTypes.keySet()));
+    }
+
+    /** The packaging type registered for {@code id}, or {@code null}. */
+    public io.github.yasmramos.forge.plugin.PluginPackagingType packagingType(String id) {
+        return packagingImpls.get(id);
     }
 }

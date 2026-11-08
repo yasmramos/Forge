@@ -20,6 +20,11 @@ public class ProjectConfig {
     private String version;
     private String group;
     private String description;
+    /**
+     * Packaging type selected by the project (AGENT.md section 4: "register
+     * packaging types"). Defaults to {@code "jar"}, the built-in type.
+     */
+    private String packaging = "jar";
     private String sourceDirectory;
     private String outputDirectory = "target/classes";
     private List<String> sourcePaths;
@@ -99,6 +104,14 @@ public class ProjectConfig {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getPackaging() {
+        return packaging;
+    }
+
+    public void setPackaging(String packaging) {
+        this.packaging = (packaging == null || packaging.trim().isEmpty()) ? "jar" : packaging;
     }
 
     public Map<String, String> getProperties() {

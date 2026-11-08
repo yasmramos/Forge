@@ -59,4 +59,10 @@ final class DefaultPluginContext implements PluginContext {
     public void registerPackagingType(String id) {
         registry.registerPackagingType(descriptor.getId(), id);
     }
+
+    @Override
+    public void registerPackagingType(String id,
+                                      io.github.yasmramos.forge.plugin.PluginPackagingType packagingType) {
+        registry.registerPackagingType(descriptor.getId(), id, packagingType);
+    }
 }
