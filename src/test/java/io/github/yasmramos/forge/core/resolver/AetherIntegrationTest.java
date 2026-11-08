@@ -109,4 +109,24 @@ class AetherIntegrationTest {
                 .anyMatch(n -> "org.slf4j:slf4j-api".equals(n.getGroupArtifact()) && n.isOmitted());
         assertTrue(hasOmitted, "loser node is retained and flagged in the tree");
     }
+
+    @Test
+    void jdkActivatedProfilesDoNotSilentlyDropTransitiveDependencies(@TempDir File cacheDir) {
+        // Regression: MavenRepositorySystemUtils.newSession() starts without the
+        // JVM's system properties, so JDK-activated profiles fail to evaluate and
+        // Aether silently drops every transitive dependency of POMs that use them.
+        // guava and jackson-databind both hit this and resolved to a single jar.
+        AetherDependencyResolver resolver =
+                new AetherDependencyResolver(cacheDir, central());
+
+        AetherDependencyResolver.ResolvedGraph graph = resolver.resolveTransitive(
+                java.util.Arrays.asList("com.google.guava:guava:32.1.3-jre"));
+
+        assertTrue(graph.getArtifacts().stream().anyMatch(
+                        a -> a.getCoordinates().startsWith("com.google.guava:failureaccess:")),
+                "guava's transitive failureaccess must be on the classpath");
+        assertTrue(graph.getArtifacts().stream().anyMatch(
+                        a -> a.getCoordinates().startsWith("org.checkerframework:checker-qual:")),
+                "guava's transitive checker-qual must be on the classpath");
+    }
 }
