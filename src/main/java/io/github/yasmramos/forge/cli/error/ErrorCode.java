@@ -188,6 +188,26 @@ public final class ErrorCode {
         "Drift between the declared descriptor and actual behavior is exactly the kind of surprise Forge exists to eliminate.",
         "Update forge-plugin.toml to match the runtime registrations, or fix the plugin's registration code.",
         "https://forge.dev/e/PLG-0005");
+    public static final Entry PLG_0006 = register("FORGE-PLG-0006",
+        "Two plugins register the same extension point.",
+        "Task types, compilers, test runners and packaging types are unique names; two owners make behavior ambiguous.",
+        "Rename one extension point, or remove one of the plugins that registers it.",
+        "https://forge.dev/e/PLG-0006");
+    public static final Entry PLG_0007 = register("FORGE-PLG-0007",
+        "A plugin tried to replace a built-in task type.",
+        "Plugins may add new types but never shadow built-ins (AGENT.md section 4).",
+        "Rename the plugin task type; built-ins are reserved.",
+        "https://forge.dev/e/PLG-0007");
+    public static final Entry PLG_0008 = register("FORGE-PLG-0008",
+        "A plugin dependency declared in forge-plugin.toml could not be resolved.",
+        "The coordinate or version is wrong, or every configured repository was unreachable.",
+        "Check the [dependencies] entries in forge-plugin.toml and the [repositories] in forge.toml, then retry.",
+        "https://forge.dev/e/PLG-0008");
+    public static final Entry PLG_0009 = register("FORGE-PLG-0009",
+        "A plugin's declared entry point could not be loaded.",
+        "The [plugin] main class named in forge-plugin.toml is missing, does not implement ForgePlugin, or failed to instantiate.",
+        "Fix the 'plugin.main' class in forge-plugin.toml so it implements io.github.yasmramos.forge.plugin.ForgePlugin, then rebuild the plugin.",
+        "https://forge.dev/e/PLG-0009");
 
     // --- Internal (INT) ---
     public static final Entry INT_0001 = register("FORGE-INT-0001",

@@ -41,6 +41,30 @@ public final class PluginDescriptorReader {
         return parse(root);
     }
 
+    /**
+     * Reads and validates the {@code forge-plugin.toml} at the root of a plugin
+     * jar (AGENT.md section 4bis: the descriptor lives in the jar). The loader
+     * reads the file itself, so a plugin cannot misreport its own identity.
+     */
+    public static PluginDescriptor readFromJar(File jar) {
+        try (java.util.zip.ZipFile zip = new java.util.zip.ZipFile(jar)) {
+            java.util.zip.ZipEntry entry = zip.getEntry(DESCRIPTOR_FILE);
+            if (entry == null) {
+                throw new ForgeException(ErrorCode.PLG_0003,
+                    "no " + DESCRIPTOR_FILE + " at the root of " + jar.getName());
+            }
+            try (java.io.Reader reader = new java.io.InputStreamReader(
+                    zip.getInputStream(entry), java.nio.charset.StandardCharsets.UTF_8)) {
+                return parse(new TomlParser().parse(reader));
+            }
+        } catch (ForgeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ForgeException(ErrorCode.PLG_0003,
+                "cannot read descriptor from " + jar.getName() + ": " + e.getMessage(), e);
+        }
+    }
+
     /** Parses and validates an already-loaded TOML tree. */
     static PluginDescriptor parse(Config root) {
         String schema = string(root, "schema");
