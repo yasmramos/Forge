@@ -58,6 +58,18 @@ public final class BuildEnvironment {
         return new BuildEnvironment(toolchainHash(), forgeVersionHash(), pluginsHash(idVersions));
     }
 
+    /**
+     * Captures the environment for the plugins actually loaded, by their
+     * {@code id:version} identity (AGENT.md section 3: the cache key folds in
+     * the versions of every plugin that affects the task). This is the loaded
+     * truth, not the declared coordinate, so it stays stable whether the plugin
+     * was resolved from a coordinate or a local jar.
+     */
+    public static BuildEnvironment forPlugins(List<String> pluginIdVersions) {
+        return new BuildEnvironment(toolchainHash(), forgeVersionHash(),
+            pluginsHash(pluginIdVersions == null ? new ArrayList<>() : pluginIdVersions));
+    }
+
     public String getToolchainHash() {
         return toolchainHash;
     }

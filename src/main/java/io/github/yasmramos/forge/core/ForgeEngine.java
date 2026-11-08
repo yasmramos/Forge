@@ -211,6 +211,21 @@ public class ForgeEngine {
 
         StandardTaskFactory factory =
             new StandardTaskFactory(config, projectRoot, resolveClassesDir());
+
+        // Configure time: load declared plugins before building the graph
+        // (AGENT.md sections 4 and 16bis). Loading happens in the same core
+        // codebase that executes the build, so there is no split brain. Their
+        // loaded identity - not just the declared coordinate - is folded into
+        // the task cache key (section 3).
+        io.github.yasmramos.forge.core.plugin.LoadedPlugins plugins =
+            io.github.yasmramos.forge.core.plugin.PluginBootstrap.forProject(config).load();
+        if (!plugins.isEmpty()) {
+            logger.info("Loaded " + plugins.catalog().size() + " plugin(s): "
+                + plugins.idVersions());
+            factory.setEnvironment(
+                io.github.yasmramos.forge.core.task.BuildEnvironment.forPlugins(plugins.idVersions()));
+        }
+
         TaskGraph graph = new TaskGraph();
         graph.add(factory.compile());
         graph.add(factory.test());

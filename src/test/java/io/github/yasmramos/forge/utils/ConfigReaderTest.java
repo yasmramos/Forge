@@ -141,4 +141,38 @@ class ConfigReaderTest {
         Map<String, String> props = Map.of("a", "1");
         assertEquals("v1-${b}", ConfigReader.expand("v${a}-${b}", props));
     }
+
+    @Test
+    void testParsesPluginsAsCoordinates() {
+        // AGENT.md sections 4/4bis: plugins are declared explicitly with a Maven
+        // coordinate; what is in the file gets loaded, what is not, does not.
+        Config root = Config.inMemory();
+        root.set("plugins", Config.inMemory());
+        root.set(java.util.Arrays.asList("plugins", "io.example.forge.kotlin"), "1.2.0");
+
+        ProjectConfig config = ConfigReader.parseConfig(root);
+
+        assertEquals("1.2.0", config.getPlugins().get("io.example.forge.kotlin"));
+    }
+
+    @Test
+    void testPluginVersionIsInterpolated() {
+        Config root = Config.inMemory();
+        root.set("project.properties", Config.inMemory());
+        root.set(java.util.Arrays.asList("project", "properties", "kotlin.plugin"), "1.2.0");
+        root.set("plugins", Config.inMemory());
+        root.set(java.util.Arrays.asList("plugins", "io.example.forge.kotlin"),
+            "${kotlin.plugin}");
+
+        ProjectConfig config = ConfigReader.parseConfig(root);
+
+        assertEquals("1.2.0", config.getPlugins().get("io.example.forge.kotlin"));
+    }
+
+    @Test
+    void testNoPluginsSectionMeansNoPlugins() {
+        Config root = Config.inMemory();
+        ProjectConfig config = ConfigReader.parseConfig(root);
+        assertTrue(config.getPlugins().isEmpty());
+    }
 }

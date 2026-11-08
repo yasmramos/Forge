@@ -30,13 +30,22 @@ public class StandardTaskFactory {
     private final ProjectConfig config;
     private final File projectRoot;
     private final Path classesDir;
-    private final BuildEnvironment environment;
+    private BuildEnvironment environment;
 
     public StandardTaskFactory(ProjectConfig config, File projectRoot, Path classesDir) {
         this.config = config;
         this.projectRoot = projectRoot;
         this.classesDir = classesDir.toAbsolutePath().normalize();
         this.environment = BuildEnvironment.forProject(config.getPlugins());
+    }
+
+    /**
+     * Replaces the build environment, e.g. to fold the identity of the plugins
+     * actually loaded (not just those declared) into the task cache key
+     * (AGENT.md sections 3 and 4bis). Must be called before tasks are created.
+     */
+    public void setEnvironment(BuildEnvironment environment) {
+        this.environment = environment;
     }
 
     /** Creates the compile task: sources + dependencies in, classes out. */

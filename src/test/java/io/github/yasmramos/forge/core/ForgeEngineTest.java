@@ -152,6 +152,32 @@ class ForgeEngineTest {
             content.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 
+    @Test
+    void declaredPluginIsResolvedAtConfigureTime(@TempDir Path tmp) throws Exception {
+        // AGENT.md sections 4 and 16bis: [plugins] in forge.toml is loaded at
+        // configure time, before the graph runs. A declared but unresolvable
+        // plugin must fail with FORGE-PLG-0008 and a message naming it - never a
+        // silent skip.
+        java.io.File root = tmp.toFile();
+        java.io.File toml = new java.io.File(root, "forge.toml");
+        Path src = tmp.resolve("src/main/java");
+        java.nio.file.Files.createDirectories(src);
+        write(src.resolve("Hello.java").toFile(), "public class Hello { }");
+        write(toml, "forge = \"0.1\"\n[project]\nname = \"plug\"\nversion = \"1.0.0\"\n"
+            + "[plugins]\n\"com.example.does.not:exist-plugin\" = \"9.9.9\"\n");
+
+        ProjectConfig config = io.github.yasmramos.forge.utils.ConfigReader.loadConfig(toml);
+        config.setSourceDirectory(src.toString());
+        config.setOutputDirectory(tmp.resolve("classes").toString());
+
+        io.github.yasmramos.forge.cli.error.ForgeException ex = assertThrows(
+            io.github.yasmramos.forge.cli.error.ForgeException.class,
+            () -> new ForgeEngine(config, root).buildWithTaskGraph());
+        assertEquals("FORGE-PLG-0008", ex.getCode());
+        assertTrue(ex.getMessage().contains("com.example.does.not:exist-plugin"),
+            "the error must name the plugin that failed to resolve: " + ex.getMessage());
+    }
+
     
     private ProjectConfig createMockConfig() {
         ProjectConfig config = new ProjectConfig();

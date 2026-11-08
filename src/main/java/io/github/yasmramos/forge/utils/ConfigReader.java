@@ -251,6 +251,26 @@ public class ConfigReader {
         config.setRepositories(repositories);
 
         // ------------------------------------------------------------------
+        // [plugins] (AGENT.md sections 4 and 4bis): plugins are declared with a
+        // Maven coordinate and loaded explicitly. No autodiscovery: what is in
+        // the file gets loaded, what is not, does not.
+        // ------------------------------------------------------------------
+        Map<String, Object> plugins = new LinkedHashMap<>();
+        UnmodifiableConfig pluginSection = root.get("plugins");
+        if (pluginSection != null) {
+            for (UnmodifiableConfig.Entry entry : pluginSection.entrySet()) {
+                Object raw = entry.getValue();
+                if (raw instanceof String) {
+                    plugins.put(entry.getKey(), expand((String) raw, properties));
+                } else if (raw instanceof UnmodifiableConfig) {
+                    UnmodifiableConfig table = (UnmodifiableConfig) raw;
+                    plugins.put(entry.getKey(), expand(table.<String>get("version"), properties));
+                }
+            }
+        }
+        config.setPlugins(plugins);
+
+        // ------------------------------------------------------------------
         // [resolutions] (AGENT.md section 2bis): groupId:artifactId -> forced
         // exact version. Highest-precedence conflict-alleviation mechanism.
         // ------------------------------------------------------------------
