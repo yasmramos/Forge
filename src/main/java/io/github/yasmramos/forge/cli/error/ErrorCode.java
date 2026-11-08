@@ -162,6 +162,33 @@ public final class ErrorCode {
         "Set group = \"com.example\" under [project] in the root forge.toml.",
         "https://forge.dev/e/MMD-0004");
 
+    // --- Plugins (PLG) ---
+    public static final Entry PLG_0001 = register("FORGE-PLG-0001",
+        "A plugin targets a core API range that does not include the running Forge API version.",
+        "The plugin was built against an incompatible core API; loading it would risk undefined behavior, so it is never half-loaded.",
+        "Use a plugin version whose [plugin] api range includes this core, or upgrade Forge.",
+        "https://forge.dev/e/PLG-0001");
+    public static final Entry PLG_0002 = register("FORGE-PLG-0002",
+        "A forge-plugin.toml uses a descriptor schema version this Forge does not understand.",
+        "The plugin descriptor was written for a newer (or older, unsupported) schema than this core implements.",
+        "Upgrade Forge, or use a plugin built against the supported descriptor schema.",
+        "https://forge.dev/e/PLG-0002");
+    public static final Entry PLG_0003 = register("FORGE-PLG-0003",
+        "A forge-plugin.toml is malformed: a required field is missing or invalid.",
+        "The descriptor does not declare a required field (id, name, version, api, main) or a value has the wrong type.",
+        "Fix the reported field in forge-plugin.toml and rebuild the plugin.",
+        "https://forge.dev/e/PLG-0003");
+    public static final Entry PLG_0004 = register("FORGE-PLG-0004",
+        "Two loaded plugins declare the same plugin id.",
+        "Plugin ids are globally unique and stable; a duplicate makes identity ambiguous for cache keys and diagnostics.",
+        "Remove one of the conflicting plugins, or fix the duplicated id in its forge-plugin.toml.",
+        "https://forge.dev/e/PLG-0004");
+    public static final Entry PLG_0005 = register("FORGE-PLG-0005",
+        "A plugin's [[provides]] declaration disagrees with what it registers at runtime.",
+        "Drift between the declared descriptor and actual behavior is exactly the kind of surprise Forge exists to eliminate.",
+        "Update forge-plugin.toml to match the runtime registrations, or fix the plugin's registration code.",
+        "https://forge.dev/e/PLG-0005");
+
     // --- Internal (INT) ---
     public static final Entry INT_0001 = register("FORGE-INT-0001",
         "An unexpected internal error occurred.",
