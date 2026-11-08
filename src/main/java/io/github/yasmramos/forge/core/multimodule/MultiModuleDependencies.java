@@ -113,7 +113,7 @@ public final class MultiModuleDependencies {
     public static Lockfile generateLock(MultiModuleProject project, File rootDirectory,
                                         ProjectConfig rootConfig, Map<String, String> repositories)
             throws Exception {
-        String configHash = Lockfile.hashOf(namedConfigs(rootDirectory, project));
+        String configHash = Lockfile.hashOf(namedConfigs(rootDirectory, project), project.getVariant());
         File workspaceDir = new File(rootDirectory, ".forge/workspace");
         org.eclipse.aether.repository.WorkspaceReader workspace =
             new WorkspaceModuleRepository(workspaceDir, moduleCoordinates(project));
@@ -135,7 +135,8 @@ public final class MultiModuleDependencies {
             return;
         }
         Lockfile existing = Lockfile.read(rootDirectory);
-        existing.verifyAgainstHash(Lockfile.hashOf(namedConfigs(rootDirectory, project)));
+        existing.verifyAgainstHash(
+            Lockfile.hashOf(namedConfigs(rootDirectory, project), project.getVariant()));
     }
 
     /** Coordinates of every module, for the workspace reader guard. */

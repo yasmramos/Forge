@@ -93,11 +93,13 @@ public final class LockfileGenerator {
             File lockFile = new File(projectRoot, Lockfile.FILE_NAME);
             if (lockFile.isFile()) {
                 Lockfile existing = Lockfile.read(projectRoot);
-                existing.verifyAgainst(new File(projectRoot, ConfigReader.CONFIG_FILE_NAME));
+                existing.verifyAgainst(new File(projectRoot, ConfigReader.CONFIG_FILE_NAME),
+                    config.getSelectedVariant());
             }
         }
         return lock(compileScopeCoordinates(config),
-                Lockfile.hashOf(new File(projectRoot, ConfigReader.CONFIG_FILE_NAME)),
+                Lockfile.hashOf(new File(projectRoot, ConfigReader.CONFIG_FILE_NAME),
+                    config.getSelectedVariant()),
                 config.getResolutions(), config.getConstraints());
     }
 
@@ -176,12 +178,21 @@ public final class LockfileGenerator {
      * runs {@code forge lock refresh}.
      */
     public static void enforceExistingLock(File projectRoot) throws Exception {
+        enforceExistingLock(projectRoot, null);
+    }
+
+    /**
+     * As {@link #enforceExistingLock(File)} but folding the selected variant into
+     * the configuration hash (AGENT.md section 8bis): switching variants
+     * invalidates the lock check loudly with {@code FORGE-LCK-0003}.
+     */
+    public static void enforceExistingLock(File projectRoot, String variant) throws Exception {
         File lockFile = new File(projectRoot, Lockfile.FILE_NAME);
         if (!lockFile.isFile()) {
             return; // No lock yet: nothing to enforce (see class javadoc).
         }
         Lockfile existing = Lockfile.read(projectRoot);
-        existing.verifyAgainst(new File(projectRoot, ConfigReader.CONFIG_FILE_NAME));
+        existing.verifyAgainst(new File(projectRoot, ConfigReader.CONFIG_FILE_NAME), variant);
     }
 
     /** Direct compile-scope coordinates ({@code group:artifact:version}) from the config. */

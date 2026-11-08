@@ -1,5 +1,7 @@
 package io.github.yasmramos.forge.core;
 
+import io.github.yasmramos.forge.core.processor.AnnotationProcessors;
+import io.github.yasmramos.forge.model.DependencyInfo;
 import io.github.yasmramos.forge.model.DependencyResolution;
 import io.github.yasmramos.forge.model.CompilationResult;
 import io.github.yasmramos.forge.cache.ForgeCache;
@@ -51,6 +53,26 @@ public class Compiler {
     private String classpath = "";
     /** Stable project identity (group:name) mixed into cache keys; see ForgeCache. */
     private String projectId = "";
+    /**
+     * Explicit annotation-processor class names from {@code [compile].processors}
+     * (AGENT.md section 23). Empty means "discover them from the compile
+     * classpath", which is the default.
+     */
+    private List<String> processorNames = new ArrayList<>();
+    /**
+     * Release level passed to javac as {@code -source}/{@code -target}
+     * ({@code [toolchain].language}, AGENT.md section 20). Empty means "let
+     * javac use its own default", i.e. the JDK running Forge.
+     */
+    private String sourceCompatibility = "";
+    /** Target release level; see {@link #sourceCompatibility}. */
+    private String targetCompatibility = "";
+    /**
+     * Extra javac arguments from {@code [compile].args} (section 10), e.g.
+     * {@code -Xlint:all}. Appended last so a user argument can override an
+     * option Forge emitted earlier.
+     */
+    private List<String> compilerArgs = new ArrayList<>();
 
     /**
      * Create a new compiler.
@@ -90,6 +112,43 @@ public class Compiler {
 
     public void setClasspath(String classpath) {
         this.classpath = classpath != null ? classpath : "";
+    }
+
+    /**
+     * Declare annotation processors explicitly ({@code [compile].processors},
+     * section 23). When empty the compiler discovers them from the compile
+     * classpath via {@code META-INF/services}.
+     *
+     * @param processorNames fully-qualified processor class names; null to clear
+     */
+    public void setProcessorNames(List<String> processorNames) {
+        this.processorNames = processorNames != null ? new ArrayList<>(processorNames)
+            : new ArrayList<>();
+    }
+
+    /**
+     * Set the language level from {@code [toolchain].language} (section 20).
+     * Values are passed to javac as {@code -source}/{@code -target}; blank
+     * values leave javac's own default in place.
+     *
+     * @param source source level, e.g. {@code "17"}; blank to use the default
+     * @param target target level, e.g. {@code "17"}; blank to use the default
+     */
+    public void setToolchain(String source, String target) {
+        this.sourceCompatibility = source != null ? source.trim() : "";
+        this.targetCompatibility = target != null ? target.trim() : "";
+    }
+
+    /**
+     * Declare extra javac arguments from {@code [compile].args} (section 10).
+     * They are appended after Forge's own options, so an explicit user argument
+     * wins over a Forge default (e.g. a user {@code -proc:only}).
+     *
+     * @param compilerArgs raw javac arguments; null to clear
+     */
+    public void setCompilerArgs(List<String> compilerArgs) {
+        this.compilerArgs = compilerArgs != null ? new ArrayList<>(compilerArgs)
+            : new ArrayList<>();
     }
 
     public String getClasspath() {
@@ -340,7 +399,10 @@ public class Compiler {
             Iterable<? extends JavaFileObject> compilationUnits =
                     fileManager.getJavaFileObjectsFromFiles(toFileList(sourceFiles));
 
-            List<String> options = Arrays.asList("-encoding", "UTF-8", "-proc:none");
+            List<String> options = buildProcessorOptions(dependencyResolution, classpath, fileManager);
+            // [compile].args go last so an explicit user argument overrides a
+            // Forge default (section 10).
+            options.addAll(compilerArgs);
 
             JavaCompiler.CompilationTask task = toolCompiler.getTask(
                     null, fileManager, diagnostics, options, null, compilationUnits);
@@ -375,7 +437,6 @@ public class Compiler {
             command.add("javac");
             command.add("-encoding");
             command.add("UTF-8");
-            command.add("-proc:none"); // javac reads sources from disk; no need for sourcepath lookup
             command.add("-d");
             command.add(outputDir);
 
@@ -385,6 +446,16 @@ public class Compiler {
                 command.add("-cp");
                 command.add(classpath);
             }
+
+            // Annotation processing (section 23): a dedicated -processorpath
+            // keeps processors off the compile classpath; -proc:none is used
+            // only when the classpath declares none, so unrelated libraries
+            // do not trigger accidental processor discovery.
+            command.addAll(buildProcessorCommandOptions(dependencyResolution, classpath));
+
+            // [compile].args last, so an explicit user argument overrides a
+            // Forge default (section 10).
+            command.addAll(compilerArgs);
 
             // Pass every source file in one invocation so interdependent classes resolve
             for (Path sourceFile : sourceFiles) {
@@ -441,7 +512,7 @@ public class Compiler {
         }
 
         if (dependencyResolution != null) {
-            for (io.github.yasmramos.forge.model.DependencyInfo dep : dependencyResolution.getDependencies()) {
+            for (DependencyInfo dep : dependencyResolution.getDependencies()) {
                 if (dep.isResolved() && dep.getLocalFile().exists()) {
                     if (classpathBuilder.length() > 0) {
                         classpathBuilder.append(File.pathSeparator);
@@ -457,7 +528,7 @@ public class Compiler {
     private Map<String, Object> createDependencyMap(DependencyResolution dependencyResolution) {
         // Create a simple map representation for cache key generation
         java.util.Map<String, Object> depMap = new java.util.HashMap<>();
-        for (io.github.yasmramos.forge.model.DependencyInfo dep : dependencyResolution.getDependencies()) {
+        for (DependencyInfo dep : dependencyResolution.getDependencies()) {
             depMap.put(dep.getName(), dep.getVersion());
         }
         return depMap;
@@ -473,6 +544,140 @@ public class Compiler {
         // No-op: batch compilation runs in the calling thread.
     }
     
+    /**
+     * javac options for the in-process compiler: always {@code -encoding}; then
+     * either annotation processing wired to the classpath-declared processors
+     * (section 23) or {@code -proc:none} when there are none.
+     *
+     * <p>Discovery scans the resolved dependency artifacts, not the whole
+     * classpath string: the latter also carries Forge's own runtime libraries
+     * (injected so javac can resolve third-party symbols), and a processor
+     * hiding there must never run against user code.</p>
+     */
+    private List<String> buildProcessorOptions(DependencyResolution dependencyResolution,
+                                               String classpath,
+                                               StandardJavaFileManager fileManager) {
+        List<String> options = new ArrayList<>();
+        options.add("-encoding");
+        options.add("UTF-8");
+        options.addAll(buildLanguageOptions());
+
+        if (!processorNames.isEmpty()) {
+            options.add("-processor");
+            options.add(String.join(",", processorNames));
+            setProcessorPath(fileManager, classpath);
+            return options;
+        }
+
+        AnnotationProcessors.Discovery discovery =
+            AnnotationProcessors.discover(
+                resolvedFiles(dependencyResolution));
+        if (discovery.isEmpty()) {
+            options.add("-proc:none");
+            return options;
+        }
+        options.add("-processor");
+        options.add(String.join(",", discovery.getNames()));
+        setProcessorPath(fileManager, join(discovery.getProcessorPath()));
+        return options;
+    }
+
+    /** Same decision as the in-process path, for the external javac executable. */
+    private List<String> buildProcessorCommandOptions(DependencyResolution dependencyResolution,
+                                                      String classpath) {
+        List<String> options = new ArrayList<>();
+        options.addAll(buildLanguageOptions());
+        if (!processorNames.isEmpty()) {
+            options.add("-processor");
+            options.add(String.join(",", processorNames));
+            options.add("-processorpath");
+            options.add(classpath);
+            return options;
+        }
+        AnnotationProcessors.Discovery discovery =
+            AnnotationProcessors.discover(
+                resolvedFiles(dependencyResolution));
+        if (discovery.isEmpty()) {
+            options.add("-proc:none");
+            return options;
+        }
+        options.add("-processor");
+        options.add(String.join(",", discovery.getNames()));
+        options.add("-processorpath");
+        options.add(join(discovery.getProcessorPath()));
+        return options;
+    }
+
+    /**
+     * {@code -source}/{@code -target} from {@code [toolchain].language}
+     * (section 20). Emitted only when declared, so an undeclared toolchain
+     * keeps javac's own default and Forge stays predictable for projects that
+     * never set it.
+     */
+    private List<String> buildLanguageOptions() {
+        List<String> options = new ArrayList<>();
+        if (!sourceCompatibility.isEmpty()) {
+            options.add("-source");
+            options.add(sourceCompatibility);
+        }
+        if (!targetCompatibility.isEmpty()) {
+            options.add("-target");
+            options.add(targetCompatibility);
+        }
+        return options;
+    }
+
+    /** Resolved dependency files, for processor discovery. */
+    private static List<File> resolvedFiles(DependencyResolution dependencyResolution) {
+        List<File> files = new ArrayList<>();
+        if (dependencyResolution == null) {
+            return files;
+        }
+        for (DependencyInfo dep : dependencyResolution.getDependencies()) {
+            if (dep.isResolved() && dep.getLocalFile().exists()) {
+                files.add(dep.getLocalFile());
+            }
+        }
+        return files;
+    }
+
+    private static void setProcessorPath(StandardJavaFileManager fileManager, String processorPath) {
+        List<File> entries = splitClasspath(processorPath);
+        if (entries.isEmpty()) {
+            return;
+        }
+        try {
+            fileManager.setLocation(StandardLocation.ANNOTATION_PROCESSOR_PATH, entries);
+        } catch (java.io.IOException e) {
+            // Best effort: without the explicit location javac falls back to
+            // the classpath, which still runs the discovered processors.
+        }
+    }
+
+    private static String join(List<File> files) {
+        StringBuilder sb = new StringBuilder();
+        for (File file : files) {
+            if (sb.length() > 0) {
+                sb.append(File.pathSeparator);
+            }
+            sb.append(file.getAbsolutePath());
+        }
+        return sb.toString();
+    }
+
+    private static List<File> splitClasspath(String classpath) {
+        List<File> entries = new ArrayList<>();
+        if (classpath == null || classpath.isEmpty()) {
+            return entries;
+        }
+        for (String entry : classpath.split(File.pathSeparator)) {
+            if (!entry.isEmpty()) {
+                entries.add(new File(entry));
+            }
+        }
+        return entries;
+    }
+
     /**
      * Immutable outcome of a compilation run, shared by the in-process and
      * external-javac execution paths.

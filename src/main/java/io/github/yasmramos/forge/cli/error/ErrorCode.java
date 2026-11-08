@@ -146,6 +146,13 @@ public final class ErrorCode {
         "Report the behavior to the plugin author, or enable strict mode with [build] reproducible = 'strict' to fail instead of warn.",
         "https://forge.dev/e/RPR-0001");
 
+    // --- Variants (VRT) ---
+    public static final Entry VRT_0001 = register("FORGE-VRT-0001",
+        "The selected variant is not declared by any forge.toml in the project.",
+        "A variant must be declared as [variant.<name>] in the root or in at least one module; selection is explicit, never magic (AGENT.md section 8).",
+        "Declare [variant.<name>] in forge.toml, or select one of the declared variants.",
+        "https://forge.dev/e/VRT-0001");
+
     // --- Multi-module (MMD) ---
     public static final Entry MMD_0001 = register("FORGE-MMD-0001",
         "A module dependency cycle exists in the multi-module project.",
@@ -159,7 +166,7 @@ public final class ErrorCode {
         "https://forge.dev/e/MMD-0002");
     public static final Entry MMD_0003 = register("FORGE-MMD-0003",
         "The requested module is not declared in the root forge.toml.",
-        "A partial build (forge build <module>) can only target modules listed under [project.modules].",
+        "A partial build (forge build <module>) or 'forge config --show-resolved <module>' can only target modules listed under [project.modules].",
         "Check the module name, or add it to [project.modules] in the root forge.toml.",
         "https://forge.dev/e/MMD-0003");
     public static final Entry MMD_0004 = register("FORGE-MMD-0004",

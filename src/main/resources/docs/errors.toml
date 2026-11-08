@@ -104,6 +104,12 @@ why  = "This indicates a bug in Forge itself, not in your project."
 how  = "Re-run with --debug to capture details and file an issue including the structured error block."
 docs = "https://forge.dev/e/INT-0001"
 
+["FORGE-VRT-0001"]
+what = "The selected variant is not declared by any forge.toml in the project."
+why  = "A variant must be declared as [variant.<name>] in the root or in at least one module; selection is explicit, never magic (AGENT.md section 8)."
+how  = "Declare [variant.<name>] in forge.toml, or select one of the declared variants."
+docs = "https://forge.dev/e/VRT-0001"
+
 ["FORGE-MMD-0001"]
 what = "A module dependency cycle exists in the multi-module project."
 why  = "Modules depend on each other in a loop, so no build order can exist (AGENT.md section 5)."
@@ -118,7 +124,7 @@ docs = "https://forge.dev/e/MMD-0002"
 
 ["FORGE-MMD-0003"]
 what = "The requested module is not declared in the root forge.toml."
-why  = "A partial build (forge build <module>) can only target modules listed under [project.modules]."
+why  = "A partial build (forge build <module>) or 'forge config --show-resolved <module>' can only target modules listed under [project.modules]."
 how  = "Check the module name, or add it to [project.modules] in the root forge.toml."
 docs = "https://forge.dev/e/MMD-0003"
 

@@ -78,6 +78,21 @@ public class ProjectConfig {
     private Map<String, Object> dependencies;
     private Map<String, Object> plugins;
     private List<String> compilerArgs = new ArrayList<>();
+    /**
+     * Names of every {@code [variant.<name>]} declared in this file (AGENT.md
+     * section 8). Kept so orchestration can distinguish "unknown variant" (a
+     * user error) from "variant not declared in this particular module" (a
+     * notice that the module builds with its base configuration).
+     */
+    private java.util.Set<String> variantNames = new java.util.LinkedHashSet<>();
+    /** Selected variant, or null when the base configuration is used (section 8). */
+    private String selectedVariant;
+    /**
+     * Explicit annotation processors from {@code [compile].processors}
+     * (AGENT.md section 23). Empty means the compiler discovers them from the
+     * compile classpath via {@code META-INF/services}.
+     */
+    private List<String> processors = new ArrayList<>();
     private String mainClass;
     private List<String> execArgs = new ArrayList<>();
     private List<String> jvmArgs = new ArrayList<>();
@@ -274,6 +289,47 @@ public class ProjectConfig {
         this.compilerArgs = compilerArgs != null ? compilerArgs : new ArrayList<>();
     }
 
+    /** Names of the variants declared by this configuration (section 8). */
+    public java.util.Set<String> getVariantNames() {
+        return variantNames;
+    }
+
+    public void setVariantNames(java.util.Set<String> variantNames) {
+        this.variantNames = variantNames != null
+            ? new java.util.LinkedHashSet<>(variantNames) : new java.util.LinkedHashSet<>();
+    }
+
+    /** Selected variant name, or null when the base configuration is used. */
+    public String getSelectedVariant() {
+        return selectedVariant;
+    }
+
+    public void setSelectedVariant(String selectedVariant) {
+        this.selectedVariant = selectedVariant;
+    }
+
+    /**
+     * Stable, machine-independent identity used to scope content-cache keys
+     * (AGENT.md sections 3, 8bis, 17). It is the project's coordinate plus the
+     * selected variant, so a build under one variant can never be served a
+     * cached artifact produced under another: the variant may change compiler
+     * arguments, toolchain and dependencies, all of which affect the output.
+     * Uses logical names only, never paths, so the scope is portable.
+     */
+    public String getCacheScopeId() {
+        String base = group + ":" + name;
+        return selectedVariant != null ? base + "@" + selectedVariant : base;
+    }
+
+    /** Explicit annotation processors (section 23); empty means auto-discovery. */
+    public List<String> getProcessors() {
+        return processors;
+    }
+
+    public void setProcessors(List<String> processors) {
+        this.processors = processors != null ? new ArrayList<>(processors) : new ArrayList<>();
+    }
+
     public String getMainClass() {
         return mainClass;
     }
@@ -405,6 +461,14 @@ public class ProjectConfig {
          * is not checked at all in "off" mode.
          */
         private String reproducible = "warn";
+        /**
+         * [build] resource_filtering: opt-in {@code ${...}} substitution in
+         * resources (AGENT.md section 22). Off by default: default-on filtering
+         * is a bug source, since a binary file containing {@code ${something}}
+         * would be corrupted. When on, values come from [project.properties]
+         * plus the project name/version.
+         */
+        private boolean resourceFiltering = false;
         
         public boolean isIncremental() {
             return incremental;
@@ -487,6 +551,15 @@ public class ProjectConfig {
 
         public void setReproducible(String reproducible) {
             this.reproducible = reproducible;
+        }
+
+        /** True when opt-in resource filtering is requested (section 22). */
+        public boolean isResourceFiltering() {
+            return resourceFiltering;
+        }
+
+        public void setResourceFiltering(boolean resourceFiltering) {
+            this.resourceFiltering = resourceFiltering;
         }
 
         /** True when strict reproducibility is requested (section 17). */

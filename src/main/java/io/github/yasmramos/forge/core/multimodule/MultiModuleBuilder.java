@@ -86,11 +86,22 @@ public final class MultiModuleBuilder {
      * @param targetModule module to build partially, or null for the whole project
      */
     public Report build(String targetModule) {
-        MultiModuleProject project = MultiModuleProject.discover(rootDirectory, rootConfig);
+        MultiModuleProject project = MultiModuleProject.discover(
+            rootDirectory, rootConfig, rootConfig.getSelectedVariant());
         if (project.isEmpty()) {
             throw new io.github.yasmramos.forge.cli.error.ForgeException(
                 io.github.yasmramos.forge.cli.error.ErrorCode.CFG_0001,
                 "no [project.modules] declared; this is not a multi-module project");
+        }
+
+        // Section 8bis: a variant declared by some modules but not all is a
+        // notice, never silence. The modules lacking it build with their base
+        // configuration, and the user is told exactly which ones.
+        java.util.List<String> ignoring = project.modulesIgnoringVariant();
+        if (!ignoring.isEmpty()) {
+            System.err.println("notice: variant '" + project.getVariant()
+                + "' is not declared by: " + String.join(", ", ignoring)
+                + " (these modules build with their base configuration)");
         }
 
         List<ModuleDescriptor> selected = targetModule == null

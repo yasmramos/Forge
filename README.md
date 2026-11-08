@@ -135,7 +135,7 @@ Configuration files use TOML format with the following sections:
 | `[constraints]` | Forced versions: `"group:artifact" = "version"`; win over transitive, below `[resolutions]` |
 | `[resolutions]` | Per-coordinate pins that win over everything: `"group:artifact" = "version"` |
 | `[build]` | Build behavior options (see below) |
-| `[compile]` | Compiler options: `encoding`, `debug`, `args` |
+| `[compile]` | Compiler options: `encoding`, `debug`, `args`, `processors` |
 | `[exec]` | Run configuration: `main`, `args`, `jvm_args` |
 | `[publish]` | Release metadata and target repository for `forge publish` (see below) |
 
@@ -149,6 +149,32 @@ Supported `[build]` keys (snake_case):
 | `threads` | number | `0` (auto) | Worker thread count; `0` means available CPUs |
 | `remote_cache` | string | unset | Base URL of a remote build cache; also settable via `FORGE_REMOTE_CACHE` |
 | `reproducible` | string | `warn` | Reproducibility policy for plugins: `warn`, `strict`, or `off` |
+| `resource_filtering` | boolean | `false` | Opt-in `${...}` substitution in resources; off by default so binary files are never corrupted |
+
+Resources declared under `[source.main].resources` (or the conventional
+`src/main/resources`) are copied into the compiled-classes directory and thus
+into the packaged jar. Copying is content-based: an unchanged resource is never
+rewritten. Filtering is **opt-in** — enable `resource_filtering` to expand
+`${...}` placeholders using `[project.properties]` plus `project.name`,
+`project.version` and `project.group`.
+
+#### Annotation processors
+
+Forge supports annotation processors (AGENT.md section 23). By default they are
+discovered from the compile classpath: any resolved jar or directory carrying
+`META-INF/services/javax.annotation.processing.Processor` declares its
+processors, and declaring the dependency (Lombok, MapStruct, Dagger) is already
+the intent to run them. Processors run with a dedicated `-processorpath`, kept
+separate from the compile classpath. When the classpath declares none, Forge
+compiles with `-proc:none`, so unrelated libraries never trigger accidental
+discovery.
+
+To run a processor that is *not* auto-declared, list it explicitly:
+
+```toml
+[compile]
+processors = ["com.example.MyProcessor"]
+```
 
 #### Remote build cache
 
@@ -313,6 +339,12 @@ forge tasks
 forge doctor
 forge doctor --format=json
 
+# Show the configuration Forge actually resolved (base + selected variant)
+forge config
+
+# Show one module's fully merged configuration (inheritance + variant)
+forge config --show-resolved awesome.app
+
 # Generate a CycloneDX SBOM of the resolved dependency graph
 forge sbom
 forge sbom --output=build/bom.json
@@ -430,6 +462,35 @@ forge run awesome.app
 Modules that depend on each other in a cycle are rejected before anything is built (`FORGE-MMD-0001`). A module with no `forge.toml` of its own fails with `FORGE-MMD-0002`. See `examples/multi-module` for a working project.
 
 The project has a **single `forge.lock` at the root** covering the union of every module's dependencies (`forge lock refresh`), and `forge tree` / `forge why` / `forge resolve` read that same aggregate graph — so they answer for the whole project, not just the root. The lock is tied to a combined hash of the root and every module `forge.toml`: changing any of them without refreshing the lock fails the build with `FORGE-LCK-0003`.
+
+### Variants
+
+A **variant** is an explicitly selected overlay over the base configuration. There are no implicit profiles: a variant is applied only when you name it with `--variant=<name>` or the `FORGE_VARIANT` environment variable.
+
+```toml
+# forge.toml
+[toolchain]
+language = "11"
+
+[variant.prod]
+[variant.prod.toolchain]
+language = "17"
+
+[variant.prod.compile]
+args = ["-Xlint:all", "-Werror"]
+```
+
+Application is deterministic: the selected `[variant.<name>]` table is merged over the base before parsing. Scalars and lists are **replaced**; tables are merged key by key, so a variant overrides only what it declares.
+
+```bash
+forge build --variant=prod
+FORGE_VARIANT=prod forge test
+forge lock refresh --variant=prod
+```
+
+In a multi-module project a variant is declared as `[variant.<name>]` in **any** `forge.toml` (root or module). Selection is global for the whole build, and module-level overrides win over inherited root values. A module that does not declare the selected variant still builds, with its base configuration, and Forge prints a notice listing it. If the variant is declared nowhere, the build fails with `FORGE-VRT-0001`.
+
+Switching variants is not free by design: the variant name is folded into the lockfile `config_hash` and into the compile cache scope, so a build under one variant can never be served a lock or a cached artifact produced under another (`FORGE-LCK-0003`).
 
 ## Modules
 

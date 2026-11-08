@@ -40,6 +40,35 @@ class LockfileTest {
     }
 
     @Test
+    void switchingVariantInvalidatesTheLock(@TempDir File root) throws Exception {
+        File toml = new File(root, "forge.toml");
+        Files.write(toml.toPath(), "forge = \"0.1\"".getBytes(StandardCharsets.UTF_8));
+
+        // Lock generated under the base configuration (no variant).
+        String baseHash = Lockfile.hashOf(toml, null);
+        new Lockfile(baseHash, sample()).write(root);
+
+        // The same forge.toml under a selected variant is a different config:
+        // the lock must fail loudly rather than silently resolve differently
+        // (AGENT.md section 8bis).
+        Lockfile read = Lockfile.read(root);
+        read.verifyAgainst(toml, null); // must not throw
+        assertThrows(io.github.yasmramos.forge.cli.error.ForgeException.class,
+            () -> read.verifyAgainst(toml, "prod"));
+    }
+
+    @Test
+    void variantHashIsStableAndDistinct(@TempDir File root) throws Exception {
+        File toml = new File(root, "forge.toml");
+        Files.write(toml.toPath(), "forge = \"0.1\"".getBytes(StandardCharsets.UTF_8));
+
+        // Portable: same inputs always produce the same digest (section 17).
+        assertEquals(Lockfile.hashOf(toml, "prod"), Lockfile.hashOf(toml, "prod"));
+        assertNotEquals(Lockfile.hashOf(toml, "prod"), Lockfile.hashOf(toml, "benchmark"));
+        assertNotEquals(Lockfile.hashOf(toml, "prod"), Lockfile.hashOf(toml, null));
+    }
+
+    @Test
     void staleLockFailsTheBuild(@TempDir File root) throws Exception {
         File toml = new File(root, "forge.toml");
         Files.write(toml.toPath(), "old config".getBytes(StandardCharsets.UTF_8));

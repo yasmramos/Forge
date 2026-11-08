@@ -75,7 +75,26 @@ public class Lockfile {
 
     /** SHA-256 over the raw forge.toml bytes; ties the lock to one exact config. */
     public static String hashOf(File forgeToml) throws Exception {
-        return sha256Hex(Files.readAllBytes(forgeToml.toPath()));
+        return hashOf(forgeToml, null);
+    }
+
+    /**
+     * As {@link #hashOf(File)} but folding in the selected variant name (AGENT.md
+     * section 8bis): switching variants must invalidate the lock loudly instead
+     * of silently resolving against a different configuration. The variant name
+     * is hashed as a logical key, never a path, so the digest stays portable
+     * across machines and checkouts (section 17).
+     */
+    public static String hashOf(File forgeToml, String variant) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        digest.update("forge.toml".getBytes(StandardCharsets.UTF_8));
+        digest.update((byte) 0);
+        digest.update(Files.readAllBytes(forgeToml.toPath()));
+        digest.update((byte) 0);
+        if (variant != null && !variant.trim().isEmpty()) {
+            digest.update(("variant:" + variant.trim()).getBytes(StandardCharsets.UTF_8));
+        }
+        return hex(digest.digest());
     }
 
     /**
@@ -89,12 +108,25 @@ public class Lockfile {
      * machines and checkouts (AGENT.md section 17).</p>
      */
     public static String hashOf(java.util.SortedMap<String, File> namedConfigs) throws Exception {
+        return hashOf(namedConfigs, null);
+    }
+
+    /**
+     * As {@link #hashOf(java.util.SortedMap)} but folding in the selected variant
+     * name (AGENT.md section 8bis), for the same reason as
+     * {@link #hashOf(File, String)}.
+     */
+    public static String hashOf(java.util.SortedMap<String, File> namedConfigs, String variant)
+            throws Exception {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         for (Map.Entry<String, File> e : namedConfigs.entrySet()) {
             digest.update(e.getKey().getBytes(StandardCharsets.UTF_8));
             digest.update((byte) 0);
             digest.update(Files.readAllBytes(e.getValue().toPath()));
             digest.update((byte) 0);
+        }
+        if (variant != null && !variant.trim().isEmpty()) {
+            digest.update(("variant:" + variant.trim()).getBytes(StandardCharsets.UTF_8));
         }
         return hex(digest.digest());
     }
@@ -206,10 +238,20 @@ public class Lockfile {
 
     /** Fails the build when the lock was produced from a different configuration. */
     public void verifyAgainst(File forgeToml) throws Exception {
-        String current = hashOf(forgeToml);
+        verifyAgainst(forgeToml, null);
+    }
+
+    /**
+     * As {@link #verifyAgainst(File)} but folding in the selected variant
+     * (AGENT.md section 8bis): switching variants changes {@code config_hash} and
+     * must fail with {@code FORGE-LCK-0003} rather than resolve differently.
+     */
+    public void verifyAgainst(File forgeToml, String variant) throws Exception {
+        String current = hashOf(forgeToml, variant);
         if (!current.equals(configHash)) {
             throw new ForgeException(ErrorCode.LCK_0003,
-                "config_hash mismatch: lock was built from a different forge.toml");
+                "config_hash mismatch: lock was built from a different forge.toml"
+                    + (variant != null ? " or variant '" + variant + "'" : ""));
         }
     }
 

@@ -294,4 +294,96 @@ class ConfigReaderTest {
         assertTrue(config.getPublishSettings().isSign());
         assertTrue(config.getPublishSettings().isSbom());
     }
+
+    // --- Variants (AGENT.md sections 8 and 8bis) ---
+
+    @Test
+    void variantOverlayReplacesScalarsAndMergesTables() {
+        Config root = Config.inMemory();
+        root.set("toolchain", Config.inMemory());
+        root.set(java.util.Arrays.asList("toolchain", "language"), "11");
+        root.set("compile", Config.inMemory());
+        root.set(java.util.Arrays.asList("compile", "encoding"), "UTF-8");
+        root.set("variant.prod", Config.inMemory());
+        root.set("variant.prod.toolchain", Config.inMemory());
+        root.set(java.util.Arrays.asList("variant", "prod", "toolchain", "language"), "17");
+        root.set("variant.prod.compile", Config.inMemory());
+        root.set(java.util.Arrays.asList("variant", "prod", "compile", "debug"), false);
+
+        ProjectConfig config = ConfigReader.parseConfig(root, null, "prod");
+
+        assertEquals("17", config.getSourceCompatibility());
+        assertEquals("17", config.getTargetCompatibility());
+        // The variant overrides one [compile] key without restating encoding.
+        assertEquals("UTF-8", config.getBuildSettings().getEncoding());
+        assertFalse(config.getBuildSettings().isDebug());
+        assertEquals("prod", config.getSelectedVariant());
+    }
+
+    @Test
+    void variantListIsReplacedNotAppended() {
+        Config root = Config.inMemory();
+        root.set("compile", Config.inMemory());
+        root.set(java.util.Arrays.asList("compile", "args"),
+            java.util.Arrays.asList("-Xlint:all"));
+        root.set("variant.prod", Config.inMemory());
+        root.set("variant.prod.compile", Config.inMemory());
+        root.set(java.util.Arrays.asList("variant", "prod", "compile", "args"),
+            java.util.Arrays.asList("-Xlint:none"));
+
+        ProjectConfig config = ConfigReader.parseConfig(root, null, "prod");
+
+        assertEquals(java.util.Arrays.asList("-Xlint:none"), config.getCompilerArgs());
+    }
+
+    @Test
+    void unselectedVariantLeavesBaseConfigUntouched() {
+        Config root = Config.inMemory();
+        root.set("toolchain", Config.inMemory());
+        root.set(java.util.Arrays.asList("toolchain", "language"), "11");
+        root.set("variant.prod", Config.inMemory());
+        root.set("variant.prod.toolchain", Config.inMemory());
+        root.set(java.util.Arrays.asList("variant", "prod", "toolchain", "language"), "17");
+
+        ProjectConfig config = ConfigReader.parseConfig(root);
+
+        assertEquals("11", config.getSourceCompatibility());
+        assertNull(config.getSelectedVariant());
+        // The declared names are still visible so orchestration can distinguish
+        // "unknown variant" from "variant not declared in this module".
+        assertEquals(java.util.Collections.singleton("prod"), config.getVariantNames());
+    }
+
+    @Test
+    void unknownVariantFallsBackToBaseButStaysUnknownToCaller() {
+        Config root = Config.inMemory();
+        root.set("toolchain", Config.inMemory());
+        root.set(java.util.Arrays.asList("toolchain", "language"), "11");
+        root.set("variant.prod", Config.inMemory());
+
+        // The parser never invents a variant: an undeclared name leaves the base
+        // configuration untouched and is reported as unknown (section 8bis).
+        ProjectConfig config = ConfigReader.parseConfig(root, null, "benchmark");
+
+        assertEquals("11", config.getSourceCompatibility());
+        assertEquals("benchmark", config.getSelectedVariant());
+        assertFalse(config.getVariantNames().contains("benchmark"));
+        assertEquals(java.util.Collections.singleton("prod"), config.getVariantNames());
+    }
+
+    @Test
+    void cacheScopeIdSeparatesVariants() {
+        Config root = Config.inMemory();
+        root.set("project", Config.inMemory());
+        root.set(java.util.Arrays.asList("project", "name"), "awesome");
+        root.set(java.util.Arrays.asList("project", "group"), "com.example");
+        root.set("variant.prod", Config.inMemory());
+
+        // A cached artifact produced under one variant must never be served to
+        // another: the scope id carries the variant (AGENT.md sections 3, 8bis).
+        assertEquals("com.example:awesome",
+            ConfigReader.parseConfig(root).getCacheScopeId());
+        assertEquals("com.example:awesome@prod",
+            ConfigReader.parseConfig(root, null, "prod").getCacheScopeId());
+    }
 }

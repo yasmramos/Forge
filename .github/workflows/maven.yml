@@ -55,7 +55,19 @@ jobs:
       # The engine relays the JUnitRunner subprocess output through its own
       # logger, which prefixes every line with timestamp/level; match the
       # summary numbers regardless of that prefix.
-      run: ../../bin/forge build 2>&1 | tee /tmp/lib.log | grep -Eq "FORGE-TESTS found=[0-9]+ passed=[1-9][0-9]* failed=0"
+      # Also assert the packaged jar carries the resource, proving section 22
+      # (resources copied into the classes dir and packaged).
+      run: |
+        ../../bin/forge build 2>&1 | tee /tmp/lib.log | grep -Eq "FORGE-TESTS found=[0-9]+ passed=[1-9][0-9]* failed=0"
+        jar tf target/forge-output/forge-main.jar | grep -q "library.properties"
+        ../../bin/forge run 2>&1 | grep -q "Bundled resource greeting: hello"
+    - name: Fire-test annotation processing (Lombok)
+      # @Getter only compiles when Forge runs the processor discovered from the
+      # compile classpath (AGENT.md section 23).
+      working-directory: examples/annotation-processing
+      run: |
+        ../../bin/forge build 2>&1 | tee /tmp/apt.log | grep -Eq "FORGE-TESTS found=[0-9]+ passed=[1-9][0-9]* failed=0"
+        ../../bin/forge run 2>&1 | grep -q "Hello Ada (36)"
     - name: Fire-test forge test runs tests without packaging
       # `forge test` shares the build's compile + TestExecutor path, so the
       # same library tests must pass and be reported here (AGENT.md section 10).

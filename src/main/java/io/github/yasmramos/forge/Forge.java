@@ -32,8 +32,9 @@ public class Forge {
             // Initialize CLI (parses global flags: --format=json, --debug)
             cli = new ForgeCLI(args);
 
-            // Load project configuration
-            Optional<ProjectConfig> config = loadProjectConfig();
+            // Load project configuration, applying the explicitly selected
+            // variant (AGENT.md section 8); no variant means the base config.
+            Optional<ProjectConfig> config = loadProjectConfig(cli.getVariant());
 
             // Interactive mode is entered only when no command was given.
             // With a command but no forge.toml, commands that do not need a
@@ -53,14 +54,24 @@ public class Forge {
         }
     }
 
-    private static Optional<ProjectConfig> loadProjectConfig() {
+    private static Optional<ProjectConfig> loadProjectConfig(String variant) {
         try {
             String currentDir = System.getProperty("user.dir");
             File configFile = Paths.get(currentDir, ConfigReader.CONFIG_FILE_NAME).toFile();
 
             if (configFile.exists()) {
                 logger.info("Loading Forge configuration from: " + configFile.getAbsolutePath());
-                return Optional.of(ConfigReader.loadConfig(configFile));
+                ProjectConfig config = ConfigReader.loadConfig(configFile, null, variant);
+                // A variant selected but declared nowhere is a user error, not a
+                // silent fallback to the base configuration (AGENT.md section 8bis).
+                if (variant != null && config.getModules().isEmpty()
+                        && !config.getVariantNames().contains(variant)) {
+                    throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                        io.github.yasmramos.forge.cli.error.ErrorCode.VRT_0001,
+                        "no forge.toml declares [variant." + variant + "]; declared variants: "
+                            + config.getVariantNames());
+                }
+                return Optional.of(config);
             } else {
                 logger.info("No forge.toml found, running in standalone mode");
                 return Optional.empty();

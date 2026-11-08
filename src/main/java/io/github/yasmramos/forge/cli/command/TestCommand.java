@@ -38,7 +38,8 @@ public final class TestCommand {
     private static int runMultiModule(ForgeEngine engine, String[] args, PrintStream out) {
         String target = args.length > 0 ? args[0] : null;
         MultiModuleProject project = MultiModuleProject.discover(
-            engine.getProjectRoot(), engine.getConfig());
+            engine.getProjectRoot(), engine.getConfig(),
+            engine.getConfig().getSelectedVariant());
         List<ModuleDescriptor> selected = target == null
             ? project.topologicalOrder()
             : project.partialOrder(target);

@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -77,10 +78,17 @@ public class ForgeEngine {
         this.compiler = new Compiler();
         // Scope cache keys to this project's stable coordinates so the shared
         // ~/.forge/cache never serves another project's entry (AGENT.md 3, 17).
-        this.compiler.setProjectId(config.getGroup() + ":" + config.getName());
+        this.compiler.setProjectId(config.getCacheScopeId());
         // Seed the compiler with third-party libraries available on the JVM classpath
         // (SLF4J, NightConfig, ...) so javac can resolve external symbols when building sources.
         this.compiler.setClasspath(System.getProperty("java.class.path"));
+        // Explicit annotation processors, when declared (section 23); otherwise
+        // the compiler discovers them from the resolved compile classpath.
+        this.compiler.setProcessorNames(config.getProcessors());
+        // [toolchain].language drives -source/-target (section 20) and
+        // [compile].args are extra javac flags (section 10).
+        this.compiler.setToolchain(config.getSourceCompatibility(), config.getTargetCompatibility());
+        this.compiler.setCompilerArgs(config.getCompilerArgs());
         this.analyzer = new BuildAnalyzer();
     }
     
@@ -98,7 +106,7 @@ public class ForgeEngine {
             // touching any output. A missing lock is allowed for now
             // (bootstrap); the graph path already enforces it identically.
             io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(
-                projectRoot);
+                projectRoot, config.getSelectedVariant());
 
             // Phase 1: Analyze project structure
             logger.info("Analyzing project structure...");
@@ -120,6 +128,10 @@ public class ForgeEngine {
                     + "/" + compilationResult.getTotalFiles() + " files compiled successfully");
                 return new BuildResult(false, null, null);
             }
+
+            // Phase 3b: Copy resources into the classes directory so the jar
+            // contains them (AGENT.md section 22).
+            copyResources();
 
             // Phase 4: Package artifacts
             logger.info("Packaging artifacts...");
@@ -157,7 +169,7 @@ public class ForgeEngine {
         try {
             // Lock enforcement (AGENT.md section 7bis), identical to a build.
             io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(
-                projectRoot);
+                projectRoot, config.getSelectedVariant());
 
             ProjectAnalysis analysis = analyzer.analyzeProject(config);
             DependencyResolution dependencyResult = resolveWithAether();
@@ -168,6 +180,10 @@ public class ForgeEngine {
                     + "/" + compilationResult.getTotalFiles() + " files compiled successfully");
                 return new BuildResult(false, null, null);
             }
+
+            // Resources land in the classes dir before the tests run, so a test
+            // reading a bundled resource sees the same file the jar will carry.
+            copyResources();
 
             TestResult testResult = executeTests(null);
             return new BuildResult(testResult.isSuccess(), null, testResult);
@@ -193,7 +209,7 @@ public class ForgeEngine {
         try {
             // Lock enforcement (AGENT.md section 7bis), identical to a full build.
             io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(
-                projectRoot);
+                projectRoot, config.getSelectedVariant());
 
             ProjectAnalysis analysis = analyzer.analyzeChanges(config);
 
@@ -208,6 +224,8 @@ public class ForgeEngine {
                     + compilationResult.getTotalFiles() + " files compiled successfully");
                 return new BuildResult(false, null, null);
             }
+
+            copyResources();
 
             PackageResult packageResult = new PackageResult(
                 true, "incremental", compilationResult.getCompiledFiles());
@@ -240,7 +258,8 @@ public class ForgeEngine {
         // re-resolves dependencies. If forge.lock exists it must match the
         // current forge.toml (config hash) and be internally intact; otherwise
         // the build fails with an actionable error before touching outputs.
-        io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(projectRoot);
+        io.github.yasmramos.forge.core.resolver.LockfileGenerator.enforceExistingLock(
+            projectRoot, config.getSelectedVariant());
 
         TaskCache taskCache = new TaskCache(projectRoot, remoteCache());
         TaskContext context = new TaskContext(projectRoot);
@@ -431,6 +450,60 @@ public class ForgeEngine {
         }
     }
     
+    /**
+     * Copies declared resources into the compiled-classes directory
+     * (AGENT.md section 22). Filtering is opt-in; an unchanged resource is left
+     * untouched (content, never timestamps: section 3).
+     */
+    private void copyResources() {
+        List<File> roots = resourceRoots();
+        if (roots.isEmpty()) {
+            return;
+        }
+        try {
+            Map<String, String> filterProps = config.getBuildSettings().isResourceFiltering()
+                ? filterProperties()
+                : null;
+            io.github.yasmramos.forge.core.resource.ResourceProcessor.Result result =
+                io.github.yasmramos.forge.core.resource.ResourceProcessor.copy(
+                    roots, resolveClassesDir(), filterProps != null, filterProps);
+            logger.info("Resources: " + result.getCopied() + " copied, "
+                + result.getUnchanged() + " unchanged (" + result.getTotal() + " total)");
+        } catch (IOException e) {
+            logger.warn("Resource copy failed: " + e.getMessage());
+        }
+    }
+
+    /** Resource directories declared in forge.toml, defaulting to src/main/resources. */
+    private List<File> resourceRoots() {
+        List<File> roots = new ArrayList<>();
+        List<String> configured = config.getMainResourcePaths();
+        if (configured == null || configured.isEmpty()) {
+            File conventional = new File(projectRoot, "src/main/resources");
+            if (conventional.isDirectory()) {
+                roots.add(conventional);
+            }
+            return roots;
+        }
+        for (String path : configured) {
+            if (path == null || path.trim().isEmpty()) {
+                continue;
+            }
+            File dir = new File(path);
+            roots.add(dir.isAbsolute() ? dir : new File(projectRoot, path));
+        }
+        return roots;
+    }
+
+    /** Property values for opt-in resource filtering (section 22). */
+    private Map<String, String> filterProperties() {
+        Map<String, String> props = new java.util.LinkedHashMap<>(config.getProperties());
+        props.putIfAbsent("project.name", config.getName());
+        props.putIfAbsent("project.version", config.getVersion());
+        props.putIfAbsent("project.group", config.getGroup());
+        return props;
+    }
+
     private CompilationResult compileSources(ProjectAnalysis analysis, 
                                            DependencyResolution dependencyResult) {
         List<Path> sourceFiles = analysis.getSourceFiles();

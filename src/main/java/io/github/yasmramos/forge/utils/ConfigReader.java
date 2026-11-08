@@ -69,9 +69,22 @@ public class ConfigReader {
      */
     public static ProjectConfig loadConfig(File configFile, Map<String, String> inheritedProperties)
             throws IOException {
+        return loadConfig(configFile, inheritedProperties, null);
+    }
+
+    /**
+     * Loads and parses a {@code forge.toml} with an explicit variant selection
+     * (AGENT.md section 8). When {@code variant} is non-null and the file
+     * declares {@code [variant.<variant>]}, the overlay is applied over the base
+     * configuration before parsing; when the file does not declare it, the base
+     * configuration is returned unchanged and the caller decides whether that is
+     * an error (no module declares it) or a notice (some modules do).
+     */
+    public static ProjectConfig loadConfig(File configFile, Map<String, String> inheritedProperties,
+                                           String variant) throws IOException {
         TomlParser parser = new TomlParser();
         Config tomlConfig = parser.parse(configFile.toPath(), FileNotFoundAction.THROW_ERROR);
-        return parseConfig(tomlConfig, inheritedProperties);
+        return parseConfig(tomlConfig, inheritedProperties, variant);
     }
 
     /**
@@ -91,6 +104,41 @@ public class ConfigReader {
      * values override the inherited ones.
      */
     static ProjectConfig parseConfig(Config root, Map<String, String> inheritedProperties) {
+        return parseConfig(root, inheritedProperties, null);
+    }
+
+    /**
+     * Parses a TOML tree with an optional variant overlay (AGENT.md section 8).
+     *
+     * <p>Application order is deterministic and documented: the selected
+     * variant's {@code [variant.<name>]} table is merged over the base tree
+     * <em>before</em> parsing, so every section (dependencies, toolchain,
+     * compile args, build settings, repositories...) is overridden uniformly
+     * with one rule: scalars and tables are replaced, and tables are merged
+     * recursively so a variant may override one key of a section without
+     * restating the rest. The variant name is recorded on the result so the
+     * lockfile can fold it into {@code config_hash} (section 8bis).</p>
+     */
+    static ProjectConfig parseConfig(Config root, Map<String, String> inheritedProperties,
+                                     String variant) {
+        Config effective = root;
+        if (variant != null && !variant.trim().isEmpty()) {
+            UnmodifiableConfig overlay = getSection(root, "variant", variant);
+            if (overlay != null) {
+                effective = Config.copy(root);
+                // Drop the whole [variant] tree from the effective config: it is
+                // selection metadata, not project configuration.
+                effective.remove("variant");
+                mergeTables(effective, overlay);
+            }
+        }
+        ProjectConfig config = parseConfigBase(effective, inheritedProperties);
+        config.setVariantNames(declaredVariantNames(root));
+        config.setSelectedVariant(variant);
+        return config;
+    }
+
+    private static ProjectConfig parseConfigBase(Config root, Map<String, String> inheritedProperties) {
         ProjectConfig config = new ProjectConfig();
 
         // Top-level `forge` key holds the configuration schema version.
@@ -331,6 +379,9 @@ public class ConfigReader {
             if (build.contains("reproducible")) {
                 settings.setReproducible(expand(build.get("reproducible"), properties));
             }
+            if (build.contains("resource_filtering")) {
+                settings.setResourceFiltering(bool(build.get("resource_filtering")));
+            }
         }
 
         // FORGE_REMOTE_CACHE overrides the URL from forge.toml so CI can point
@@ -383,6 +434,9 @@ public class ConfigReader {
                 settings.setDebug(bool(compile.get("debug")));
             }
             config.setCompilerArgs(getStringList(root, "compile", "args", properties));
+            // Annotation processors (section 23): optional explicit list; when
+            // absent the compiler discovers them from the compile classpath.
+            config.setProcessors(getStringList(root, "compile", "processors", properties));
         }
 
         // ------------------------------------------------------------------
@@ -411,7 +465,20 @@ public class ConfigReader {
      */
     public static ProjectConfig loadModuleConfig(ProjectConfig root, File moduleToml)
             throws IOException {
-        ProjectConfig module = loadConfig(moduleToml, root.getProperties());
+        return loadModuleConfig(root, moduleToml, null);
+    }
+
+    /**
+     * Variant-aware module load (AGENT.md section 8bis). Application order is
+     * fixed: the module inherits the root's <em>resolved-with-variant</em>
+     * configuration, the module's own base values override it, and the module's
+     * own {@code [variant.<selected>]} overlay (applied during parsing) wins over
+     * everything. A module that does not declare the variant keeps its base
+     * configuration; the caller reports that as a notice, never an error.
+     */
+    public static ProjectConfig loadModuleConfig(ProjectConfig root, File moduleToml, String variant)
+            throws IOException {
+        ProjectConfig module = loadConfig(moduleToml, root.getProperties(), variant);
 
         // Version and group: module wins; otherwise inherit from the root so the
         // module's coordinate matches what the root declares.
@@ -549,5 +616,47 @@ public class ConfigReader {
         } catch (NumberFormatException e) {
             return 0;
         }
+    }
+
+    /**
+     * Recursively merges {@code overlay} into {@code target} (AGENT.md section
+     * 8). Sub-tables are merged key by key so a variant overrides only what it
+     * declares; anything else (scalars, arrays, lists) is replaced wholesale.
+     * Lists are replaced rather than appended, matching section 8's
+     * "predictability wins" rule.
+     */
+    private static void mergeTables(Config target, UnmodifiableConfig overlay) {
+        for (UnmodifiableConfig.Entry entry : overlay.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            Object existing = target.get(key);
+            if (value instanceof UnmodifiableConfig) {
+                if (existing instanceof Config) {
+                    mergeTables((Config) existing, (UnmodifiableConfig) value);
+                } else {
+                    target.set(key, Config.copy((UnmodifiableConfig) value));
+                }
+            } else {
+                target.set(key, value);
+            }
+        }
+    }
+
+    /**
+     * Names of every {@code [variant.<name>]} table declared in a config, sorted
+     * for deterministic reporting (AGENT.md section 8bis: the notice listing the
+     * modules that ignored a variant must not depend on file order).
+     */
+    private static java.util.Set<String> declaredVariantNames(Config root) {
+        java.util.Set<String> names = new java.util.TreeSet<>();
+        UnmodifiableConfig variants = getSection(root, "variant");
+        if (variants != null) {
+            for (UnmodifiableConfig.Entry entry : variants.entrySet()) {
+                if (entry.getValue() instanceof UnmodifiableConfig) {
+                    names.add(entry.getKey());
+                }
+            }
+        }
+        return names;
     }
 }

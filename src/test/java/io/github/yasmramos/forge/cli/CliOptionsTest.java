@@ -39,4 +39,31 @@ class CliOptionsTest {
     void jsonAliasIsAccepted() {
         assertTrue(CliOptions.parse(new String[] {"build", "--json"}).isJson());
     }
+
+    @Test
+    void variantFlagIsExtractedFromArguments() {
+        CliOptions options = CliOptions.parse(
+            new String[] {"build", "--variant=prod"}, null);
+        assertEquals("prod", options.getVariant());
+        assertEquals(Arrays.asList("build"), options.rest());
+    }
+
+    @Test
+    void variantFallsBackToEnvironmentWhenFlagAbsent() {
+        assertEquals("benchmark", CliOptions.parse(new String[] {"build"}, "benchmark").getVariant());
+        // The flag wins over the environment (explicit over implicit, section 8).
+        assertEquals("prod",
+            CliOptions.parse(new String[] {"build", "--variant=prod"}, "benchmark").getVariant());
+        assertEquals(null, CliOptions.parse(new String[] {"build"}, null).getVariant());
+    }
+
+    @Test
+    void programArgumentsAfterDoubleDashAreNeverTreatedAsFlags() {
+        CliOptions options = CliOptions.parse(
+            new String[] {"run", "--", "--variant=prod", "--debug"}, null);
+        // The program's own flags must reach it verbatim, never be swallowed.
+        assertEquals(null, options.getVariant());
+        assertFalse(options.isDebug());
+        assertEquals(Arrays.asList("run", "--", "--variant=prod", "--debug"), options.rest());
+    }
 }

@@ -27,4 +27,9 @@ class CalculatorTest {
     void handlesNegativeOperands() {
         assertEquals(-1, Calculator.add(2, -3));
     }
+
+    @Test
+    void resourceIsOnTheClasspath() {
+        assertEquals("hello", Main.bundledGreeting());
+    }
 }

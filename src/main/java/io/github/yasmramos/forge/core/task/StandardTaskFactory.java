@@ -53,11 +53,16 @@ public class StandardTaskFactory {
         TaskType type = new TaskTypeRegistry().get(TaskType.COMPILE);
         ForgeTask task = new ForgeTask(COMPILE, type)
             .input(new TaskInput.FilesInput("main-sources", sourceRoots()))
+            .input(new TaskInput.FilesInput("main-resources", resourceRoots()))
             .input(new TaskInput.ValueInput("dependencies", String.valueOf(
                 io.github.yasmramos.forge.core.DependencyScopes.filter(
                     config.getDependencies(),
                     io.github.yasmramos.forge.core.DependencyScopes.COMPILE))))
             .input(new TaskInput.ValueInput("toolchain", String.valueOf(config.getSourceCompatibility())))
+            .input(new TaskInput.ValueInput("resource-filtering", String.valueOf(
+                config.getBuildSettings().isResourceFiltering())))
+            .input(new TaskInput.ValueInput("processors", String.valueOf(config.getProcessors())))
+            .input(new TaskInput.ValueInput("compiler-args", String.valueOf(config.getCompilerArgs())))
             .output(new TaskOutput("classes", Collections.singletonList(relative(classesDir))));
 
         task.action(context -> {
@@ -72,8 +77,11 @@ public class StandardTaskFactory {
                     null);
 
             Compiler compiler = new Compiler();
-            compiler.setProjectId(config.getGroup() + ":" + config.getName());
+            compiler.setProjectId(config.getCacheScopeId());
             compiler.setClasspath(System.getProperty("java.class.path"));
+            compiler.setProcessorNames(config.getProcessors());
+            compiler.setToolchain(config.getSourceCompatibility(), config.getTargetCompatibility());
+            compiler.setCompilerArgs(config.getCompilerArgs());
             CompilationResult result =
                 compiler.compileBatch(analysis.getSourceFiles(), resolution, null, classesDir.toString());
             if (!result.isSuccess()) {
@@ -82,6 +90,18 @@ public class StandardTaskFactory {
                     + " Check the compiler messages above for the offending sources.");
             }
             compiler.shutdown();
+
+            // Resources into the classes dir so the packaged jar carries them
+            // (AGENT.md section 22); the same inputs are declared above, so a
+            // resource change re-runs this task instead of restoring stale classes.
+            try {
+                boolean filtering = config.getBuildSettings().isResourceFiltering();
+                io.github.yasmramos.forge.core.resource.ResourceProcessor.copy(
+                    resourceRoots(), classesDir, filtering, config.getProperties());
+            } catch (java.io.IOException e) {
+                return TaskResult.failure("Resource copy failed: " + e.getMessage());
+            }
+
             context.put(COMPILE + ".compiledFiles", result.getCompiledFiles());
             return TaskResult.success("Compiled " + result.getCompiledFiles() + " source files");
         });
@@ -176,6 +196,26 @@ public class StandardTaskFactory {
 
     private List<File> testSourceRoots() {
         return Collections.singletonList(new File(projectRoot, "src/test/java"));
+    }
+
+    /** Declared resource directories, defaulting to src/main/resources (section 22). */
+    private List<File> resourceRoots() {
+        List<String> configured = config.getMainResourcePaths();
+        if (configured == null || configured.isEmpty()) {
+            File conventional = new File(projectRoot, "src/main/resources");
+            return conventional.isDirectory()
+                ? Collections.singletonList(conventional)
+                : Collections.emptyList();
+        }
+        List<File> roots = new java.util.ArrayList<>();
+        for (String path : configured) {
+            if (path == null || path.trim().isEmpty()) {
+                continue;
+            }
+            File dir = new File(path);
+            roots.add(dir.isAbsolute() ? dir : new File(projectRoot, path));
+        }
+        return roots;
     }
 
     /** Project-relative POSIX path for cache-portable outputs. */

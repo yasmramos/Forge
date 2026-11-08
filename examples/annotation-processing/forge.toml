@@ -1,0 +1,38 @@
+# Annotation-processing example: validates AGENT.md section 23.
+#
+# Lombok is declared as a `provided` dependency. Its jar carries
+# META-INF/services/javax.annotation.processing.Processor, so Forge discovers
+# the processor from the compile classpath and runs it with a dedicated
+# -processorpath. @Getter would not compile otherwise.
+
+forge = "0.1"
+
+[project]
+name    = "annotation-processing"
+version = "1.0.0"
+group   = "com.example"
+
+[project.properties]
+"lombok.version" = "1.18.30"
+"junit.version"  = "5.9.2"
+
+[repositories]
+central = "https://repo1.maven.org/maven2"
+
+[toolchain]
+language = "11"
+
+[source.main]
+java = ["src/main/java"]
+
+[source.test]
+java = ["src/test/java"]
+
+[dependencies.provided]
+"org.projectlombok:lombok" = "${lombok.version}"
+
+[dependencies.test]
+"org.junit.jupiter:junit-jupiter" = "${junit.version}"
+
+[exec]
+main = "com.example.apt.App"
