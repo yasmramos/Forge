@@ -265,6 +265,21 @@ public class ForgeEngine {
                 logger.info("Plugin compiler task registered: " + t.getName()
                     + " (" + t.getType() + ")");
             }
+
+            // Plugin test runners (AGENT.md section 4: "register test runners").
+            // Each runner contributes a test task that discovers the tests it
+            // claims by extension and depends on the built-in test task.
+            io.github.yasmramos.forge.core.plugin.PluginTestContributor testRunners =
+                new io.github.yasmramos.forge.core.plugin.PluginTestContributor(
+                    plugins, config, projectRoot, resolveClassesDir(),
+                    environment != null ? environment
+                        : io.github.yasmramos.forge.core.task.BuildEnvironment
+                            .forPlugins(plugins.idVersions()));
+            for (ForgeTask t : testRunners.tasks()) {
+                graph.add(t);
+                logger.info("Plugin test runner task registered: " + t.getName()
+                    + " (" + t.getType() + ")");
+            }
         }
 
         // Configure time: validate dangling references and cycles first.

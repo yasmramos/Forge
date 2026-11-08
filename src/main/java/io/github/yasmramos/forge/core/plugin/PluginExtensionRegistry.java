@@ -33,6 +33,8 @@ public final class PluginExtensionRegistry {
         new LinkedHashMap<>();
     private final Map<String, io.github.yasmramos.forge.plugin.PluginCompiler> compilerImpls =
         new LinkedHashMap<>();
+    private final Map<String, io.github.yasmramos.forge.plugin.PluginTestRunner> testRunnerImpls =
+        new LinkedHashMap<>();
 
     /** Records a task type registered by {@code pluginId}. */
     public void registerTaskType(String pluginId, String name) {
@@ -76,6 +78,19 @@ public final class PluginExtensionRegistry {
 
     public void registerTestRunner(String pluginId, String id) {
         put(testRunners, pluginId, id, "test-runner");
+    }
+
+    /**
+     * Records a test runner implementation for an id (AGENT.md section 4). The
+     * implementation is what lets the build run that language's tests; a runner
+     * registered without one is listed but contributes no test execution.
+     */
+    public void registerTestRunner(String pluginId, String id,
+                                   io.github.yasmramos.forge.plugin.PluginTestRunner runner) {
+        registerTestRunner(pluginId, id);
+        if (runner != null) {
+            testRunnerImpls.put(id, runner);
+        }
     }
 
     public void registerPackagingType(String pluginId, String id) {
@@ -147,5 +162,20 @@ public final class PluginExtensionRegistry {
     /** The compiler registered for {@code language}, or {@code null}. */
     public io.github.yasmramos.forge.plugin.PluginCompiler compiler(String language) {
         return compilerImpls.get(language);
+    }
+
+    /** Test runners that declared an implementation. */
+    public Set<String> testRunnersWithImpl() {
+        return Collections.unmodifiableSet(new LinkedHashSet<>(testRunnerImpls.keySet()));
+    }
+
+    /** All registered test runner ids, whether or not they have an implementation. */
+    public Set<String> testRunners() {
+        return Collections.unmodifiableSet(new LinkedHashSet<>(testRunners.keySet()));
+    }
+
+    /** The test runner registered for {@code id}, or {@code null}. */
+    public io.github.yasmramos.forge.plugin.PluginTestRunner testRunner(String id) {
+        return testRunnerImpls.get(id);
     }
 }

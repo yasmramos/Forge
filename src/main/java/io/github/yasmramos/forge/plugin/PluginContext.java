@@ -43,6 +43,15 @@ public interface PluginContext {
     /** Registers a test runner, keyed by its id. */
     void registerTestRunner(String id);
 
+    /**
+     * Registers a test runner together with its implementation (section 4).
+     * Prefer this overload: Forge discovers the test sources the runner claims
+     * by {@link PluginTestRunner#testSourceExtension()} and runs them as part of
+     * the build. Fails on the same collisions as
+     * {@link #registerTestRunner(String)}.
+     */
+    void registerTestRunner(String id, PluginTestRunner runner);
+
     /** Registers a packaging type, keyed by its id. */
     void registerPackagingType(String id);
 }
