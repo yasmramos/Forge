@@ -121,3 +121,33 @@ what = "A multi-module project has no [project] group to build inter-module coor
 why  = "Modules consume each other by Maven coordinate (groupId:artifactId:version), which needs a group (AGENT.md section 5)."
 how  = "Set group = \"com.example\" under [project] in the root forge.toml."
 docs = "https://forge.dev/e/MMD-0004"
+
+["FORGE-PLG-0001"]
+what = "A plugin targets a core API range that does not include the running Forge API version."
+why  = "The plugin was built against an incompatible core API; loading it would risk undefined behavior, so it is never half-loaded."
+how  = "Use a plugin version whose [plugin] api range includes this core, or upgrade Forge."
+docs = "https://forge.dev/e/PLG-0001"
+
+["FORGE-PLG-0002"]
+what = "A forge-plugin.toml uses a descriptor schema version this Forge does not understand."
+why  = "The plugin descriptor was written for a newer (or older, unsupported) schema than this core implements."
+how  = "Upgrade Forge, or use a plugin built against the supported descriptor schema."
+docs = "https://forge.dev/e/PLG-0002"
+
+["FORGE-PLG-0003"]
+what = "A forge-plugin.toml is malformed: a required field is missing or invalid."
+why  = "The descriptor does not declare a required field (id, name, version, api, main) or a value has the wrong type."
+how  = "Fix the reported field in forge-plugin.toml and rebuild the plugin."
+docs = "https://forge.dev/e/PLG-0003"
+
+["FORGE-PLG-0004"]
+what = "Two loaded plugins declare the same plugin id."
+why  = "Plugin ids are globally unique and stable; a duplicate makes identity ambiguous for cache keys and diagnostics."
+how  = "Remove one of the conflicting plugins, or fix the duplicated id in its forge-plugin.toml."
+docs = "https://forge.dev/e/PLG-0004"
+
+["FORGE-PLG-0005"]
+what = "A plugin's [[provides]] declaration disagrees with what it registers at runtime."
+why  = "Drift between the declared descriptor and actual behavior is exactly the kind of surprise Forge exists to eliminate."
+how  = "Update forge-plugin.toml to match the runtime registrations, or fix the plugin's registration code."
+docs = "https://forge.dev/e/PLG-0005"
