@@ -136,11 +136,86 @@ class CompilerTest {
     }
 
     @Test
-    void lostNestedClassIsRegeneratedFromWarmCache(@TempDir Path tmp) throws Exception {
-        // Regression: the presence check must cover nested/anonymous classes,
-        // not just the top-level name. Losing Outer$Inner.class while Outer.class
-        // survives must not be a silent cache hit that yields an incomplete
-        // build (the failure mode the per-file presence check prevents).
+    void dependencyChangeInvalidatesDependentCacheEntry(@TempDir Path tmp) throws Exception {
+        // Regression: javac inlines static final constants, so a change in A can
+        // change B.class even when B.java is untouched. Keying B's entry on its
+        // own bytes alone served the stale B.class; the effective hash must fold
+        // in the dependency so both are recompiled (AGENT.md sections 3 and 17).
+        Path src = Files.createDirectories(tmp.resolve("src"));
+        Path out = tmp.resolve("out");
+        Path a = src.resolve("A.java");
+        Path b = src.resolve("B.java");
+        Files.write(a, "package p; public class A { public static final int MAX = 10; }".getBytes());
+        Files.write(b, ("package p; public class B {"
+            + " public static int value() { return A.MAX; } }").getBytes());
+
+        ForgeCache cache = new ForgeCache(tmp.resolve("cache").toString());
+        Compiler compiler = new Compiler();
+        assertTrue(compiler.compileBatch(Arrays.asList(a, b), null, cache, out.toString()).isSuccess());
+        assertEquals(10, invokeValue(out, "p.B"));
+
+        // Only A.java changes.
+        Files.write(a, "package p; public class A { public static final int MAX = 99; }".getBytes());
+        CompilationResult second = compiler.compileBatch(Arrays.asList(a, b), null, cache, out.toString());
+
+        assertTrue(second.isSuccess());
+        assertEquals(0, second.getCachedFiles(),
+            "the dependent file must be recompiled when its dependency changes");
+        assertEquals(99, invokeValue(out, "p.B"),
+            "B.class must reflect the new inlined constant");
+    }
+
+    @Test
+    void toggledConstantRestoresCorrectOutputFromCache(@TempDir Path tmp) throws Exception {
+        // Regression: the cache must store and restore outputs, not just check
+        // that a file with the right name exists. After A goes 10 -> 99 -> 10,
+        // A's key is the one from the first build again; a presence-only hit
+        // would leave the 99 bytes on disk.
+        Path src = Files.createDirectories(tmp.resolve("src"));
+        Path out = tmp.resolve("out");
+        Path a = src.resolve("A.java");
+        Files.write(a, "package p; public class A { public static final int MAX = 10; }".getBytes());
+
+        ForgeCache cache = new ForgeCache(tmp.resolve("cache").toString());
+        Compiler compiler = new Compiler();
+        assertTrue(compiler.compileBatch(Collections.singletonList(a), null, cache, out.toString()).isSuccess());
+        assertEquals(10, constantOf(out, "p.A"));
+
+        Files.write(a, "package p; public class A { public static final int MAX = 99; }".getBytes());
+        assertTrue(compiler.compileBatch(Collections.singletonList(a), null, cache, out.toString()).isSuccess());
+        assertEquals(99, constantOf(out, "p.A"));
+
+        Files.write(a, "package p; public class A { public static final int MAX = 10; }".getBytes());
+        CompilationResult third = compiler.compileBatch(Collections.singletonList(a), null, cache, out.toString());
+
+        assertTrue(third.isSuccess());
+        assertEquals(10, constantOf(out, "p.A"),
+            "the cached output must be restored, not the stale class left on disk");
+    }
+
+    /** Reads {@code MAX} from the compiled class, exercising the real bytes on disk. */
+    private static int constantOf(Path classesDir, String fqn) throws Exception {
+        try (java.net.URLClassLoader loader = new java.net.URLClassLoader(
+                new java.net.URL[] { classesDir.toUri().toURL() }, null)) {
+            return Class.forName(fqn, true, loader).getField("MAX").getInt(null);
+        }
+    }
+
+    /** Invokes the compiled {@code value()} method, which returns an inlined constant. */
+    private static int invokeValue(Path classesDir, String fqn) throws Exception {
+        try (java.net.URLClassLoader loader = new java.net.URLClassLoader(
+                new java.net.URL[] { classesDir.toUri().toURL() }, null)) {
+            Class<?> type = Class.forName(fqn, true, loader);
+            return (Integer) type.getMethod("value").invoke(null);
+        }
+    }
+
+    @Test
+    void lostNestedClassIsRestoredFromWarmCache(@TempDir Path tmp) throws Exception {
+        // Regression: a hit must account for nested/anonymous classes, not just
+        // the top-level name. Losing Outer$Inner.class while Outer.class survives
+        // must not yield an incomplete build; the stored output is restored
+        // (AGENT.md section 3: outputs are stored and put back in position).
         Path src = Files.createDirectories(tmp.resolve("src"));
         Path out = tmp.resolve("out");
         Path outer = src.resolve("Outer.java");
@@ -158,10 +233,10 @@ class CompilerTest {
 
         CompilationResult second = compiler.compileBatch(Arrays.asList(outer), null, cache, out.toString());
         assertTrue(second.isSuccess());
-        assertEquals(0, second.getCachedFiles(),
-            "a missing nested class must invalidate the cache hit");
+        assertEquals(1, second.getCachedFiles(),
+            "the entry is a hit; its output is restored from cache");
         assertTrue(Files.isRegularFile(innerClass),
-            "the nested class must be regenerated");
+            "the nested class must be back in place");
     }
 
     @Test
@@ -216,10 +291,11 @@ class CompilerTest {
     }
 
     @Test
-    void warmCacheMissingOneClassRecompiles(@TempDir Path tmp) throws Exception {
+    void warmCacheMissingOneClassIsRestored(@TempDir Path tmp) throws Exception {
         // Regression: the warm-cache guard accepted the cache as long as *any*
         // .class existed, so a partial output (crash, partial remote-cache
         // restore) produced an incomplete build that still reported success.
+        // Now the missing class is restored from the entry's stored outputs.
         Path src = Files.createDirectories(tmp.resolve("src"));
         Path out = tmp.resolve("out");
         Files.write(src.resolve("A.java"), "public class A { public int v() { return 1; } }".getBytes());
@@ -237,17 +313,16 @@ class CompilerTest {
 
         CompilationResult second = compiler.compileBatch(sources, null, cache, out.toString());
         assertTrue(second.isSuccess());
-        assertEquals(1, second.getCachedFiles(),
-            "the unchanged file stays cached; only the lost class is recompiled");
+        assertEquals(2, second.getCachedFiles(),
+            "both files are cache hits; the lost class is restored, not recompiled");
         assertTrue(Files.exists(out.resolve("B.class")),
-            "the missing class must be regenerated");
+            "the missing class must be back in place");
     }
 
     @Test
-    void changedFileWithPresentOutputIsAHitButLostOutputIsNot(@TempDir Path tmp) throws Exception {
+    void changedFileMissesAndLostOutputIsRestored(@TempDir Path tmp) throws Exception {
         // Mixed case: A changed on disk (content key misses) and B's class file
-        // was deleted (output misses). Both must recompile; a file whose output
-        // vanished is stale even when its bytes are unchanged.
+        // was deleted. A must recompile; B's stored output is restored.
         Path src = Files.createDirectories(tmp.resolve("src"));
         Path out = tmp.resolve("out");
         Path a = src.resolve("A.java");
@@ -265,14 +340,14 @@ class CompilerTest {
 
         CompilationResult second = compiler.compileBatch(Arrays.asList(a, b), null, cache, out.toString());
         assertTrue(second.isSuccess());
-        assertEquals(0, second.getCachedFiles(),
-            "both files must be recompiled: one changed, the other lost its output");
+        assertEquals(1, second.getCachedFiles(),
+            "A changed (recompiled); B is a hit whose output is restored");
         assertTrue(Files.exists(out.resolve("A.class")));
         assertTrue(Files.exists(out.resolve("B.class")), "the deleted class must come back");
     }
 
     @Test
-    void warmCacheWithoutClassesRecompiles(@TempDir Path tmp) throws Exception {
+    void warmCacheWithoutClassesRestoresOutputs(@TempDir Path tmp) throws Exception {
         Path src = Files.createDirectories(tmp.resolve("src"));
         Path out = tmp.resolve("out");
         Files.write(src.resolve("D.java"), "public class D {}".getBytes());
@@ -293,10 +368,10 @@ class CompilerTest {
         CompilationResult afterClean = compiler.compileBatch(
             Collections.singletonList(src.resolve("D.java")), null, cache, out.toString());
         assertTrue(afterClean.isSuccess(), "Build after clean must succeed");
-        assertEquals(0, afterClean.getCachedFiles(),
-            "Warm cache must be distrusted when its outputs are missing");
+        assertEquals(1, afterClean.getCachedFiles(),
+            "the entry is a hit; its stored output is restored");
         assertTrue(Files.exists(out.resolve("D.class")),
-            "Classes must be regenerated after a clean");
+            "Classes must be back in place after a clean");
     }
 
     private static void deleteRecursively(Path p) throws Exception {
