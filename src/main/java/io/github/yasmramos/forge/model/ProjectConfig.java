@@ -61,8 +61,16 @@ public class ProjectConfig {
     /**
      * Explicit version overrides declared in [resolutions] of forge.toml
      * (AGENT.md section 2bis): groupId:artifactId -> forced exact version.
+     * Highest-precedence relief mechanism, above [constraints].
      */
     private Map<String, String> resolutions = new LinkedHashMap<>();
+
+    /**
+     * Forced versions declared in [constraints] of forge.toml (AGENT.md section
+     * 2bis): groupId:artifactId -> exact version. Wins over everything
+     * transitive, below [resolutions].
+     */
+    private Map<String, String> constraints = new LinkedHashMap<>();
     private String sourceCompatibility;
     private String targetCompatibility;
     private String jdkVendor;
@@ -178,6 +186,15 @@ public class ProjectConfig {
 
     public void setResolutions(Map<String, String> resolutions) {
         this.resolutions = resolutions != null ? resolutions : new LinkedHashMap<>();
+    }
+
+    /** [constraints]: GA -> exact version, below [resolutions] in precedence. */
+    public Map<String, String> getConstraints() {
+        return constraints;
+    }
+
+    public void setConstraints(Map<String, String> constraints) {
+        this.constraints = constraints != null ? constraints : new LinkedHashMap<>();
     }
 
     public List<String> getMainJavaSources() {

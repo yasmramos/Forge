@@ -98,7 +98,7 @@ public final class LockfileGenerator {
         }
         return lock(compileScopeCoordinates(config),
                 Lockfile.hashOf(new File(projectRoot, ConfigReader.CONFIG_FILE_NAME)),
-                config.getResolutions());
+                config.getResolutions(), config.getConstraints());
     }
 
     /**
@@ -113,6 +113,17 @@ public final class LockfileGenerator {
      */
     public Lockfile lock(List<String> roots, String configHash,
                          Map<String, String> resolutions) throws Exception {
+        return lock(roots, configHash, resolutions, Collections.emptyMap());
+    }
+
+    /**
+     * Same as {@link #lock(List, String, Map)}, also applying {@code [constraints]}
+     * (AGENT.md section 2bis): forced versions that win over everything transitive
+     * but stay below {@code [resolutions]}.
+     */
+    public Lockfile lock(List<String> roots, String configHash,
+                         Map<String, String> resolutions,
+                         Map<String, String> constraints) throws Exception {
         if (roots.isEmpty()) {
             // Nothing to resolve: emit a valid, empty lock so builds stay reproducible.
             return new Lockfile(configHash, Collections.emptyMap());
@@ -121,9 +132,18 @@ public final class LockfileGenerator {
         AetherDependencyResolver.ResolvedGraph graph =
                 resolver.resolveTransitive(roots);
 
-        // Section 2bis: fail-by-default policy with [resolutions] overrides.
-        Map<String, String> selected =
-                new ConflictPolicy(resolutions).enforce(graph.getRequestedVersionsByGa());
+        // Section 2bis: fail-by-default policy with [resolutions]/[constraints] overrides.
+        ConflictPolicy policy = new ConflictPolicy(resolutions, constraints);
+        Map<String, String> selected;
+        try {
+            selected = policy.enforce(graph.getRequestedVersionsByGa());
+        } catch (ConflictPolicy.ConflictException e) {
+            // Embed the condensed derivation in the error so `forge lock refresh`
+            // already says who requests what, not just that a conflict exists.
+            throw e.withDerivation(
+                    ConflictDerivation.condense(graph.getTree(),
+                            graph.getRequestedVersionsByGa(), policy));
+        }
 
         // Build coordinate -> repository map from the resolved graph paths.
         Map<String, String> repoByCoordinate = new LinkedHashMap<>();

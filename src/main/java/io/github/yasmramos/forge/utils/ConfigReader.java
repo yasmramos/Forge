@@ -287,6 +287,21 @@ public class ConfigReader {
         config.setResolutions(resolutions);
 
         // ------------------------------------------------------------------
+        // [constraints] (AGENT.md section 2bis): groupId:artifactId -> forced
+        // exact version. Wins over everything transitive, below [resolutions].
+        // ------------------------------------------------------------------
+        Map<String, String> constraints = new LinkedHashMap<>();
+        UnmodifiableConfig constraintsSection = root.get("constraints");
+        if (constraintsSection != null) {
+            for (UnmodifiableConfig.Entry entry : constraintsSection.entrySet()) {
+                if (entry.getValue() instanceof String) {
+                    constraints.put(entry.getKey(), expand((String) entry.getValue(), properties));
+                }
+            }
+        }
+        config.setConstraints(constraints);
+
+        // ------------------------------------------------------------------
         // [build] section (snake_case keys).
         // ------------------------------------------------------------------
         ProjectConfig.BuildSettings settings = config.getBuildSettings();

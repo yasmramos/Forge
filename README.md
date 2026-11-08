@@ -132,6 +132,8 @@ Configuration files use TOML format with the following sections:
 | `[toolchain]` | Single source of truth for the Java version: `language`, optional `jdk_vendor` / `jdk_version` |
 | `[source.main]` / `[source.test]` | Source roots per scope: `java` and `resources` arrays |
 | `[dependencies.compile\|runtime\|test\|provided]` | Scoped dependencies: `"group:artifact" = "version"` |
+| `[constraints]` | Forced versions: `"group:artifact" = "version"`; win over transitive, below `[resolutions]` |
+| `[resolutions]` | Per-coordinate pins that win over everything: `"group:artifact" = "version"` |
 | `[build]` | Build behavior options (see below) |
 | `[compile]` | Compiler options: `encoding`, `debug`, `args` |
 | `[exec]` | Run configuration: `main`, `args`, `jvm_args` |
@@ -240,6 +242,14 @@ forge resolve --explain
 
 # List the available task types
 forge tasks
+
+# Diagnose environment and project problems (exit 2 when a check fails)
+forge doctor
+forge doctor --format=json
+
+# Generate a CycloneDX SBOM of the resolved dependency graph
+forge sbom
+forge sbom --output=build/bom.json
 
 # Multi-module: list modules in build order, or build one module and its deps
 forge modules

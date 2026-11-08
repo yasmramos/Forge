@@ -29,6 +29,7 @@ import org.eclipse.aether.util.graph.visitor.PreorderNodeListGenerator;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -191,6 +192,18 @@ public final class AetherDependencyResolver {
 
     private RepositorySystemSession newSession() {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+        // MavenRepositorySystemUtils.newSession() leaves the session without the
+        // running JVM's system properties. Without them, JDK-activated profiles
+        // ("<jdk>11</jdk>", "!1.8") fail to evaluate with "Failed to determine
+        // Java version" and Aether silently drops every transitive dependency of
+        // such POMs (guava, jackson-databind, junit...), producing a classpath
+        // that looks complete but is not. Seed the session so activation behaves
+        // exactly as in Maven itself (AGENT.md section 2: reuse, do not reinvent).
+        Map<String, String> systemProperties = new HashMap<>();
+        for (String name : System.getProperties().stringPropertyNames()) {
+            systemProperties.put(name, System.getProperty(name));
+        }
+        session.setSystemProperties(systemProperties);
         session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(
                 session, new LocalRepository(localRepositoryDir)));
         // Verbose conflict resolution (AGENT.md section 2bis): without it, Aether
