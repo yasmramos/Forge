@@ -247,6 +247,10 @@ forge tasks
 forge doctor
 forge doctor --format=json
 
+# Generate a CycloneDX SBOM of the resolved dependency graph
+forge sbom
+forge sbom --output=build/bom.json
+
 # Multi-module: list modules in build order, or build one module and its deps
 forge modules
 forge build awesome.core

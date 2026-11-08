@@ -74,6 +74,9 @@ public class ForgeCLI {
                 case "doctor":
                     return io.github.yasmramos.forge.cli.command.DoctorCommand.run(
                         engine, options.isJson(), System.out);
+                case "sbom":
+                    return io.github.yasmramos.forge.cli.command.SbomCommand.run(
+                        engine, tail(args), System.out);
                 case "help":
                     showHelp();
                     return 0;
@@ -497,6 +500,7 @@ public class ForgeCLI {
         System.out.println("  tasks                     - List available task types");
         System.out.println("  modules                   - List the modules of a multi-module project in build order");
         System.out.println("  doctor                    - Diagnose environment and project problems (exit 2 on failure)");
+        System.out.println("  sbom [--output=<path>]    - Generate a CycloneDX SBOM (default target/sbom.json)");
         System.out.println("  run [module] [-- args...] - Execute the [exec] main class (program owns stdout)");
         System.out.println("  clean                     - Clean build artifacts");
         System.out.println("  init                      - Initialize new project");

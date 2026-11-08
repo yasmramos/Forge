@@ -172,7 +172,7 @@ public final class DependencyCommand {
 
     // --- shared plumbing ---
 
-    private static AetherDependencyResolver.ResolvedGraph resolveCompileGraph() {
+    static AetherDependencyResolver.ResolvedGraph resolveCompileGraph() {
         ProjectConfig config = loadConfig();
         Map<String, String> repositories = config.getRepositories().isEmpty()
             ? defaultRepositories() : config.getRepositories();
