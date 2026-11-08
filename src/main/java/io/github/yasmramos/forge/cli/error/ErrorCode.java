@@ -218,6 +218,11 @@ public final class ErrorCode {
         "The configured source directory is unreadable or disappeared while the build was gathering sources for a plugin-registered language.",
         "Check the source directory permissions and that it exists, then rebuild.",
         "https://forge.dev/e/PLG-0011");
+    public static final Entry PLG_0012 = register("FORGE-PLG-0012",
+        "The test directory for a plugin test runner's language could not be scanned.",
+        "A test source directory is unreadable or disappeared while the build was gathering tests for a plugin-registered runner.",
+        "Check the test directory permissions and that it exists, then rebuild.",
+        "https://forge.dev/e/PLG-0012");
 
     // --- Internal (INT) ---
     public static final Entry INT_0001 = register("FORGE-INT-0001",

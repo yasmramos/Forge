@@ -187,3 +187,9 @@ what = "The source directory for a plugin compiler's language could not be scann
 why  = "The configured source directory is unreadable or disappeared while the build was gathering sources for a plugin-registered language."
 how  = "Check the source directory permissions and that it exists, then rebuild."
 docs = "https://forge.dev/e/PLG-0011"
+
+["FORGE-PLG-0012"]
+what = "The test directory for a plugin test runner's language could not be scanned."
+why  = "A test source directory is unreadable or disappeared while the build was gathering tests for a plugin-registered runner."
+how  = "Check the test directory permissions and that it exists, then rebuild."
+docs = "https://forge.dev/e/PLG-0012"

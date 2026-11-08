@@ -85,4 +85,26 @@ class PluginExtensionRegistryTest {
         assertSame(impl, registry.compiler("kotlin"));
         assertNull(registry.compiler("listedOnly"));
     }
+
+    @Test
+    void testRunnersTrackWhichCanExecute() {
+        PluginExtensionRegistry registry = new PluginExtensionRegistry();
+        registry.registerTestRunner("io.example.p", "listedOnly");
+        io.github.yasmramos.forge.plugin.PluginTestRunner impl =
+            new io.github.yasmramos.forge.plugin.PluginTestRunner() {
+                public String testSourceExtension() { return "kt"; }
+                public io.github.yasmramos.forge.plugin.PluginTestRunResult run(
+                    io.github.yasmramos.forge.plugin.PluginTestRunRequest r) {
+                    return io.github.yasmramos.forge.plugin.PluginTestRunResult.success(0, 0);
+                }
+            };
+        registry.registerTestRunner("io.example.p", "kotlin", impl);
+
+        // Both are listed as extension points; only one can actually run tests.
+        assertTrue(registry.testRunners().contains("listedOnly"));
+        assertTrue(registry.testRunners().contains("kotlin"));
+        assertEquals(java.util.Collections.singleton("kotlin"), registry.testRunnersWithImpl());
+        assertSame(impl, registry.testRunner("kotlin"));
+        assertNull(registry.testRunner("listedOnly"));
+    }
 }

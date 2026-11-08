@@ -50,6 +50,12 @@ final class DefaultPluginContext implements PluginContext {
     }
 
     @Override
+    public void registerTestRunner(String id,
+                                   io.github.yasmramos.forge.plugin.PluginTestRunner runner) {
+        registry.registerTestRunner(descriptor.getId(), id, runner);
+    }
+
+    @Override
     public void registerPackagingType(String id) {
         registry.registerPackagingType(descriptor.getId(), id);
     }

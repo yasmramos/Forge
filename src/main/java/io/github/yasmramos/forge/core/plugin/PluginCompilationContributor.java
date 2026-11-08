@@ -22,11 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * Turns the compilers registered by loaded plugins into graph tasks (AGENT.md
@@ -127,48 +123,9 @@ public final class PluginCompilationContributor {
 
     /** Sources with the compiler's extension under the project's source roots. */
     private List<File> discoverSources(String extension) {
-        String suffix = "." + extension.toLowerCase(Locale.ROOT);
-        Set<File> found = new LinkedHashSet<>();
-        for (Path dir : sourceDirectories()) {
-            if (!Files.isDirectory(dir)) {
-                continue;
-            }
-            try (Stream<Path> files = Files.walk(dir)) {
-                files.filter(Files::isRegularFile)
-                    .filter(p -> p.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(suffix))
-                    .sorted()
-                    .forEach(p -> found.add(p.toFile()));
-            } catch (java.io.IOException e) {
-                throw new ForgeException(ErrorCode.PLG_0011,
-                    "cannot scan source directory " + dir + " for '" + extension
-                        + "' sources: " + e.getMessage(), e);
-            }
-        }
-        return new ArrayList<>(found);
-    }
-
-    private List<Path> sourceDirectories() {
-        Set<Path> dirs = new LinkedHashSet<>();
-        String configured = config.getSourceDirectory();
-        if (configured != null && !configured.trim().isEmpty()) {
-            dirs.add(resolveAgainstRoot(configured));
-        }
-        if (config.getSourcePaths() != null) {
-            for (String p : config.getSourcePaths()) {
-                if (p != null && !p.trim().isEmpty()) {
-                    dirs.add(resolveAgainstRoot(p));
-                }
-            }
-        }
-        if (dirs.isEmpty()) {
-            dirs.add(new File(projectRoot, "src/main/java").toPath());
-        }
-        return new ArrayList<>(dirs);
-    }
-
-    private Path resolveAgainstRoot(String path) {
-        Path p = new File(path).toPath();
-        return p.isAbsolute() ? p : new File(projectRoot, path).toPath();
+        return PluginSourceScanner.discover(
+            PluginSourceScanner.mainSourceDirectories(config, projectRoot),
+            extension, ErrorCode.PLG_0011);
     }
 
     /** Project-relative POSIX path for cache-portable outputs. */
