@@ -137,6 +137,42 @@ class ConfigReaderTest {
     }
 
     @Test
+    void reproducibleDefaultsToWarn() {
+        Config root = Config.inMemory();
+        root.set("build", Config.inMemory());
+
+        ProjectConfig config = ConfigReader.parseConfig(root);
+
+        assertEquals("warn", config.getBuildSettings().getReproducible());
+        assertFalse(config.getBuildSettings().isReproducibleStrict());
+        assertFalse(config.getBuildSettings().isReproducibleOff());
+    }
+
+    @Test
+    void strictReproducibilityIsParsed() {
+        Config root = Config.inMemory();
+        root.set("build", Config.inMemory());
+        root.set(java.util.Arrays.asList("build", "reproducible"), "strict");
+
+        ProjectConfig config = ConfigReader.parseConfig(root);
+
+        assertTrue(config.getBuildSettings().isReproducibleStrict());
+        assertFalse(config.getBuildSettings().isReproducibleOff());
+    }
+
+    @Test
+    void reproducibilityOffIsParsed() {
+        Config root = Config.inMemory();
+        root.set("build", Config.inMemory());
+        root.set(java.util.Arrays.asList("build", "reproducible"), "off");
+
+        ProjectConfig config = ConfigReader.parseConfig(root);
+
+        assertTrue(config.getBuildSettings().isReproducibleOff());
+        assertFalse(config.getBuildSettings().isReproducibleStrict());
+    }
+
+    @Test
     void testZeroThreadsMeansAuto() {
         Config root = Config.inMemory();
         root.set("build", Config.inMemory());

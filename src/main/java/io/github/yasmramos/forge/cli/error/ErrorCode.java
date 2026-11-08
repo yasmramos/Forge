@@ -142,7 +142,7 @@ public final class ErrorCode {
     public static final Entry RPR_0001 = register("FORGE-RPR-0001",
         "A plugin produced outputs that differ between two identical builds.",
         "Bit-for-bit reproducibility is guaranteed for core tasks only; plugins are best-effort (AGENT.md section 17).",
-        "Report the behavior to the plugin author, or enable strict mode with [build] reproducible_strict = true to fail instead of warn.",
+        "Report the behavior to the plugin author, or enable strict mode with [build] reproducible = 'strict' to fail instead of warn.",
         "https://forge.dev/e/RPR-0001");
 
     // --- Multi-module (MMD) ---

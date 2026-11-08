@@ -95,7 +95,7 @@ docs = "https://forge.dev/e/CCH-0002"
 ["FORGE-RPR-0001"]
 what = "A plugin produced outputs that differ between two identical builds."
 why  = "Bit-for-bit reproducibility is guaranteed for core tasks only; plugins are best-effort (AGENT.md section 17)."
-how  = "Report the behavior to the plugin author, or enable strict mode with [build] reproducible_strict = true to fail instead of warn."
+how  = "Report the behavior to the plugin author, or enable strict mode with [build] reproducible = 'strict' to fail instead of warn."
 docs = "https://forge.dev/e/RPR-0001"
 
 ["FORGE-INT-0001"]
