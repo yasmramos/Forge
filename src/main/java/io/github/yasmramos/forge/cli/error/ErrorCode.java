@@ -17,7 +17,8 @@ import com.electronwill.nightconfig.toml.TomlParser;
  * <p>Codes follow the pattern {@code FORGE-<PREFIX>-<NNNN>} with domain
  * prefixes: CFG (config), DEP (resolution), LCK (lockfile), TSK (graph and
  * tasks), PLG (plugins), NET (network), CCH (cache), VRT (variants),
- * RUN (process execution), RPR (reproducibility), INT (internal bugs).
+ * RUN (process execution), RPR (reproducibility), MMD (multi-module),
+ * PUB (publishing), INT (internal bugs).
  *
  * <p>A shipped code is public API: it is never reused or renumbered. The
  * catalog lives in {@code docs/errors.toml} inside the jar resources so tests
@@ -233,6 +234,43 @@ public final class ErrorCode {
         "A project selects a packaging type through 'packaging' in [project]; Forge found no loaded plugin that registered an implementation for it, so it cannot produce that artifact.",
         "Declare the plugin providing the type in [plugins] of forge.toml, fix the type name, or set packaging = \"jar\" for the built-in packaging.",
         "https://forge.dev/e/PLG-0013");
+
+    // --- Publishing (PUB) ---
+    public static final Entry PUB_0001 = register("FORGE-PUB-0001",
+        "The project is missing metadata Maven Central requires for publishing.",
+        "Maven Central rejects artifacts without a license, developer, project URL and SCM section (AGENT.md section 6).",
+        "Add the missing keys under [publish] in forge.toml (license, license_url, developers, developer_names, url, scm), then retry.",
+        "https://forge.dev/e/PUB-0001");
+    public static final Entry PUB_0002 = register("FORGE-PUB-0002",
+        "The project coordinates required to publish are incomplete.",
+        "Publishing needs a groupId, artifactId and version, taken from [project] group, name and version.",
+        "Set group, name and version under [project] in forge.toml, then retry.",
+        "https://forge.dev/e/PUB-0002");
+    public static final Entry PUB_0003 = register("FORGE-PUB-0003",
+        "Forge could not write the staged publish artifacts to disk.",
+        "The staging directory is not writable, or the disk is full.",
+        "Check write permissions on the staging directory (default target/forge-publish) and free disk space, then retry.",
+        "https://forge.dev/e/PUB-0003");
+    public static final Entry PUB_0004 = register("FORGE-PUB-0004",
+        "The main artifact to publish was not found.",
+        "forge publish stages the packaged JAR, but no build output exists under target/forge-output.",
+        "Run 'forge build' before 'forge publish'.",
+        "https://forge.dev/e/PUB-0004");
+    public static final Entry PUB_0005 = register("FORGE-PUB-0005",
+        "The target repository for publishing is not declared in [repositories].",
+        "forge publish uploads to a repository key from [publish] repository, which must resolve against [repositories] in forge.toml.",
+        "Declare the repository URL under [repositories] in forge.toml, or point [publish] repository at an existing key.",
+        "https://forge.dev/e/PUB-0005");
+    public static final Entry PUB_0006 = register("FORGE-PUB-0006",
+        "An artifact could not be uploaded to the target repository.",
+        "The repository rejected the upload (HTTP status in the message), or the network failed. A partial publish is not a success.",
+        "Check the repository URL and credentials in ~/.forge/credentials.toml, verify network access, then retry; re-uploading is idempotent.",
+        "https://forge.dev/e/PUB-0006");
+    public static final Entry PUB_0007 = register("FORGE-PUB-0007",
+        "The credentials file ~/.forge/credentials.toml could not be read.",
+        "The file exists but is not valid TOML, or a repository entry is missing username/password.",
+        "Fix the TOML in ~/.forge/credentials.toml; each repository needs username and password keys.",
+        "https://forge.dev/e/PUB-0007");
 
     // --- Internal (INT) ---
     public static final Entry INT_0001 = register("FORGE-INT-0001",

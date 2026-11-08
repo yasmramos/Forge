@@ -341,6 +341,36 @@ public class ConfigReader {
         }
 
         // ------------------------------------------------------------------
+        // [publish] section (AGENT.md section 6): POM metadata, target
+        // repositories and signing. Credentials are deliberately absent here;
+        // they live in ~/.forge/credentials.toml.
+        // ------------------------------------------------------------------
+        ProjectConfig.PublishSettings publish = config.getPublishSettings();
+        UnmodifiableConfig publishSection = root.get("publish");
+        if (publishSection != null) {
+            publish.setLicenseName(expand(publishSection.get("license"), properties));
+            publish.setLicenseUrl(expand(publishSection.get("license_url"), properties));
+            publish.setDeveloperIds(expand(publishSection.get("developers"), properties));
+            publish.setDeveloperNames(expand(publishSection.get("developer_names"), properties));
+            publish.setDeveloperEmails(expand(publishSection.get("developer_emails"), properties));
+            publish.setUrl(expand(publishSection.get("url"), properties));
+            publish.setScmUrl(expand(publishSection.get("scm"), properties));
+            if (publishSection.contains("repository")) {
+                publish.setRepository(expand(publishSection.get("repository"), properties));
+            }
+            if (publishSection.contains("sign")) {
+                publish.setSign(bool(publishSection.get("sign")));
+            }
+            if (publishSection.contains("sbom")) {
+                publish.setSbom(bool(publishSection.get("sbom")));
+            }
+            UnmodifiableConfig snapshot = getSection(root, "publish", "snapshot");
+            if (snapshot != null && snapshot.get("repository") != null) {
+                publish.setSnapshotRepository(expand(snapshot.get("repository"), properties));
+            }
+        }
+
+        // ------------------------------------------------------------------
         // [compile] section: compiler options. source/target now live in
         // [toolchain], so they are not read here anymore.
         // ------------------------------------------------------------------

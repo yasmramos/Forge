@@ -82,6 +82,11 @@ public class ProjectConfig {
     private List<String> execArgs = new ArrayList<>();
     private List<String> jvmArgs = new ArrayList<>();
     private BuildSettings buildSettings;
+    /**
+     * {@code [publish]} section (AGENT.md section 6): POM metadata, target
+     * repositories and signing. Populated by {@code ConfigReader}.
+     */
+    private PublishSettings publishSettings = new PublishSettings();
 
     public ProjectConfig() {
         this.sourcePaths = new ArrayList<>();
@@ -365,6 +370,15 @@ public class ProjectConfig {
     public void setBuildSettings(BuildSettings buildSettings) {
         this.buildSettings = buildSettings;
     }
+
+    /** {@code [publish]} settings (AGENT.md section 6). */
+    public PublishSettings getPublishSettings() {
+        return publishSettings;
+    }
+
+    public void setPublishSettings(PublishSettings publishSettings) {
+        this.publishSettings = publishSettings != null ? publishSettings : new PublishSettings();
+    }
     
     public static class BuildSettings {
         private boolean incremental = true;
@@ -484,5 +498,75 @@ public class ProjectConfig {
         public boolean isReproducibleOff() {
             return reproducible != null && "off".equalsIgnoreCase(reproducible.trim());
         }
+    }
+
+    /**
+     * {@code [publish]} section (AGENT.md section 6).
+     *
+     * <p>Publishing to Maven Central is non-negotiable, so Forge generates a
+     * complete POM and Gradle Module Metadata automatically. Users only supply
+     * the fields Maven Central requires (licenses, developers, SCM) plus the
+     * target repositories and signing switch. Credentials never live here:
+     * they belong in {@code ~/.forge/credentials.toml}.</p>
+     */
+    public static class PublishSettings {
+        /** License identifier, e.g. {@code Apache-2.0} (SPDX) - required. */
+        private String licenseName;
+        /** License URL, e.g. {@code https://www.apache.org/licenses/LICENSE-2.0}. */
+        private String licenseUrl;
+        /** Comma-separated developer ids, aligned with developerNames/emails. */
+        private String developerIds;
+        private String developerNames;
+        private String developerEmails;
+        /** Project URL published in the POM. */
+        private String url;
+        /** SCM connection URL, e.g. {@code scm:git:https://github.com/me/repo.git}. */
+        private String scmUrl;
+        /**
+         * Target repository key (into {@code [repositories]}) used by
+         * {@code forge publish}. Defaults to {@code central}.
+         */
+        private String repository = "central";
+        /** {@code [publish.snapshot]}: key of the snapshot repository. */
+        private String snapshotRepository = "snapshots";
+        /** When true, artifacts are GPG-signed before upload (section 6). */
+        private boolean sign = true;
+        /** When true, a CycloneDX SBOM is generated during publish (section 18). */
+        private boolean sbom = true;
+
+        public String getLicenseName() { return licenseName; }
+        public void setLicenseName(String licenseName) { this.licenseName = licenseName; }
+
+        public String getLicenseUrl() { return licenseUrl; }
+        public void setLicenseUrl(String licenseUrl) { this.licenseUrl = licenseUrl; }
+
+        public String getDeveloperIds() { return developerIds; }
+        public void setDeveloperIds(String developerIds) { this.developerIds = developerIds; }
+
+        public String getDeveloperNames() { return developerNames; }
+        public void setDeveloperNames(String developerNames) { this.developerNames = developerNames; }
+
+        public String getDeveloperEmails() { return developerEmails; }
+        public void setDeveloperEmails(String developerEmails) { this.developerEmails = developerEmails; }
+
+        public String getUrl() { return url; }
+        public void setUrl(String url) { this.url = url; }
+
+        public String getScmUrl() { return scmUrl; }
+        public void setScmUrl(String scmUrl) { this.scmUrl = scmUrl; }
+
+        public String getRepository() { return repository; }
+        public void setRepository(String repository) { this.repository = repository; }
+
+        public String getSnapshotRepository() { return snapshotRepository; }
+        public void setSnapshotRepository(String snapshotRepository) {
+            this.snapshotRepository = snapshotRepository;
+        }
+
+        public boolean isSign() { return sign; }
+        public void setSign(boolean sign) { this.sign = sign; }
+
+        public boolean isSbom() { return sbom; }
+        public void setSbom(boolean sbom) { this.sbom = sbom; }
     }
 }

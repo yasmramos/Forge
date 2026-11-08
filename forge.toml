@@ -78,3 +78,22 @@ args     = ["-Xlint:all"]
 main     = "com.example.Main"
 args     = ["--verbose"]
 jvm_args = ["-Xmx2g"]
+
+# Publishing metadata for `forge publish` (AGENT.md section 6).
+# Maven Central requires license, developers, url and scm; forge publish fails
+# with FORGE-PUB-0001 naming the missing keys instead of letting the repository
+# reject the upload. Credentials are never stored here: use ~/.forge/credentials.toml.
+# [publish]
+# license          = "Apache-2.0"
+# license_url      = "https://www.apache.org/licenses/LICENSE-2.0"
+# developers       = "jdoe"
+# developer_names  = "Jane Doe"
+# developer_emails = "jane@example.com"
+# url              = "https://example.io/awesome"
+# scm              = "scm:git:https://github.com/example/awesome.git"
+# repository       = "central"   # key into [repositories]
+# sign             = true        # GPG-sign before upload
+# sbom             = true        # generate a CycloneDX SBOM during publish
+#
+# [publish.snapshot]
+# repository = "ossrh-snapshots"
