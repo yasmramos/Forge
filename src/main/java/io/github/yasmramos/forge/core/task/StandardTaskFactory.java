@@ -30,11 +30,13 @@ public class StandardTaskFactory {
     private final ProjectConfig config;
     private final File projectRoot;
     private final Path classesDir;
+    private final BuildEnvironment environment;
 
     public StandardTaskFactory(ProjectConfig config, File projectRoot, Path classesDir) {
         this.config = config;
         this.projectRoot = projectRoot;
         this.classesDir = classesDir.toAbsolutePath().normalize();
+        this.environment = BuildEnvironment.forProject(config.getPlugins());
     }
 
     /** Creates the compile task: sources + dependencies in, classes out. */
@@ -74,7 +76,7 @@ public class StandardTaskFactory {
             context.put(COMPILE + ".compiledFiles", result.getCompiledFiles());
             return TaskResult.success("Compiled " + result.getCompiledFiles() + " source files");
         });
-        return task;
+        return task.environment(environment);
     }
 
     /**
@@ -110,7 +112,7 @@ public class StandardTaskFactory {
                     + ". Verify the compiled classes exist under " + classesDir + ".");
             }
         });
-        return task;
+        return task.environment(environment);
     }
 
     /**
@@ -150,7 +152,7 @@ public class StandardTaskFactory {
                 ? "No test sources found"
                 : "Ran " + result.getTotal() + " test class(es), all passed");
         });
-        return task;
+        return task.environment(environment);
     }
 
     // ---- helpers ----------------------------------------------------------
