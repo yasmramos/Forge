@@ -21,6 +21,7 @@ public class ForgeTask {
     private final List<String> softDependsOn = new ArrayList<>();
     private final Map<String, Object> attributes = new LinkedHashMap<>();
     private TaskAction action = TaskAction.NOOP;
+    private BuildEnvironment environment = BuildEnvironment.current();
 
     public ForgeTask(String name, TaskType type) {
         if (name == null || name.isEmpty()) {
@@ -46,6 +47,12 @@ public class ForgeTask {
     public ForgeTask attribute(String key, Object value) { attributes.put(key, value); return this; }
     public ForgeTask action(TaskAction action) { this.action = action; return this; }
 
+    /** Overrides the build environment folded into the cache key (AGENT.md section 3). */
+    public ForgeTask environment(BuildEnvironment environment) {
+        this.environment = environment;
+        return this;
+    }
+
     public List<TaskInput> getInputs() { return inputs; }
     public List<TaskOutput> getOutputs() { return outputs; }
     public List<String> getDependsOn() { return dependsOn; }
@@ -54,9 +61,10 @@ public class ForgeTask {
     public TaskAction getAction() { return action; }
 
     /**
-     * Deterministic cache key: task name + type + every input hash, folded into
-     * a single SHA-256 digest. Any change to any component changes the key
-     * (AGENT.md decision 3: content-based invalidation, never time-based).
+     * Deterministic cache key: task name + type + every input hash + the build
+     * environment (toolchain, Forge version, plugins), folded into a single
+     * SHA-256 digest. Any change to any component changes the key (AGENT.md
+     * section 3: content-based invalidation, never time-based).
      */
     public String computeHash() {
         return computeHash(java.util.Collections.emptyMap());
@@ -82,6 +90,12 @@ public class ForgeTask {
         java.security.MessageDigest digest = TaskInput.sha256();
         TaskInput.update(digest, name);
         TaskInput.update(digest, type.getName());
+        // Toolchain, Forge version and plugins are part of the key (AGENT.md
+        // section 3), not just the declared inputs: the same sources compiled by
+        // a different JDK or a different Forge are different results.
+        TaskInput.update(digest, environment.getToolchainHash());
+        TaskInput.update(digest, environment.getForgeVersionHash());
+        TaskInput.update(digest, environment.getPluginsHash());
         // Sort input hashes so declaration order does not affect the key.
         List<String> hashes = new ArrayList<>();
         for (TaskInput in : inputs) {

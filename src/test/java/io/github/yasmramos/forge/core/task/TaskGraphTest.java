@@ -105,6 +105,42 @@ class TaskGraphTest {
     }
 
     @Test
+    void toolchainChangeIsACacheMissOnRealStore(@TempDir File root) throws Exception {
+        // End-to-end through TaskCache: an entry stored under one toolchain must
+        // not be served when the toolchain changes, even with identical sources
+        // and outputs (AGENT.md section 3). Without the environment in the key
+        // this returned a stale hit.
+        File outDir = new File(root, "build/classes");
+        outDir.mkdirs();
+        Files.write(new File(outDir, "A.class").toPath(), "bytes".getBytes(StandardCharsets.UTF_8));
+
+        ForgeTask jdk11 = new ForgeTask("compile", new TaskTypeRegistry().get(TaskType.COMPILE))
+            .output(new TaskOutput("classes", Collections.singletonList("build/classes")))
+            .environment(environment("11.0.2"));
+        String hash11 = jdk11.computeHash();
+
+        TaskCache cache = new TaskCache(root);
+        assertFalse(cache.isUpToDate(hash11, jdk11));
+        cache.store(hash11, jdk11, root);
+        assertTrue(cache.isUpToDate(hash11, jdk11));
+
+        ForgeTask jdk17 = new ForgeTask("compile", new TaskTypeRegistry().get(TaskType.COMPILE))
+            .output(new TaskOutput("classes", Collections.singletonList("build/classes")))
+            .environment(environment("17.0.9"));
+
+        assertNotEquals(hash11, jdk17.computeHash(), "different JDK -> different key");
+        assertFalse(cache.isUpToDate(jdk17.computeHash(), jdk17),
+            "the entry built with another JDK must not be a hit");
+    }
+
+    private static BuildEnvironment environment(String jdkVersion) {
+        return new BuildEnvironment(
+            BuildEnvironment.toolchainHash("OpenJDK 64-Bit Server VM", jdkVersion, "Eclipse Adoptium"),
+            BuildEnvironment.forgeVersionHash("1.0.0-SNAPSHOT"),
+            BuildEnvironment.pluginsHash(Collections.emptyList()));
+    }
+
+    @Test
     void cacheStoreRestoreRoundTrip(@TempDir File root) throws Exception {
         File outDir = new File(root, "build/classes");
         outDir.mkdirs();
