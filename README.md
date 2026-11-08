@@ -149,6 +149,14 @@ Supported `[build]` keys (snake_case):
 | `threads` | number | `0` (auto) | Worker thread count; `0` means available CPUs |
 | `remote_cache` | string | unset | Base URL of a remote build cache; also settable via `FORGE_REMOTE_CACHE` |
 | `reproducible` | string | `warn` | Reproducibility policy for plugins: `warn`, `strict`, or `off` |
+| `resource_filtering` | boolean | `false` | Opt-in `${...}` substitution in resources; off by default so binary files are never corrupted |
+
+Resources declared under `[source.main].resources` (or the conventional
+`src/main/resources`) are copied into the compiled-classes directory and thus
+into the packaged jar. Copying is content-based: an unchanged resource is never
+rewritten. Filtering is **opt-in** — enable `resource_filtering` to expand
+`${...}` placeholders using `[project.properties]` plus `project.name`,
+`project.version` and `project.group`.
 
 #### Remote build cache
 

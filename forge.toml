@@ -64,6 +64,7 @@ incremental   = true
 parallel      = true
 threads       = 0        # 0 = auto (number of available cores)
 cache_enabled = true     # consistent snake_case
+resource_filtering = false  # opt-in ${...} substitution in resources (section 22)
 
 # Compiler configuration.
 # source/target no longer live here: they belong to [toolchain].

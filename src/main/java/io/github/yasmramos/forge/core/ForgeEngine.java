@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -121,6 +122,10 @@ public class ForgeEngine {
                 return new BuildResult(false, null, null);
             }
 
+            // Phase 3b: Copy resources into the classes directory so the jar
+            // contains them (AGENT.md section 22).
+            copyResources();
+
             // Phase 4: Package artifacts
             logger.info("Packaging artifacts...");
             PackageResult packageResult = packageArtifacts(compilationResult);
@@ -169,6 +174,10 @@ public class ForgeEngine {
                 return new BuildResult(false, null, null);
             }
 
+            // Resources land in the classes dir before the tests run, so a test
+            // reading a bundled resource sees the same file the jar will carry.
+            copyResources();
+
             TestResult testResult = executeTests(null);
             return new BuildResult(testResult.isSuccess(), null, testResult);
         } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
@@ -208,6 +217,8 @@ public class ForgeEngine {
                     + compilationResult.getTotalFiles() + " files compiled successfully");
                 return new BuildResult(false, null, null);
             }
+
+            copyResources();
 
             PackageResult packageResult = new PackageResult(
                 true, "incremental", compilationResult.getCompiledFiles());
@@ -431,6 +442,60 @@ public class ForgeEngine {
         }
     }
     
+    /**
+     * Copies declared resources into the compiled-classes directory
+     * (AGENT.md section 22). Filtering is opt-in; an unchanged resource is left
+     * untouched (content, never timestamps: section 3).
+     */
+    private void copyResources() {
+        List<File> roots = resourceRoots();
+        if (roots.isEmpty()) {
+            return;
+        }
+        try {
+            Map<String, String> filterProps = config.getBuildSettings().isResourceFiltering()
+                ? filterProperties()
+                : null;
+            io.github.yasmramos.forge.core.resource.ResourceProcessor.Result result =
+                io.github.yasmramos.forge.core.resource.ResourceProcessor.copy(
+                    roots, resolveClassesDir(), filterProps != null, filterProps);
+            logger.info("Resources: " + result.getCopied() + " copied, "
+                + result.getUnchanged() + " unchanged (" + result.getTotal() + " total)");
+        } catch (IOException e) {
+            logger.warn("Resource copy failed: " + e.getMessage());
+        }
+    }
+
+    /** Resource directories declared in forge.toml, defaulting to src/main/resources. */
+    private List<File> resourceRoots() {
+        List<File> roots = new ArrayList<>();
+        List<String> configured = config.getMainResourcePaths();
+        if (configured == null || configured.isEmpty()) {
+            File conventional = new File(projectRoot, "src/main/resources");
+            if (conventional.isDirectory()) {
+                roots.add(conventional);
+            }
+            return roots;
+        }
+        for (String path : configured) {
+            if (path == null || path.trim().isEmpty()) {
+                continue;
+            }
+            File dir = new File(path);
+            roots.add(dir.isAbsolute() ? dir : new File(projectRoot, path));
+        }
+        return roots;
+    }
+
+    /** Property values for opt-in resource filtering (section 22). */
+    private Map<String, String> filterProperties() {
+        Map<String, String> props = new java.util.LinkedHashMap<>(config.getProperties());
+        props.putIfAbsent("project.name", config.getName());
+        props.putIfAbsent("project.version", config.getVersion());
+        props.putIfAbsent("project.group", config.getGroup());
+        return props;
+    }
+
     private CompilationResult compileSources(ProjectAnalysis analysis, 
                                            DependencyResolution dependencyResult) {
         List<Path> sourceFiles = analysis.getSourceFiles();

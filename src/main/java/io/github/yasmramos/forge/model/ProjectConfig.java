@@ -405,6 +405,14 @@ public class ProjectConfig {
          * is not checked at all in "off" mode.
          */
         private String reproducible = "warn";
+        /**
+         * [build] resource_filtering: opt-in {@code ${...}} substitution in
+         * resources (AGENT.md section 22). Off by default: default-on filtering
+         * is a bug source, since a binary file containing {@code ${something}}
+         * would be corrupted. When on, values come from [project.properties]
+         * plus the project name/version.
+         */
+        private boolean resourceFiltering = false;
         
         public boolean isIncremental() {
             return incremental;
@@ -487,6 +495,15 @@ public class ProjectConfig {
 
         public void setReproducible(String reproducible) {
             this.reproducible = reproducible;
+        }
+
+        /** True when opt-in resource filtering is requested (section 22). */
+        public boolean isResourceFiltering() {
+            return resourceFiltering;
+        }
+
+        public void setResourceFiltering(boolean resourceFiltering) {
+            this.resourceFiltering = resourceFiltering;
         }
 
         /** True when strict reproducibility is requested (section 17). */
