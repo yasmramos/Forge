@@ -5,6 +5,8 @@ import io.github.yasmramos.forge.cli.error.ForgeException;
 import io.github.yasmramos.forge.core.ForgeEngine;
 import io.github.yasmramos.forge.core.lockfile.Lockfile;
 import io.github.yasmramos.forge.core.packageinfo.ReproducibleBuild;
+import io.github.yasmramos.forge.core.publish.Credentials;
+import io.github.yasmramos.forge.core.publish.MavenUploader;
 import io.github.yasmramos.forge.core.publish.PublishStaging;
 import io.github.yasmramos.forge.core.resolver.AetherDependencyResolver;
 import io.github.yasmramos.forge.core.sbom.SbomGenerator;
@@ -80,9 +82,30 @@ public final class PublishCommand {
         for (File f : staged.getFiles()) {
             out.println("  " + f.getName());
         }
-        out.println("Repository target: " + targetRepository(config)
-            + " (upload arrives in a later increment)");
+
+        String repositoryKey = targetRepository(config);
+        if (hasFlag(args, "--upload")) {
+            upload(config, projectRoot, staged, repositoryKey, out);
+        } else {
+            out.println("Repository target: " + repositoryKey
+                + " (pass --upload to send the artifacts)");
+        }
         return 0;
+    }
+
+    private static void upload(ProjectConfig config, File projectRoot, PublishStaging.Result staged,
+                               String repositoryKey, PrintStream out) {
+        String url = config.getRepositories().get(repositoryKey);
+        if (url == null || url.trim().isEmpty()) {
+            throw new ForgeException(ErrorCode.PUB_0005,
+                "no repository named '" + repositoryKey + "' in [repositories]");
+        }
+        Credentials credentials = Credentials.loadDefault();
+        MavenUploader uploader = new MavenUploader(url, credentials.forRepository(repositoryKey));
+        out.println("Uploading to " + repositoryKey + " (" + url + ")...");
+        int uploaded = uploader.upload(config.getGroup(), config.getName(), config.getVersion(),
+            staged.getFiles());
+        out.println("Uploaded " + uploaded + " artifact(s) with checksums to " + repositoryKey);
     }
 
     private static String targetRepository(ProjectConfig config) {

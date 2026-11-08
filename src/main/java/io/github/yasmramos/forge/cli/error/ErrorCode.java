@@ -261,6 +261,16 @@ public final class ErrorCode {
         "forge publish uploads to a repository key from [publish] repository, which must resolve against [repositories] in forge.toml.",
         "Declare the repository URL under [repositories] in forge.toml, or point [publish] repository at an existing key.",
         "https://forge.dev/e/PUB-0005");
+    public static final Entry PUB_0006 = register("FORGE-PUB-0006",
+        "An artifact could not be uploaded to the target repository.",
+        "The repository rejected the upload (HTTP status in the message), or the network failed. A partial publish is not a success.",
+        "Check the repository URL and credentials in ~/.forge/credentials.toml, verify network access, then retry; re-uploading is idempotent.",
+        "https://forge.dev/e/PUB-0006");
+    public static final Entry PUB_0007 = register("FORGE-PUB-0007",
+        "The credentials file ~/.forge/credentials.toml could not be read.",
+        "The file exists but is not valid TOML, or a repository entry is missing username/password.",
+        "Fix the TOML in ~/.forge/credentials.toml; each repository needs username and password keys.",
+        "https://forge.dev/e/PUB-0007");
 
     // --- Internal (INT) ---
     public static final Entry INT_0001 = register("FORGE-INT-0001",

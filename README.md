@@ -222,6 +222,28 @@ repository = "ossrh-snapshots"
 Missing required metadata fails at configure time with `FORGE-PUB-0001` naming
 the exact keys, rather than being rejected by the repository mid-upload.
 
+`forge publish` stages the artifacts under `target/forge-publish/` in Maven
+repository layout. Add `--upload` to send them to the repository named by
+`[publish] repository` (or `[publish.snapshot] repository` for a `-SNAPSHOT`
+version). For every artifact Forge also uploads the `.md5`, `.sha1`, `.sha256`
+and `.sha512` checksums the repository validates, and re-uploading is
+idempotent.
+
+Credentials are read from `~/.forge/credentials.toml`, keyed by the same
+repository name used in `[repositories]`, and are never taken from
+`forge.toml`:
+
+```toml
+# ~/.forge/credentials.toml
+[central]
+username = "deployer"
+password = "s3cr3t"
+```
+
+A rejected upload fails the command with `FORGE-PUB-0006` (URL and HTTP status
+in the message); a malformed credentials file fails with `FORGE-PUB-0007`. GPG
+signing lands in a later increment.
+
 ### Programmatic Configuration
 
 You can also configure Forge programmatically using the ProjectConfig class:
@@ -294,6 +316,9 @@ forge sbom --output=build/bom.json
 # Stage release artifacts (POM, Gradle Module Metadata, jars, SBOM)
 forge publish
 forge publish --skip-build
+
+# Stage and upload to the configured repository (credentials from ~/.forge)
+forge publish --upload
 
 # Multi-module: list modules in build order, or build one module and its deps
 forge modules

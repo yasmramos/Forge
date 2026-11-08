@@ -235,3 +235,15 @@ what = "The target repository for publishing is not declared in [repositories]."
 why  = "forge publish uploads to a repository key from [publish] repository, which must resolve against [repositories] in forge.toml."
 how  = "Declare the repository URL under [repositories] in forge.toml, or point [publish] repository at an existing key."
 docs = "https://forge.dev/e/PUB-0005"
+
+["FORGE-PUB-0006"]
+what = "An artifact could not be uploaded to the target repository."
+why  = "The repository rejected the upload (HTTP status in the message), or the network failed. A partial publish is not a success."
+how  = "Check the repository URL and credentials in ~/.forge/credentials.toml, verify network access, then retry; re-uploading is idempotent."
+docs = "https://forge.dev/e/PUB-0006"
+
+["FORGE-PUB-0007"]
+what = "The credentials file ~/.forge/credentials.toml could not be read."
+why  = "The file exists but is not valid TOML, or a repository entry is missing username/password."
+how  = "Fix the TOML in ~/.forge/credentials.toml; each repository needs username and password keys."
+docs = "https://forge.dev/e/PUB-0007"
