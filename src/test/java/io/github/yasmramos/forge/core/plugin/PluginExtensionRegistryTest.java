@@ -48,4 +48,19 @@ class PluginExtensionRegistryTest {
             "test-runner:kotest", "packaging-type:war")),
             registry.extensionPoints());
     }
+
+    @Test
+    void taskTypesWithFactoriesTracksWhichCanContributeTasks() {
+        PluginExtensionRegistry registry = new PluginExtensionRegistry();
+        registry.registerTaskType("io.example.p", "listedOnly");
+        registry.registerTaskType("io.example.p", "withFactory",
+            project -> java.util.Collections.emptyList());
+
+        assertTrue(registry.taskTypes().contains("listedOnly"));
+        assertTrue(registry.taskTypes().contains("withFactory"));
+        assertEquals(java.util.Collections.singleton("withFactory"),
+            registry.taskTypesWithFactories());
+        assertNotNull(registry.taskFactory("withFactory"));
+        assertNull(registry.taskFactory("listedOnly"));
+    }
 }
