@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Forge logging configuration (AGENT.md section 11).
+
+  Logs go to stderr, never stdout: stdout belongs to the program launched by
+  `forge run`, and to command output such as `forge config` or `forge tree`.
+  Graph tasks that spawn processes (javaExec) have their output captured by
+  Forge, never written to the build's stdout either.
+
+  The pattern stays plain here; the CLI decides human vs structured rendering
+  for its own command output.
+-->
+<configuration>
+    <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.err</target>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDERR"/>
+    </root>
+</configuration>
