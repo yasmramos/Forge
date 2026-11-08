@@ -31,6 +31,15 @@ public interface PluginContext {
     /** Registers a compiler for a language, keyed by language id. */
     void registerCompiler(String language);
 
+    /**
+     * Registers a compiler for a language together with its implementation
+     * (section 4). Prefer this overload: Forge discovers the sources the
+     * compiler claims by {@link PluginCompiler#sourceExtension()} and compiles
+     * them as part of the build. Fails on the same collisions as
+     * {@link #registerCompiler(String)}.
+     */
+    void registerCompiler(String language, PluginCompiler compiler);
+
     /** Registers a test runner, keyed by its id. */
     void registerTestRunner(String id);
 

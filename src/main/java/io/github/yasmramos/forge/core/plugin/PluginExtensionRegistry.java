@@ -31,6 +31,8 @@ public final class PluginExtensionRegistry {
     private final Map<String, String> packagingTypes = new LinkedHashMap<>();
     private final Map<String, io.github.yasmramos.forge.plugin.PluginTaskFactory> taskFactories =
         new LinkedHashMap<>();
+    private final Map<String, io.github.yasmramos.forge.plugin.PluginCompiler> compilerImpls =
+        new LinkedHashMap<>();
 
     /** Records a task type registered by {@code pluginId}. */
     public void registerTaskType(String pluginId, String name) {
@@ -57,6 +59,19 @@ public final class PluginExtensionRegistry {
 
     public void registerCompiler(String pluginId, String language) {
         put(compilers, pluginId, language, "compiler");
+    }
+
+    /**
+     * Records a compiler implementation for a language (AGENT.md section 4).
+     * The implementation is what lets the build compile that language; a
+     * language registered without one is listed but contributes no compilation.
+     */
+    public void registerCompiler(String pluginId, String language,
+                                 io.github.yasmramos.forge.plugin.PluginCompiler compiler) {
+        registerCompiler(pluginId, language);
+        if (compiler != null) {
+            compilerImpls.put(language, compiler);
+        }
     }
 
     public void registerTestRunner(String pluginId, String id) {
@@ -117,5 +132,20 @@ public final class PluginExtensionRegistry {
     /** The factory registered for {@code taskType}, or {@code null}. */
     public io.github.yasmramos.forge.plugin.PluginTaskFactory taskFactory(String taskType) {
         return taskFactories.get(taskType);
+    }
+
+    /** Languages that declared a compiler implementation. */
+    public Set<String> compilerLanguages() {
+        return Collections.unmodifiableSet(new LinkedHashSet<>(compilerImpls.keySet()));
+    }
+
+    /** All registered compiler languages, whether or not they have an implementation. */
+    public Set<String> compilers() {
+        return Collections.unmodifiableSet(new LinkedHashSet<>(compilers.keySet()));
+    }
+
+    /** The compiler registered for {@code language}, or {@code null}. */
+    public io.github.yasmramos.forge.plugin.PluginCompiler compiler(String language) {
+        return compilerImpls.get(language);
     }
 }

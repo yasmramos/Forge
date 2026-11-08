@@ -213,6 +213,11 @@ public final class ErrorCode {
         "Task names are unique in the graph; a plugin must not collide with a built-in task (compile, test, package, javaExec, clean, resolve) or with another plugin task.",
         "Rename the offending plugin task in its factory, or remove the duplicate contribution.",
         "https://forge.dev/e/PLG-0010");
+    public static final Entry PLG_0011 = register("FORGE-PLG-0011",
+        "The source directory for a plugin compiler's language could not be scanned.",
+        "The configured source directory is unreadable or disappeared while the build was gathering sources for a plugin-registered language.",
+        "Check the source directory permissions and that it exists, then rebuild.",
+        "https://forge.dev/e/PLG-0011");
 
     // --- Internal (INT) ---
     public static final Entry INT_0001 = register("FORGE-INT-0001",
