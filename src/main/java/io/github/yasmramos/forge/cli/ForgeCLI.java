@@ -55,6 +55,14 @@ public class ForgeCLI {
                     return 0;
                 case "lock":
                     return executeLock(args);
+                case "update":
+                    // AGENT.md sections 7 and 10: `forge update` is an explicit,
+                    // user-driven lockfile regeneration, the same conscious act as
+                    // `forge lock refresh`. A build never updates the lock itself.
+                    return executeLock(new String[] {"lock", "refresh"});
+                case "test":
+                    return io.github.yasmramos.forge.cli.command.TestCommand.run(
+                        requireEngine(engine), tail(args), System.out);
                 case "run":
                     return executeRun(requireEngine(engine), args);
                 case "tree":
@@ -497,6 +505,8 @@ public class ForgeCLI {
         System.out.println("Available Commands:");
         System.out.println("  build [module]            - Build the project (or one module of a multi-module project)");
         System.out.println("  lock refresh              - Regenerate forge.lock explicitly (never done by builds)");
+        System.out.println("  update                    - Alias for 'lock refresh': update the lockfile consciously");
+        System.out.println("  test [module]             - Compile and run tests without packaging");
         System.out.println("  tree [--depth=N] [filter] - Show the resolved dependency tree");
         System.out.println("  why <coordinate>          - Explain why a dependency is in the graph");
         System.out.println("  resolve [--explain]       - Inspect the dependency graph; --explain shows version derivation");

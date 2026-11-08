@@ -56,6 +56,13 @@ jobs:
       # logger, which prefixes every line with timestamp/level; match the
       # summary numbers regardless of that prefix.
       run: ../../bin/forge build 2>&1 | tee /tmp/lib.log | grep -Eq "FORGE-TESTS found=[0-9]+ passed=[1-9][0-9]* failed=0"
+    - name: Fire-test forge test runs tests without packaging
+      # `forge test` shares the build's compile + TestExecutor path, so the
+      # same library tests must pass and be reported here (AGENT.md section 10).
+      working-directory: examples/library
+      run: |
+        ../../bin/forge test 2>&1 | tee /tmp/lib-test.log | grep -q "Tests passed."
+        grep -Eq "FORGE-TESTS found=[0-9]+ passed=[1-9][0-9]* failed=0" /tmp/lib-test.log
     - name: Fire-test multi-module (modules + lock + build + run)
       working-directory: examples/multi-module
       run: |
@@ -63,6 +70,8 @@ jobs:
         # The single root lock must cover the modules' external dependencies
         # (AGENT.md section 8bis), not just the empty root.
         ../../bin/forge lock refresh 2>&1 | grep -q "1 locked dependencies"
+        # `forge update` is the explicit alias for `lock refresh` (section 7).
+        ../../bin/forge update 2>&1 | grep -q "1 locked dependencies"
         grep -q "org.slf4j:slf4j-api" forge.lock
         ../../bin/forge build 2>&1 | grep -q "Multi-module build OK"
         # The app module consumes example.core by coordinate, so a correct
