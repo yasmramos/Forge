@@ -296,6 +296,30 @@ public final class ErrorCode {
         "Move or delete the existing forge.toml, choose another directory with --output, or review the import first with --dry-run.",
         "https://forge.dev/e/IMP-0003");
 
+    // --- Audit (AUD) ---
+    public static final Entry AUD_0001 = register("FORGE-AUD-0001",
+        "No dependencies were found to audit.",
+        "The resolved dependency graph is empty, so there is nothing to check against OSS Index.",
+        "Declare dependencies in [dependencies] in forge.toml, then run 'forge audit' again.",
+        "https://forge.dev/e/AUD-0001");
+    public static final Entry AUD_0003 = register("FORGE-AUD-0003",
+        "The configured OSS Index URL is invalid.",
+        "The URL set in [build] audit_oss_index or FORGE_OSS_INDEX is empty, malformed, or does not use http/https.",
+        "Fix the URL to a base like https://ossindex.sonatype.org, or remove it to use the default service.",
+        "https://forge.dev/e/AUD-0003");
+    public static final Entry AUD_0004 = register("FORGE-AUD-0004",
+        "OSS Index returned a document that could not be understood.",
+        "The service replied with a response that is not the expected JSON component report, or the response was corrupted.",
+        "Retry; if it persists, the service may have changed its API - report the issue with the response body.",
+        "https://forge.dev/e/AUD-0004");
+
+    // --- Network (NET) ---
+    public static final Entry NET_0001 = register("FORGE-NET-0001",
+        "A remote service could not be reached.",
+        "The network is unavailable, the service is down, or the request failed after all retries.",
+        "Check your connectivity and the service URL, then retry; use 'forge audit --offline' to skip the vulnerability query entirely.",
+        "https://forge.dev/e/NET-0001");
+
     // --- Build scan (SCN) ---
     public static final Entry SCN_0001 = register("FORGE-SCN-0001",
         "The build scan HTML report could not be written.",

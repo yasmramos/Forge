@@ -470,6 +470,19 @@ public class ProjectConfig {
          */
         private boolean resourceFiltering = false;
         
+        /**
+         * [build] audit_oss_index: base URL of the OSS Index service used by
+         * {@code forge audit} (AGENT.md section 18), or null for the public
+         * endpoint. Overridable so a mirror or an air-gapped proxy can be used.
+         */
+        private String auditOssIndexUrl;
+        /**
+         * [build] audit_fail_on: lowest severity that makes {@code forge audit}
+         * exit non-zero (AGENT.md section 18). One of {@code none} (never fail),
+         * {@code low}, {@code medium}, {@code high} (default) or {@code critical}.
+         */
+        private String auditFailOn = "high";
+
         public boolean isIncremental() {
             return incremental;
         }
@@ -556,6 +569,24 @@ public class ProjectConfig {
         /** True when opt-in resource filtering is requested (section 22). */
         public boolean isResourceFiltering() {
             return resourceFiltering;
+        }
+
+        /** [build] audit_oss_index base URL, or null for the public endpoint. */
+        public String getAuditOssIndexUrl() {
+            return auditOssIndexUrl;
+        }
+
+        public void setAuditOssIndexUrl(String auditOssIndexUrl) {
+            this.auditOssIndexUrl = auditOssIndexUrl;
+        }
+
+        /** [build] audit_fail_on severity threshold (default {@code high}). */
+        public String getAuditFailOn() {
+            return auditFailOn;
+        }
+
+        public void setAuditFailOn(String auditFailOn) {
+            this.auditFailOn = auditFailOn;
         }
 
         public void setResourceFiltering(boolean resourceFiltering) {

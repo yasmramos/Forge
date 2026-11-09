@@ -52,6 +52,8 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
 | Toolchain language + `[compile].args` | `core/Compiler.java` (`setToolchain`, `setCompilerArgs`) |
 | Import from Maven/Gradle (`forge import`) | `cli/command/ImportCommand.java`, `core/importer/` |
 | Build scan (`forge build --scan`) | `cli/command/BuildScanCommand.java`, `core/scan/BuildScanGenerator.java` |
+| Vulnerability audit (`forge audit`) | `cli/command/AuditCommand.java`, `core/audit/OssIndexClient.java` |
+| Minimal JSON reader (audit) | `core/audit/Json.java` |
 
 ## Non-obvious invariants
 
@@ -93,6 +95,15 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
   and can be archived. Its timestamp comes from the same `SOURCE_DATE_EPOCH`
   chain as the rest of the build, so two identical builds produce byte-identical
   scans. Task names are HTML-escaped before rendering.
+- **`forge audit` is optional, off the build path, and never lies** (section 18).
+  It scans the *resolved* graph (same graph as `forge tree`/`why`), so its
+  answers cannot disagree with resolution. An unreachable service is a
+  structured `FORGE-NET-0001` (exit 2, environment), never a silently clean
+  report; `--offline` is the explicit opt-out. Its exit code gates CI: non-zero
+  when a finding is at or above `[build] audit_fail_on` (default `high`, `none`
+  never fails). The OSS Index client batches at the API limit (128), retries
+  with backoff, and reads responses with the hand-written `core/audit/Json`
+  reader because Forge ships no JSON library.
 - **Error codes are public API.** Add new ones to `cli/error/ErrorCode.java`
   with what/why/how/docs; never reuse or renumber a shipped code.
 
@@ -100,6 +111,7 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
 
 Sections 22 (resources), 23 (annotation processors), 8/8bis (variants), the
 `forge config` command, the `[toolchain].language` → `-source`/`-target`
-wiring, `forge import` (section 14) and the local build scan `forge build
---scan` (section 19, single-project builds) are implemented and committed.
-Section 10's command table is still missing `forge audit`.
+wiring, `forge import` (section 14), the local build scan `forge build --scan`
+(section 19, single-project builds) and the vulnerability audit `forge audit`
+(section 18) are implemented and committed. Section 10's command table is
+complete.

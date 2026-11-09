@@ -122,6 +122,30 @@ why  = "The output directory is not writable, or --scan-output points at a locat
 how  = "Choose a writable path with --scan-output=<path>, or fix the permissions of the target directory."
 docs = "https://forge.dev/e/SCN-0001"
 
+["FORGE-AUD-0001"]
+what = "No dependencies were found to audit."
+why  = "The resolved dependency graph is empty, so there is nothing to check against OSS Index."
+how  = "Declare dependencies in [dependencies] in forge.toml, then run 'forge audit' again."
+docs = "https://forge.dev/e/AUD-0001"
+
+["FORGE-AUD-0003"]
+what = "The configured OSS Index URL is invalid."
+why  = "The URL set in [build] audit_oss_index or FORGE_OSS_INDEX is empty, malformed, or does not use http/https."
+how  = "Fix the URL to a base like https://ossindex.sonatype.org, or remove it to use the default service."
+docs = "https://forge.dev/e/AUD-0003"
+
+["FORGE-AUD-0004"]
+what = "OSS Index returned a document that could not be understood."
+why  = "The service replied with a response that is not the expected JSON component report, or the response was corrupted."
+how  = "Retry; if it persists, the service may have changed its API - report the issue with the response body."
+docs = "https://forge.dev/e/AUD-0004"
+
+["FORGE-NET-0001"]
+what = "A remote service could not be reached."
+why  = "The network is unavailable, the service is down, or the request failed after all retries."
+how  = "Check your connectivity and the service URL, then retry; use 'forge audit --offline' to skip the vulnerability query entirely."
+docs = "https://forge.dev/e/NET-0001"
+
 ["FORGE-INT-0001"]
 what = "An unexpected internal error occurred."
 why  = "This indicates a bug in Forge itself, not in your project."

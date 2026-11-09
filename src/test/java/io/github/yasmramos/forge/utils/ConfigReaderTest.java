@@ -137,6 +137,28 @@ class ConfigReaderTest {
     }
 
     @Test
+    void testAuditSettingsParseAndDefault() {
+        Config root = Config.inMemory();
+        root.set("build", Config.inMemory());
+        root.set(java.util.Arrays.asList("build", "audit_oss_index"), "https://mirror.example/oss");
+        root.set(java.util.Arrays.asList("build", "audit_fail_on"), "critical");
+
+        ProjectConfig.BuildSettings settings = ConfigReader.parseConfig(root).getBuildSettings();
+
+        assertEquals("https://mirror.example/oss", settings.getAuditOssIndexUrl());
+        assertEquals("critical", settings.getAuditFailOn());
+    }
+
+    @Test
+    void testAuditFailOnDefaultsToHigh() {
+        Config root = Config.inMemory();
+        root.set("build", Config.inMemory());
+
+        assertEquals("high",
+            ConfigReader.parseConfig(root).getBuildSettings().getAuditFailOn());
+    }
+
+    @Test
     void constraintsAreParsed() {
         Config root = Config.inMemory();
         root.set(java.util.Arrays.asList("constraints", "com.google.guava:guava"), "32.1.3-jre");
