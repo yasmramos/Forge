@@ -296,6 +296,13 @@ public final class ErrorCode {
         "Move or delete the existing forge.toml, choose another directory with --output, or review the import first with --dry-run.",
         "https://forge.dev/e/IMP-0003");
 
+    // --- Build scan (SCN) ---
+    public static final Entry SCN_0001 = register("FORGE-SCN-0001",
+        "The build scan HTML report could not be written.",
+        "The output directory is not writable, or --scan-output points at a location Forge cannot create.",
+        "Choose a writable path with --scan-output=<path>, or fix the permissions of the target directory.",
+        "https://forge.dev/e/SCN-0001");
+
     // --- Internal (INT) ---
     public static final Entry INT_0001 = register("FORGE-INT-0001",
         "An unexpected internal error occurred.",

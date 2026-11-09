@@ -374,6 +374,10 @@ forge info
 forge import
 forge import --dry-run
 forge import path/to/pom.xml --output=forge.toml
+
+# Task-graph build with a local HTML build scan (timeline, cache hits, bottlenecks)
+forge build --scan
+forge build --scan --scan-output=reports/scan.html
 ```
 
 ### Programmatic Usage
@@ -420,6 +424,24 @@ config.setBuildSettings(settings);
 ForgeEngine engine = new ForgeEngine(config);
 engine.build();
 ```
+
+### Build Scans
+
+`forge build --scan` runs the task-graph build and writes a self-contained HTML
+report to `target/build-scan.html`: a timeline of every task, its duration,
+whether it executed or came from the cache, and the bottlenecks. No server is
+involved — the file opens in a browser and can be archived as a build artifact.
+It is the Gradle Enterprise feature, free and local.
+
+```bash
+forge build --scan                              # write target/build-scan.html
+forge build --scan --scan-output=reports/scan.html
+```
+
+The timestamp follows the same `SOURCE_DATE_EPOCH` chain as the rest of the
+build (AGENT.md section 17), so two identical builds produce byte-identical
+scans. Build scans currently cover single-project builds; multi-module roots
+print a notice and skip the report.
 
 ### Multi-Module Projects
 

@@ -116,6 +116,12 @@ why  = "Import never overwrites an existing configuration, because doing so woul
 how  = "Move or delete the existing forge.toml, choose another directory with --output, or review the import first with --dry-run."
 docs = "https://forge.dev/e/IMP-0003"
 
+["FORGE-SCN-0001"]
+what = "The build scan HTML report could not be written."
+why  = "The output directory is not writable, or --scan-output points at a location Forge cannot create."
+how  = "Choose a writable path with --scan-output=<path>, or fix the permissions of the target directory."
+docs = "https://forge.dev/e/SCN-0001"
+
 ["FORGE-INT-0001"]
 what = "An unexpected internal error occurred."
 why  = "This indicates a bug in Forge itself, not in your project."

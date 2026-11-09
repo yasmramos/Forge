@@ -51,6 +51,7 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
 | Resolved-config inspection | `cli/command/ConfigCommand.java` (`forge config`) |
 | Toolchain language + `[compile].args` | `core/Compiler.java` (`setToolchain`, `setCompilerArgs`) |
 | Import from Maven/Gradle (`forge import`) | `cli/command/ImportCommand.java`, `core/importer/` |
+| Build scan (`forge build --scan`) | `cli/command/BuildScanCommand.java`, `core/scan/BuildScanGenerator.java` |
 
 ## Non-obvious invariants
 
@@ -87,6 +88,11 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
   always parseable TOML. Repository keys are quoted: an unquoted dotted key
   (`jitpack.io`) parses as a nested table in TOML and would silently drop the
   repository.
+- **The build scan is self-contained and reproducible** (section 19). It writes
+  a single HTML file with inline CSS and no external assets, so it opens offline
+  and can be archived. Its timestamp comes from the same `SOURCE_DATE_EPOCH`
+  chain as the rest of the build, so two identical builds produce byte-identical
+  scans. Task names are HTML-escaped before rendering.
 - **Error codes are public API.** Add new ones to `cli/error/ErrorCode.java`
   with what/why/how/docs; never reuse or renumber a shipped code.
 
@@ -94,5 +100,6 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
 
 Sections 22 (resources), 23 (annotation processors), 8/8bis (variants), the
 `forge config` command, the `[toolchain].language` → `-source`/`-target`
-wiring, and `forge import` (section 14) are implemented and committed. Section
-10's command table is still missing `forge audit` and `forge build --scan`.
+wiring, `forge import` (section 14) and the local build scan `forge build
+--scan` (section 19, single-project builds) are implemented and committed.
+Section 10's command table is still missing `forge audit`.

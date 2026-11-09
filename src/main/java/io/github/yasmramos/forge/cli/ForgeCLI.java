@@ -330,6 +330,12 @@ public class ForgeCLI {
         if (!engine.getConfig().getModules().isEmpty()) {
             return executeMultiModuleBuild(engine, args);
         }
+        // A build scan (AGENT.md section 19) needs the task-graph report, which
+        // is the only path that records per-task timings. `forge build --scan`
+        // therefore runs the graph build and writes the report afterwards.
+        if (io.github.yasmramos.forge.cli.command.BuildScanCommand.isRequested(args)) {
+            return executeGraphBuild(engine, args, true);
+        }
         if (args.length > 1) {
             String buildType = args[1].toLowerCase();
             switch (buildType) {
@@ -342,27 +348,7 @@ public class ForgeCLI {
                 case "graph":
                     // Experimental: task-graph + content-cache pipeline
                     // (AGENT.md decisions 1 and 3). Opt-in until it becomes default.
-                    System.out.println("Running experimental task-graph build...");
-                    try {
-                        io.github.yasmramos.forge.core.graph.TaskScheduler.Report report =
-                            engine.buildWithTaskGraph();
-                        if (report.failed()) {
-                            System.err.println("Task-graph build FAILED. See the per-task"
-                                + " outcomes above for which task broke and why.");
-                            return 1;
-                        }
-                        System.out.println("Task-graph build OK: " + report.cacheHits()
-                            + " from cache, " + report.executed() + " executed.");
-                        return 0;
-                    } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
-                        // Structured errors render their own what/why/how block
-                        // (AGENT.md section 10bis); do not flatten them here.
-                        throw fe;
-                    } catch (Exception e) {
-                        throw new io.github.yasmramos.forge.cli.error.ForgeException(
-                            io.github.yasmramos.forge.cli.error.ErrorCode.INT_0001,
-                            e.getMessage(), e);
-                    }
+                    return executeGraphBuild(engine, args, false);
                 default:
                     throw new io.github.yasmramos.forge.cli.error.ForgeException(
                         io.github.yasmramos.forge.cli.error.ErrorCode.CFG_0002,
@@ -375,18 +361,65 @@ public class ForgeCLI {
     }
 
     /**
+     * Runs the task-graph build and, when requested, writes the HTML build scan
+     * (AGENT.md sections 3, 19). Shared by {@code forge build graph} and
+     * {@code forge build --scan} so both use the identical pipeline.
+     */
+    private int executeGraphBuild(ForgeEngine engine, String[] args, boolean writeScan) {
+        System.out.println("Running experimental task-graph build...");
+        try {
+            io.github.yasmramos.forge.core.graph.TaskScheduler.Report report =
+                engine.buildWithTaskGraph();
+            if (report.failed()) {
+                // A scan is most useful precisely when a build breaks, so write it
+                // before reporting failure.
+                if (writeScan) {
+                    io.github.yasmramos.forge.cli.command.BuildScanCommand.run(
+                        engine, report, args, System.out);
+                }
+                System.err.println("Task-graph build FAILED. See the per-task"
+                    + " outcomes above for which task broke and why.");
+                return 1;
+            }
+            System.out.println("Task-graph build OK: " + report.cacheHits()
+                + " from cache, " + report.executed() + " executed.");
+            if (writeScan) {
+                io.github.yasmramos.forge.cli.command.BuildScanCommand.run(
+                    engine, report, args, System.out);
+            }
+            return 0;
+        } catch (io.github.yasmramos.forge.cli.error.ForgeException fe) {
+            // Structured errors render their own what/why/how block
+            // (AGENT.md section 10bis); do not flatten them here.
+            throw fe;
+        } catch (Exception e) {
+            throw new io.github.yasmramos.forge.cli.error.ForgeException(
+                io.github.yasmramos.forge.cli.error.ErrorCode.INT_0001,
+                e.getMessage(), e);
+        }
+    }
+
+    /**
      * Drives a multi-module build (AGENT.md section 5). With no extra argument
      * every module is built; with {@code forge build <module>} only that module
      * and its transitive dependencies are built (a partial build). Modules are
      * ordered by their inter-module dependencies and built in parallel per level.
      */
     private int executeMultiModuleBuild(ForgeEngine engine, String[] args) {
+        // A build scan needs per-task timings, which the multi-module report does
+        // not carry yet (section 19). Say so explicitly instead of silently
+        // dropping the flag or misreading it as a module name.
+        if (io.github.yasmramos.forge.cli.command.BuildScanCommand.isRequested(args)) {
+            System.out.println("Note: --scan is not yet supported for multi-module builds; "
+                + "it records timings for single-project builds only (AGENT.md section 19).");
+        }
         String target = args.length > 1 ? args[1] : null;
         // Reserved build-type words keep their single-project meaning even in a
         // multi-module root, so `forge build graph` is never read as a module name.
         if (target != null && ("full".equalsIgnoreCase(target)
                 || "graph".equalsIgnoreCase(target)
-                || "incremental".equalsIgnoreCase(target))) {
+                || "incremental".equalsIgnoreCase(target)
+                || target.startsWith("--"))) {
             target = null;
         }
         io.github.yasmramos.forge.core.multimodule.MultiModuleBuilder builder =
@@ -532,6 +565,7 @@ public class ForgeCLI {
         System.out.println();
         System.out.println("Available Commands:");
         System.out.println("  build [module]            - Build the project (or one module of a multi-module project)");
+        System.out.println("  build --scan [--scan-output=<path>] - Task-graph build + local HTML build scan (section 19)");
         System.out.println("  lock refresh              - Regenerate forge.lock explicitly (never done by builds)");
         System.out.println("  update                    - Alias for 'lock refresh': update the lockfile consciously");
         System.out.println("  test [module]             - Compile and run tests without packaging");
