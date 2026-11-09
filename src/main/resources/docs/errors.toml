@@ -98,6 +98,54 @@ why  = "Bit-for-bit reproducibility is guaranteed for core tasks only; plugins a
 how  = "Report the behavior to the plugin author, or enable strict mode with [build] reproducible = 'strict' to fail instead of warn."
 docs = "https://forge.dev/e/RPR-0001"
 
+["FORGE-IMP-0001"]
+what = "No build file to import was found in the current directory."
+why  = "forge import reads pom.xml or build.gradle; neither exists here, so there is nothing to migrate (AGENT.md section 14)."
+how  = "Run 'forge import' in a project that has a pom.xml or build.gradle, or pass one explicitly: 'forge import <file>'."
+docs = "https://forge.dev/e/IMP-0001"
+
+["FORGE-IMP-0002"]
+what = "The build file to import is malformed and could not be parsed."
+why  = "The pom.xml or build.gradle does not contain the structure Forge expects, so a reliable forge.toml cannot be produced."
+how  = "Fix the reported XML/Gradle syntax error, or open an issue with the build file if it is valid for Maven/Gradle."
+docs = "https://forge.dev/e/IMP-0002"
+
+["FORGE-IMP-0003"]
+what = "forge.toml already exists in the target directory."
+why  = "Import never overwrites an existing configuration, because doing so would silently discard hand-written settings."
+how  = "Move or delete the existing forge.toml, choose another directory with --output, or review the import first with --dry-run."
+docs = "https://forge.dev/e/IMP-0003"
+
+["FORGE-SCN-0001"]
+what = "The build scan HTML report could not be written."
+why  = "The output directory is not writable, or --scan-output points at a location Forge cannot create."
+how  = "Choose a writable path with --scan-output=<path>, or fix the permissions of the target directory."
+docs = "https://forge.dev/e/SCN-0001"
+
+["FORGE-AUD-0001"]
+what = "No dependencies were found to audit."
+why  = "The resolved dependency graph is empty, so there is nothing to check against OSS Index."
+how  = "Declare dependencies in [dependencies] in forge.toml, then run 'forge audit' again."
+docs = "https://forge.dev/e/AUD-0001"
+
+["FORGE-AUD-0003"]
+what = "The configured OSS Index URL is invalid."
+why  = "The URL set in [build] audit_oss_index or FORGE_OSS_INDEX is empty, malformed, or does not use http/https."
+how  = "Fix the URL to a base like https://ossindex.sonatype.org, or remove it to use the default service."
+docs = "https://forge.dev/e/AUD-0003"
+
+["FORGE-AUD-0004"]
+what = "OSS Index returned a document that could not be understood."
+why  = "The service replied with a response that is not the expected JSON component report, or the response was corrupted."
+how  = "Retry; if it persists, the service may have changed its API - report the issue with the response body."
+docs = "https://forge.dev/e/AUD-0004"
+
+["FORGE-NET-0001"]
+what = "A remote service could not be reached."
+why  = "The network is unavailable, the service is down, or the request failed after all retries."
+how  = "Check your connectivity and the service URL, then retry; use 'forge audit --offline' to skip the vulnerability query entirely."
+docs = "https://forge.dev/e/NET-0001"
+
 ["FORGE-INT-0001"]
 what = "An unexpected internal error occurred."
 why  = "This indicates a bug in Forge itself, not in your project."

@@ -50,6 +50,10 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
 | Config variants (8/8bis) | `utils/ConfigReader.java` (`parseConfig(root, props, variant)`) |
 | Resolved-config inspection | `cli/command/ConfigCommand.java` (`forge config`) |
 | Toolchain language + `[compile].args` | `core/Compiler.java` (`setToolchain`, `setCompilerArgs`) |
+| Import from Maven/Gradle (`forge import`) | `cli/command/ImportCommand.java`, `core/importer/` |
+| Build scan (`forge build --scan`) | `cli/command/BuildScanCommand.java`, `core/scan/BuildScanGenerator.java` |
+| Vulnerability audit (`forge audit`) | `cli/command/AuditCommand.java`, `core/audit/OssIndexClient.java` |
+| Minimal JSON reader (audit) | `core/audit/Json.java` |
 
 ## Non-obvious invariants
 
@@ -78,12 +82,36 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
   toolchain leaves javac's default (the running JDK) untouched. `[compile].args`
   is a declared task input, so changing it re-runs the compile instead of
   restoring a stale cached output (section 3).
+- **`forge import` never overwrites and never invents data** (section 14).
+  It refuses to touch an existing `forge.toml` (`FORGE-IMP-0003`), parses XML
+  without fetching external DTDs, and turns anything it cannot translate into a
+  visible `TODO` instead of a guess. A dependency without a declared version is
+  emitted commented out, never given a made-up version, so the generated file is
+  always parseable TOML. Repository keys are quoted: an unquoted dotted key
+  (`jitpack.io`) parses as a nested table in TOML and would silently drop the
+  repository.
+- **The build scan is self-contained and reproducible** (section 19). It writes
+  a single HTML file with inline CSS and no external assets, so it opens offline
+  and can be archived. Its timestamp comes from the same `SOURCE_DATE_EPOCH`
+  chain as the rest of the build, so two identical builds produce byte-identical
+  scans. Task names are HTML-escaped before rendering.
+- **`forge audit` is optional, off the build path, and never lies** (section 18).
+  It scans the *resolved* graph (same graph as `forge tree`/`why`), so its
+  answers cannot disagree with resolution. An unreachable service is a
+  structured `FORGE-NET-0001` (exit 2, environment), never a silently clean
+  report; `--offline` is the explicit opt-out. Its exit code gates CI: non-zero
+  when a finding is at or above `[build] audit_fail_on` (default `high`, `none`
+  never fails). The OSS Index client batches at the API limit (128), retries
+  with backoff, and reads responses with the hand-written `core/audit/Json`
+  reader because Forge ships no JSON library.
 - **Error codes are public API.** Add new ones to `cli/error/ErrorCode.java`
   with what/why/how/docs; never reuse or renumber a shipped code.
 
 ## Current state
 
 Sections 22 (resources), 23 (annotation processors), 8/8bis (variants), the
-`forge config` command and the `[toolchain].language` → `-source`/`-target`
-wiring are implemented and committed. Section 10's command table is still
-missing `forge import`, `forge audit` and `forge build --scan`.
+`forge config` command, the `[toolchain].language` → `-source`/`-target`
+wiring, `forge import` (section 14), the local build scan `forge build --scan`
+(section 19, single-project builds) and the vulnerability audit `forge audit`
+(section 18) are implemented and committed. Section 10's command table is
+complete.

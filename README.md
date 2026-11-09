@@ -150,6 +150,8 @@ Supported `[build]` keys (snake_case):
 | `remote_cache` | string | unset | Base URL of a remote build cache; also settable via `FORGE_REMOTE_CACHE` |
 | `reproducible` | string | `warn` | Reproducibility policy for plugins: `warn`, `strict`, or `off` |
 | `resource_filtering` | boolean | `false` | Opt-in `${...}` substitution in resources; off by default so binary files are never corrupted |
+| `audit_oss_index` | string | unset | Base URL of the OSS Index service for `forge audit`; also settable via `FORGE_OSS_INDEX` |
+| `audit_fail_on` | string | `high` | Lowest severity that makes `forge audit` exit non-zero: `none`, `low`, `medium`, `high`, `critical` |
 
 Resources declared under `[source.main].resources` (or the conventional
 `src/main/resources`) are copied into the compiled-classes directory and thus
@@ -349,6 +351,10 @@ forge config --show-resolved awesome.app
 forge sbom
 forge sbom --output=build/bom.json
 
+# Scan dependencies for known vulnerabilities (OSS Index); exit 1 on findings
+forge audit
+forge audit --offline      # skip the query, check nothing, exit 0
+
 # Stage release artifacts (POM, Gradle Module Metadata, jars, SBOM)
 forge publish
 forge publish --skip-build
@@ -369,6 +375,15 @@ forge build incremental
 
 # Show version and configuration
 forge info
+
+# Migrate from Maven or Gradle: generate forge.toml from an existing build file
+forge import
+forge import --dry-run
+forge import path/to/pom.xml --output=forge.toml
+
+# Task-graph build with a local HTML build scan (timeline, cache hits, bottlenecks)
+forge build --scan
+forge build --scan --scan-output=reports/scan.html
 ```
 
 ### Programmatic Usage
@@ -415,6 +430,48 @@ config.setBuildSettings(settings);
 ForgeEngine engine = new ForgeEngine(config);
 engine.build();
 ```
+
+### Build Scans
+
+`forge build --scan` runs the task-graph build and writes a self-contained HTML
+report to `target/build-scan.html`: a timeline of every task, its duration,
+whether it executed or came from the cache, and the bottlenecks. No server is
+involved — the file opens in a browser and can be archived as a build artifact.
+It is the Gradle Enterprise feature, free and local.
+
+```bash
+forge build --scan                              # write target/build-scan.html
+forge build --scan --scan-output=reports/scan.html
+```
+
+The timestamp follows the same `SOURCE_DATE_EPOCH` chain as the rest of the
+build (AGENT.md section 17), so two identical builds produce byte-identical
+scans. Build scans currently cover single-project builds; multi-module roots
+print a notice and skip the report.
+
+### Vulnerability Audit
+
+`forge audit` queries [OSS Index](https://ossindex.sonatype.org) for known
+vulnerabilities in the **resolved** dependency graph — the same graph
+`forge tree` and `forge why` report, so the answers cannot disagree.
+
+```bash
+forge audit              # scan and report; exit 1 if a finding meets the threshold
+forge audit --offline    # skip the query entirely (checks nothing, exit 0)
+```
+
+Findings are grouped by severity (CVSS v3 bands) and the exit code makes the
+command a CI gate: it is non-zero when a vulnerability at or above
+`[build] audit_fail_on` is found (default `high`; `none` never fails). The scan
+is optional and never on the build path — a build does not depend on the
+service being up.
+
+The OSS Index service is external. When it cannot be reached, Forge fails with
+`FORGE-NET-0001` (exit 2, environment) rather than reporting a falsely clean
+result; `--offline` is the explicit opt-out. Point at a mirror or an air-gapped
+proxy with `[build] audit_oss_index` or the `FORGE_OSS_INDEX` environment
+variable. Credentials, when the service requires them, come from the
+`FORGE_OSS_INDEX_USER` and `FORGE_OSS_INDEX_TOKEN` environment variables.
 
 ### Multi-Module Projects
 

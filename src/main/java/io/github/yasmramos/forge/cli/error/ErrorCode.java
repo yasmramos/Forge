@@ -18,7 +18,7 @@ import com.electronwill.nightconfig.toml.TomlParser;
  * prefixes: CFG (config), DEP (resolution), LCK (lockfile), TSK (graph and
  * tasks), PLG (plugins), NET (network), CCH (cache), VRT (variants),
  * RUN (process execution), RPR (reproducibility), MMD (multi-module),
- * PUB (publishing), INT (internal bugs).
+ * PUB (publishing), IMP (import/migration), INT (internal bugs).
  *
  * <p>A shipped code is public API: it is never reused or renumbered. The
  * catalog lives in {@code docs/errors.toml} inside the jar resources so tests
@@ -278,6 +278,54 @@ public final class ErrorCode {
         "The file exists but is not valid TOML, or a repository entry is missing username/password.",
         "Fix the TOML in ~/.forge/credentials.toml; each repository needs username and password keys.",
         "https://forge.dev/e/PUB-0007");
+
+    // --- Import / migration (IMP) ---
+    public static final Entry IMP_0001 = register("FORGE-IMP-0001",
+        "No build file to import was found in the current directory.",
+        "forge import reads pom.xml or build.gradle; neither exists here, so there is nothing to migrate (AGENT.md section 14).",
+        "Run 'forge import' in a project that has a pom.xml or build.gradle, or pass one explicitly: 'forge import <file>'.",
+        "https://forge.dev/e/IMP-0001");
+    public static final Entry IMP_0002 = register("FORGE-IMP-0002",
+        "The build file to import is malformed and could not be parsed.",
+        "The pom.xml or build.gradle does not contain the structure Forge expects, so a reliable forge.toml cannot be produced.",
+        "Fix the reported XML/Gradle syntax error, or open an issue with the build file if it is valid for Maven/Gradle.",
+        "https://forge.dev/e/IMP-0002");
+    public static final Entry IMP_0003 = register("FORGE-IMP-0003",
+        "forge.toml already exists in the target directory.",
+        "Import never overwrites an existing configuration, because doing so would silently discard hand-written settings.",
+        "Move or delete the existing forge.toml, choose another directory with --output, or review the import first with --dry-run.",
+        "https://forge.dev/e/IMP-0003");
+
+    // --- Audit (AUD) ---
+    public static final Entry AUD_0001 = register("FORGE-AUD-0001",
+        "No dependencies were found to audit.",
+        "The resolved dependency graph is empty, so there is nothing to check against OSS Index.",
+        "Declare dependencies in [dependencies] in forge.toml, then run 'forge audit' again.",
+        "https://forge.dev/e/AUD-0001");
+    public static final Entry AUD_0003 = register("FORGE-AUD-0003",
+        "The configured OSS Index URL is invalid.",
+        "The URL set in [build] audit_oss_index or FORGE_OSS_INDEX is empty, malformed, or does not use http/https.",
+        "Fix the URL to a base like https://ossindex.sonatype.org, or remove it to use the default service.",
+        "https://forge.dev/e/AUD-0003");
+    public static final Entry AUD_0004 = register("FORGE-AUD-0004",
+        "OSS Index returned a document that could not be understood.",
+        "The service replied with a response that is not the expected JSON component report, or the response was corrupted.",
+        "Retry; if it persists, the service may have changed its API - report the issue with the response body.",
+        "https://forge.dev/e/AUD-0004");
+
+    // --- Network (NET) ---
+    public static final Entry NET_0001 = register("FORGE-NET-0001",
+        "A remote service could not be reached.",
+        "The network is unavailable, the service is down, or the request failed after all retries.",
+        "Check your connectivity and the service URL, then retry; use 'forge audit --offline' to skip the vulnerability query entirely.",
+        "https://forge.dev/e/NET-0001");
+
+    // --- Build scan (SCN) ---
+    public static final Entry SCN_0001 = register("FORGE-SCN-0001",
+        "The build scan HTML report could not be written.",
+        "The output directory is not writable, or --scan-output points at a location Forge cannot create.",
+        "Choose a writable path with --scan-output=<path>, or fix the permissions of the target directory.",
+        "https://forge.dev/e/SCN-0001");
 
     // --- Internal (INT) ---
     public static final Entry INT_0001 = register("FORGE-INT-0001",

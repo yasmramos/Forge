@@ -382,6 +382,20 @@ public class ConfigReader {
             if (build.contains("resource_filtering")) {
                 settings.setResourceFiltering(bool(build.get("resource_filtering")));
             }
+            // [build] audit_oss_index / audit_fail_on drive `forge audit`
+            // (AGENT.md section 18). The URL is also overridable by the
+            // FORGE_OSS_INDEX environment variable (section 24).
+            if (build.contains("audit_oss_index")) {
+                settings.setAuditOssIndexUrl(expand(build.get("audit_oss_index"), properties));
+            }
+            if (build.contains("audit_fail_on")) {
+                settings.setAuditFailOn(expand(build.get("audit_fail_on"), properties));
+            }
+        }
+
+        String envOssIndex = System.getenv("FORGE_OSS_INDEX");
+        if (envOssIndex != null && !envOssIndex.trim().isEmpty()) {
+            settings.setAuditOssIndexUrl(envOssIndex.trim());
         }
 
         // FORGE_REMOTE_CACHE overrides the URL from forge.toml so CI can point
