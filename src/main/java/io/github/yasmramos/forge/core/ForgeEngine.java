@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  * Handles compilation, dependency resolution, and build orchestration
  */
 public class ForgeEngine {
-    
+
     private final Logger logger = LoggerFactory.getLogger(ForgeEngine.class);
     private final ProjectConfig config;
     private final ForgeCache cache;
@@ -56,7 +56,7 @@ public class ForgeEngine {
     public File getProjectRoot() {
         return projectRoot;
     }
-    
+
     public ForgeEngine(ProjectConfig config) {
         this(config, new File(System.getProperty("user.dir")));
     }
@@ -91,13 +91,13 @@ public class ForgeEngine {
         this.compiler.setCompilerArgs(config.getCompilerArgs());
         this.analyzer = new BuildAnalyzer();
     }
-    
+
     /**
      * Execute full build process
      */
     public BuildResult build() {
         logger.info("Starting Forge build for project: " + config.getName());
-        
+
         try {
             // Lock enforcement (AGENT.md section 7bis): a normal build never
             // re-resolves dependencies. If forge.lock exists it must match the
@@ -111,14 +111,14 @@ public class ForgeEngine {
             // Phase 1: Analyze project structure
             logger.info("Analyzing project structure...");
             ProjectAnalysis analysis = analyzer.analyzeProject(config);
-            
+
             // Phase 2: Resolve dependencies through Maven Resolver (Aether).
             // AGENT.md section 2: never reimplement resolution; the same engine
             // that produced forge.lock resolves the compile classpath here.
             DependencyResolution dependencyResult = resolveWithAether();
             logger.info("Resolved " + dependencyResult.getSuccessCount()
                 + " artifact(s) via Maven Resolver");
-            
+
             // Phase 3: Compile sources
             logger.info("Compiling sources...");
             CompilationResult compilationResult = compileSources(analysis, dependencyResult);
@@ -156,7 +156,7 @@ public class ForgeEngine {
             shutdown();
         }
     }
-    
+
     /**
      * Test-only pipeline (AGENT.md section 10, {@code forge test}): compile the
      * main sources, then compile and run the tests, without packaging. Shares the
@@ -240,7 +240,7 @@ public class ForgeEngine {
             shutdown();
         }
     }
-    
+
     /**
      * Experimental task-graph build (AGENT.md decisions 1 and 3): the whole
      * graph is built and validated up front ("configure time"), so any bad
@@ -418,7 +418,7 @@ public class ForgeEngine {
      */
     public void clean() {
         logger.info("Cleaning build artifacts...");
-        
+
         try {
             {
                 // Only remove build outputs: the compiled-classes directory
@@ -441,15 +441,15 @@ public class ForgeEngine {
                         });
                 }
             }
-            
+
             cache.clear();
             logger.info("Clean completed");
-            
+
         } catch (Exception e) {
             logger.error("Clean failed", e);
         }
     }
-    
+
     /**
      * Copies declared resources into the compiled-classes directory
      * (AGENT.md section 22). Filtering is opt-in; an unchanged resource is left
@@ -504,7 +504,7 @@ public class ForgeEngine {
         return props;
     }
 
-    private CompilationResult compileSources(ProjectAnalysis analysis, 
+    private CompilationResult compileSources(ProjectAnalysis analysis,
                                            DependencyResolution dependencyResult) {
         List<Path> sourceFiles = analysis.getSourceFiles();
 
@@ -568,33 +568,33 @@ public class ForgeEngine {
 
     private PackageResult packageArtifacts(CompilationResult compilationResult) {
         logger.info("Packaging compiled artifacts...");
-        
+
         try {
             // Create output directory based on project configuration
             Path outputDir = resolveBuildBaseDir().resolve("forge-output");
             Files.createDirectories(outputDir);
-            
+
             int artifactCount = 0;
-            
+
             // Package main JAR
             Path mainJar = packageMainJar(outputDir);
             if (mainJar != null) {
                 artifactCount++;
                 logger.info("Main JAR packaged: " + mainJar);
             }
-            
+
             // Package additional artifacts (sources, javadoc, etc.)
             artifactCount += packageAdditionalArtifacts(outputDir);
-            
+
             logger.info("Packaging complete: " + artifactCount + " artifacts created");
             return new PackageResult(true, "jar", artifactCount);
-            
+
         } catch (Exception e) {
             logger.error("Packaging failed", e);
             return new PackageResult(false, "jar", 0);
         }
     }
-    
+
     private Path packageMainJar(Path outputDir) {
         try {
             Path classesDir = resolveClassesDir();
@@ -624,10 +624,10 @@ public class ForgeEngine {
         return io.github.yasmramos.forge.core.packageinfo.ReproducibleBuild.epochSeconds(
             projectRoot, config.getBuildSettings().getReproducibleTimestamp());
     }
-    
+
     private int packageAdditionalArtifacts(Path outputDir) {
         int count = 0;
-        
+
         try {
             // Create sources JAR if source files exist (honoring configured source directory)
             Path sourcesDir = resolveSourceDir();
@@ -637,19 +637,19 @@ public class ForgeEngine {
                     count++;
                 }
             }
-            
+
             // Create javadoc JAR if documentation exists
             if (generateJavadoc(outputDir)) {
                 count++;
             }
-            
+
         } catch (Exception e) {
             logger.error("Error creating additional artifacts", e);
         }
-        
+
         return count;
     }
-    
+
     private boolean createSourcesJar(Path sourcesDir, Path jarFile) {
         try {
             io.github.yasmramos.forge.core.packageinfo.JarWriter.writeDirectory(
@@ -660,47 +660,47 @@ public class ForgeEngine {
             return false;
         }
     }
-    
+
     private boolean generateJavadoc(Path outputDir) {
         try {
             Path docDir = outputDir.resolve("javadoc");
             Files.createDirectories(docDir);
-            
+
             // Generate javadoc for main sources (honoring configured source directory)
             Path sourcesDir = resolveSourceDir();
             if (!Files.exists(sourcesDir)) {
                 return false;
             }
-            
+
             ProcessBuilder pb = new ProcessBuilder(
-                "javadoc", "-quiet", "-d", docDir.toString(), 
+                "javadoc", "-quiet", "-d", docDir.toString(),
                 "-sourcepath", sourcesDir.toString(),
                 "-subpackages", "io.github.yasmramos.forge"
             );
-            
+
             Process process = pb.start();
             int exitCode = process.waitFor();
-            
+
             if (exitCode == 0) {
                 // Create JAR from javadoc
                 Path javadocJar = outputDir.resolve("forge-javadoc.jar");
                 ProcessBuilder jarPb = new ProcessBuilder(
                     "jar", "cf", javadocJar.toString(), "-C", docDir.toString(), "."
                 );
-                
+
                 Process jarProcess = jarPb.start();
                 int jarExitCode = jarProcess.waitFor();
-                
+
                 return jarExitCode == 0;
             }
-            
+
             return false;
         } catch (Exception e) {
             logger.error("Error generating javadoc", e);
             return false;
         }
     }
-    
+
     private TestResult executeTests(PackageResult packageResult) {
         logger.info("Running tests...");
         io.github.yasmramos.forge.core.test.TestExecutor.Result result =
@@ -709,56 +709,66 @@ public class ForgeEngine {
                 resolveBuildBaseDir().resolve("test-classes"));
         logger.info("Test execution complete: " + (result.isSuccess() ? "all tests passed"
             : "tests failed"));
-        return new TestResult(result.isSuccess(), result.getTotal(), result.getPassed());
+        if (result.isSelected() && result.getSkipped() > 0) {
+            logger.info("Selective execution: ran " + result.getTotal()
+                + " test class(es), skipped " + result.getSkipped()
+                + " unaffected (AGENT.md section 21)");
+        }
+        for (String flaky : result.getFlaky()) {
+            logger.warn("Flaky test passed on retry: " + flaky
+                + " (AGENT.md section 21; investigate the nondeterminism)");
+        }
+        return new TestResult(result.isSuccess(), result.getTotal(), result.getPassed(),
+            result.getSkipped(), result.isSelected(), result.getFlaky());
     }
-    
+
     private boolean runSingleTest(Path testFile) {
         try {
             // Simple test execution - compile and run if it has a main method
             String fileName = testFile.getFileName().toString();
             String className = fileName.substring(0, fileName.length() - 5); // Remove .java
-            
+
             logger.debug("Running test: " + className);
-            
+
             // Check if test has a main method
             String content = Files.readString(testFile);
             if (!content.contains("public static void main")) {
                 logger.debug("Skipping test (no main method): " + className);
                 return true; // Skip tests without main method
             }
-            
+
             // Compile test (classpath derived from configured output directory)
             String testClasspath = buildTestCompileClasspath();
             ProcessBuilder compilePb = new ProcessBuilder(
                 "javac", "-cp", testClasspath,
                 testFile.toString()
             );
-            
+
             Process compileProcess = compilePb.start();
             int compileExit = compileProcess.waitFor();
-            
+
             if (compileExit != 0) {
                 logger.error("Test compilation failed: " + className);
                 return false;
             }
-            
+
             // Run test
             ProcessBuilder runPb = new ProcessBuilder(
                 "java", "-cp", testClasspath + File.pathSeparator + ".",
                 className
             );
-            
+
             Process runProcess = runPb.start();
             int runExit = runProcess.waitFor();
-            
+
             return runExit == 0;
-            
+
         } catch (Exception e) {
             logger.error("Error running test: " + testFile, e);
             return false;
         }
     }
-    
+
     /**
      * Build the classpath used for compiling and running tests,
      * based on the configured output directory.
@@ -783,7 +793,7 @@ public class ForgeEngine {
             Thread.currentThread().interrupt();
         }
     }
-    
+
     // Result classes
     public static class BuildResult {
         private final boolean success;
@@ -816,20 +826,38 @@ public class ForgeEngine {
         public io.github.yasmramos.forge.cli.error.ForgeException getError() { return error; }
     }
 
-    
+
     public static class TestResult {
         private final boolean success;
         private final int totalTests;
         private final int passedTests;
-        
+        private final int skippedTests;
+        private final boolean selective;
+        private final List<String> flaky;
+
         public TestResult(boolean success, int totalTests, int passedTests) {
+            this(success, totalTests, passedTests, 0, false,
+                java.util.Collections.emptyList());
+        }
+
+        public TestResult(boolean success, int totalTests, int passedTests, int skippedTests,
+                          boolean selective, List<String> flaky) {
             this.success = success;
             this.totalTests = totalTests;
             this.passedTests = passedTests;
+            this.skippedTests = skippedTests;
+            this.selective = selective;
+            this.flaky = flaky == null ? java.util.Collections.emptyList() : flaky;
         }
-        
+
         public boolean isSuccess() { return success; }
         public int getTotalTests() { return totalTests; }
         public int getPassedTests() { return passedTests; }
+        /** Test classes not run because a change could not reach them (section 21). */
+        public int getSkippedTests() { return skippedTests; }
+        /** True when selective execution narrowed the set (section 21). */
+        public boolean isSelective() { return selective; }
+        /** Classes that failed then passed on retry (section 21). */
+        public List<String> getFlaky() { return flaky; }
     }
 }

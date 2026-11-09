@@ -408,4 +408,37 @@ class ConfigReaderTest {
         assertEquals("com.example:awesome@prod",
             ConfigReader.parseConfig(root, null, "prod").getCacheScopeId());
     }
+
+    @Test
+    void testSectionDefaultsAreOff() {
+        // Both [test] behaviours are opt-in: with no section, nothing changes.
+        ProjectConfig config = ConfigReader.parseConfig(Config.inMemory());
+        assertFalse(config.getTestSettings().isSelective());
+        assertEquals(0, config.getTestSettings().getRetryFailed());
+    }
+
+    @Test
+    void testSectionIsParsed() {
+        Config root = Config.inMemory();
+        root.set("test", Config.inMemory());
+        root.set(java.util.Arrays.asList("test", "selective"), true);
+        root.set(java.util.Arrays.asList("test", "retry_failed"), 2);
+
+        ProjectConfig config = ConfigReader.parseConfig(root);
+
+        assertTrue(config.getTestSettings().isSelective());
+        assertEquals(2, config.getTestSettings().getRetryFailed());
+    }
+
+    @Test
+    void retryFailedIsNeverNegative() {
+        Config root = Config.inMemory();
+        root.set("test", Config.inMemory());
+        root.set(java.util.Arrays.asList("test", "retry_failed"), -5);
+
+        ProjectConfig config = ConfigReader.parseConfig(root);
+
+        assertEquals(0, config.getTestSettings().getRetryFailed(),
+            "a negative retry count is clamped to zero");
+    }
 }
