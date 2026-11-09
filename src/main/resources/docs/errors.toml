@@ -146,6 +146,18 @@ why  = "The network is unavailable, the service is down, or the request failed a
 how  = "Check your connectivity and the service URL, then retry; use 'forge audit --offline' to skip the vulnerability query entirely."
 docs = "https://forge.dev/e/NET-0001"
 
+["FORGE-IDE-0001"]
+what = "An IDE project file could not be written."
+why  = "The project directory is not writable, or an IDE model path could not be created."
+how  = "Check write permissions on the project directory, close the IDE if it locks the files, then retry."
+docs = "https://forge.dev/e/IDE-0001"
+
+["FORGE-IDE-0002"]
+what = "The requested IDE target is not recognized."
+why  = "forge ide --ide=<name> only accepts intellij, eclipse, vscode or all."
+how  = "Run 'forge ide --ide=intellij' (or eclipse/vscode/all), or omit --ide to export every model."
+docs = "https://forge.dev/e/IDE-0002"
+
 ["FORGE-INT-0001"]
 what = "An unexpected internal error occurred."
 why  = "This indicates a bug in Forge itself, not in your project."

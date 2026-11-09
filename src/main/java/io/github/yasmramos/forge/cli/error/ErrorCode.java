@@ -327,6 +327,18 @@ public final class ErrorCode {
         "Choose a writable path with --scan-output=<path>, or fix the permissions of the target directory.",
         "https://forge.dev/e/SCN-0001");
 
+    // --- IDE integration (IDE) ---
+    public static final Entry IDE_0001 = register("FORGE-IDE-0001",
+        "An IDE project file could not be written.",
+        "The project directory is not writable, or an IDE model path could not be created.",
+        "Check write permissions on the project directory, close the IDE if it locks the files, then retry.",
+        "https://forge.dev/e/IDE-0001");
+    public static final Entry IDE_0002 = register("FORGE-IDE-0002",
+        "The requested IDE target is not recognized.",
+        "forge ide --ide=<name> only accepts intellij, eclipse, vscode or all.",
+        "Run 'forge ide --ide=intellij' (or eclipse/vscode/all), or omit --ide to export every model.",
+        "https://forge.dev/e/IDE-0002");
+
     // --- Internal (INT) ---
     public static final Entry INT_0001 = register("FORGE-INT-0001",
         "An unexpected internal error occurred.",

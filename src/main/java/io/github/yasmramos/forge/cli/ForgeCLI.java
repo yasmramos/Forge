@@ -113,6 +113,11 @@ public class ForgeCLI {
                     // resolved graph against OSS Index. Never on the build path.
                     return io.github.yasmramos.forge.cli.command.AuditCommand.run(
                         requireEngine(engine), tail(args), System.out);
+                case "ide":
+                    // AGENT.md section 13 (phase 1): export the resolved project
+                    // model to IntelliJ, Eclipse and VS Code.
+                    return io.github.yasmramos.forge.cli.command.IdeCommand.run(
+                        requireEngine(engine), tail(args), System.out);
                 case "publish":
                     return io.github.yasmramos.forge.cli.command.PublishCommand.run(
                         requireEngine(engine), tail(args), System.out);
@@ -583,6 +588,7 @@ public class ForgeCLI {
         System.out.println("  config [--show-resolved <module>] - Show the resolved configuration (base + variant + inheritance)");
         System.out.println("  sbom [--output=<path>]    - Generate a CycloneDX SBOM (default target/sbom.json)");
         System.out.println("  audit [--offline]         - Scan dependencies for known vulnerabilities (OSS Index)");
+        System.out.println("  ide [--ide=<name>] [--dry-run] - Export the project model to IntelliJ/Eclipse/VS Code");
         System.out.println("  publish [--skip-build] [--upload] - Stage (and optionally upload) release artifacts");
         System.out.println("  run [module] [-- args...] - Execute the [exec] main class (program owns stdout)");
         System.out.println("  clean                     - Clean build artifacts");

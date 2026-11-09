@@ -8,7 +8,7 @@ test and extend the repository. Read both before changing anything.
 
 ```bash
 mvn -q package -DskipTests        # produces target/forge-1.0.0-SNAPSHOT.jar
-mvn test                          # full suite (323 tests as of section 23)
+mvn test                          # full suite (398 tests as of section 13 phase 1)
 ./bin/forge build                 # run the CLI from the repo (needs the jar above)
 ```
 
@@ -54,6 +54,7 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
 | Build scan (`forge build --scan`) | `cli/command/BuildScanCommand.java`, `core/scan/BuildScanGenerator.java` |
 | Vulnerability audit (`forge audit`) | `cli/command/AuditCommand.java`, `core/audit/OssIndexClient.java` |
 | Minimal JSON reader (audit) | `core/audit/Json.java` |
+| IDE export (`forge ide`, phase 1) | `cli/command/IdeCommand.java`, `core/ide/` |
 
 ## Non-obvious invariants
 
@@ -104,6 +105,16 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
   never fails). The OSS Index client batches at the API limit (128), retries
   with backoff, and reads responses with the hand-written `core/audit/Json`
   reader because Forge ships no JSON library.
+- **`forge ide` is a one-way export, derived from the build model** (section 13,
+  phase 1). It writes the IntelliJ/Eclipse/VS Code files from the *same*
+  configuration and Aether-resolved classpath the compiler uses, so the IDE
+  classpath cannot drift from the build classpath. Forge never reads these files
+  back: the model is refreshed by re-running the command, never by editing the
+  generated files. Source/resource roots are project-relative (portable, section
+  17); library paths are absolute (IDEs reference jars by location). The test
+  scope lists only libraries *not already* on the compile scope, so no jar is
+  emitted twice. Generators are pure (`core/ide/IdeGenerators`) and the command
+  is a thin writer, so the models are unit-tested without a filesystem.
 - **Error codes are public API.** Add new ones to `cli/error/ErrorCode.java`
   with what/why/how/docs; never reuse or renumber a shipped code.
 
@@ -112,6 +123,7 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
 Sections 22 (resources), 23 (annotation processors), 8/8bis (variants), the
 `forge config` command, the `[toolchain].language` → `-source`/`-target`
 wiring, `forge import` (section 14), the local build scan `forge build --scan`
-(section 19, single-project builds) and the vulnerability audit `forge audit`
-(section 18) are implemented and committed. Section 10's command table is
-complete.
+(section 19, single-project builds), the vulnerability audit `forge audit`
+(section 18) and IDE integration phase 1 `forge ide` (section 13: IntelliJ,
+Eclipse and VS Code models) are implemented and committed. Section 10's command
+table is complete.
