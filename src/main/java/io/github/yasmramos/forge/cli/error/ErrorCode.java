@@ -18,7 +18,7 @@ import com.electronwill.nightconfig.toml.TomlParser;
  * prefixes: CFG (config), DEP (resolution), LCK (lockfile), TSK (graph and
  * tasks), PLG (plugins), NET (network), CCH (cache), VRT (variants),
  * RUN (process execution), RPR (reproducibility), MMD (multi-module),
- * PUB (publishing), INT (internal bugs).
+ * PUB (publishing), IMP (import/migration), INT (internal bugs).
  *
  * <p>A shipped code is public API: it is never reused or renumbered. The
  * catalog lives in {@code docs/errors.toml} inside the jar resources so tests
@@ -278,6 +278,23 @@ public final class ErrorCode {
         "The file exists but is not valid TOML, or a repository entry is missing username/password.",
         "Fix the TOML in ~/.forge/credentials.toml; each repository needs username and password keys.",
         "https://forge.dev/e/PUB-0007");
+
+    // --- Import / migration (IMP) ---
+    public static final Entry IMP_0001 = register("FORGE-IMP-0001",
+        "No build file to import was found in the current directory.",
+        "forge import reads pom.xml or build.gradle; neither exists here, so there is nothing to migrate (AGENT.md section 14).",
+        "Run 'forge import' in a project that has a pom.xml or build.gradle, or pass one explicitly: 'forge import <file>'.",
+        "https://forge.dev/e/IMP-0001");
+    public static final Entry IMP_0002 = register("FORGE-IMP-0002",
+        "The build file to import is malformed and could not be parsed.",
+        "The pom.xml or build.gradle does not contain the structure Forge expects, so a reliable forge.toml cannot be produced.",
+        "Fix the reported XML/Gradle syntax error, or open an issue with the build file if it is valid for Maven/Gradle.",
+        "https://forge.dev/e/IMP-0002");
+    public static final Entry IMP_0003 = register("FORGE-IMP-0003",
+        "forge.toml already exists in the target directory.",
+        "Import never overwrites an existing configuration, because doing so would silently discard hand-written settings.",
+        "Move or delete the existing forge.toml, choose another directory with --output, or review the import first with --dry-run.",
+        "https://forge.dev/e/IMP-0003");
 
     // --- Internal (INT) ---
     public static final Entry INT_0001 = register("FORGE-INT-0001",

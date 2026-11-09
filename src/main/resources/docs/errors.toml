@@ -98,6 +98,24 @@ why  = "Bit-for-bit reproducibility is guaranteed for core tasks only; plugins a
 how  = "Report the behavior to the plugin author, or enable strict mode with [build] reproducible = 'strict' to fail instead of warn."
 docs = "https://forge.dev/e/RPR-0001"
 
+["FORGE-IMP-0001"]
+what = "No build file to import was found in the current directory."
+why  = "forge import reads pom.xml or build.gradle; neither exists here, so there is nothing to migrate (AGENT.md section 14)."
+how  = "Run 'forge import' in a project that has a pom.xml or build.gradle, or pass one explicitly: 'forge import <file>'."
+docs = "https://forge.dev/e/IMP-0001"
+
+["FORGE-IMP-0002"]
+what = "The build file to import is malformed and could not be parsed."
+why  = "The pom.xml or build.gradle does not contain the structure Forge expects, so a reliable forge.toml cannot be produced."
+how  = "Fix the reported XML/Gradle syntax error, or open an issue with the build file if it is valid for Maven/Gradle."
+docs = "https://forge.dev/e/IMP-0002"
+
+["FORGE-IMP-0003"]
+what = "forge.toml already exists in the target directory."
+why  = "Import never overwrites an existing configuration, because doing so would silently discard hand-written settings."
+how  = "Move or delete the existing forge.toml, choose another directory with --output, or review the import first with --dry-run."
+docs = "https://forge.dev/e/IMP-0003"
+
 ["FORGE-INT-0001"]
 what = "An unexpected internal error occurred."
 why  = "This indicates a bug in Forge itself, not in your project."

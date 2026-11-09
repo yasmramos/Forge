@@ -369,6 +369,11 @@ forge build incremental
 
 # Show version and configuration
 forge info
+
+# Migrate from Maven or Gradle: generate forge.toml from an existing build file
+forge import
+forge import --dry-run
+forge import path/to/pom.xml --output=forge.toml
 ```
 
 ### Programmatic Usage

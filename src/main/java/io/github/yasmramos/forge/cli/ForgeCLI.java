@@ -60,6 +60,12 @@ public class ForgeCLI {
                 case "init":
                     initializeProject();
                     return 0;
+                case "import":
+                    // AGENT.md section 14: generate forge.toml from pom.xml or
+                    // build.gradle. Runs outside a project on purpose - the point
+                    // is that no forge.toml exists yet.
+                    return io.github.yasmramos.forge.cli.command.ImportCommand.run(
+                        tail(args), System.out);
                 case "info":
                     showInfo();
                     return 0;
@@ -302,6 +308,10 @@ public class ForgeCLI {
             case "init":
                 initializeProject();
                 break;
+            case "import":
+                io.github.yasmramos.forge.cli.command.ImportCommand.run(
+                    java.util.Arrays.copyOfRange(parts, 1, parts.length), System.out);
+                break;
             case "info":
                 showInfo();
                 break;
@@ -537,6 +547,7 @@ public class ForgeCLI {
         System.out.println("  run [module] [-- args...] - Execute the [exec] main class (program owns stdout)");
         System.out.println("  clean                     - Clean build artifacts");
         System.out.println("  init                      - Initialize new project");
+        System.out.println("  import [file] [--output=<path>] [--dry-run] - Generate forge.toml from pom.xml or build.gradle");
         System.out.println("  info                      - Show system information");
         System.out.println("  help                      - Show this help");
         System.out.println("  exit/quit                 - Exit interactive mode");
