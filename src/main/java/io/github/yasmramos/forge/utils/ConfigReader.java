@@ -463,6 +463,20 @@ public class ConfigReader {
             config.setJvmArgs(getStringList(root, "exec", "jvm_args", properties));
         }
 
+        // ------------------------------------------------------------------
+        // [test] section (AGENT.md section 21): selective execution and flaky
+        // retry, both opt-in. Absent keys keep the off defaults.
+        // ------------------------------------------------------------------
+        UnmodifiableConfig test = root.get("test");
+        if (test != null) {
+            if (test.contains("selective")) {
+                config.getTestSettings().setSelective(bool(test.get("selective")));
+            }
+            if (test.contains("retry_failed")) {
+                config.getTestSettings().setRetryFailed(number(test.get("retry_failed")));
+            }
+        }
+
         return config;
     }
 

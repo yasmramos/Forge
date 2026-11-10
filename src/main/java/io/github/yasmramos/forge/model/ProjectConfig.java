@@ -102,6 +102,11 @@ public class ProjectConfig {
      * repositories and signing. Populated by {@code ConfigReader}.
      */
     private PublishSettings publishSettings = new PublishSettings();
+    /**
+     * {@code [test]} section (AGENT.md section 21): selective execution and
+     * flaky-test retry. Populated by {@code ConfigReader}.
+     */
+    private TestSettings testSettings = new TestSettings();
 
     public ProjectConfig() {
         this.sourcePaths = new ArrayList<>();
@@ -435,7 +440,53 @@ public class ProjectConfig {
     public void setPublishSettings(PublishSettings publishSettings) {
         this.publishSettings = publishSettings != null ? publishSettings : new PublishSettings();
     }
-    
+
+    /** {@code [test]} settings (AGENT.md section 21). */
+    public TestSettings getTestSettings() {
+        return testSettings;
+    }
+
+    public void setTestSettings(TestSettings testSettings) {
+        this.testSettings = testSettings != null ? testSettings : new TestSettings();
+    }
+
+    /**
+     * {@code [test]} section (AGENT.md section 21): selective execution and
+     * flaky-test retry, both opt-in and off the default path.
+     */
+    public static class TestSettings {
+        /**
+         * {@code [test] selective}: run only the tests affected by a change,
+         * derived from the source dependency graph. Off by default because the
+         * approximation over-approximates and a first run has no baseline; when
+         * off, every test runs, exactly as before.
+         */
+        private boolean selective = false;
+        /**
+         * {@code [test] retry_failed}: number of extra attempts for a failing
+         * test class before it is reported as failed. 0 (default) means a
+         * failure is final. Intended for known-flaky tests; a class that passes
+         * on retry is reported as flaky, never silently as a pass.
+         */
+        private int retryFailed = 0;
+
+        public boolean isSelective() {
+            return selective;
+        }
+
+        public void setSelective(boolean selective) {
+            this.selective = selective;
+        }
+
+        public int getRetryFailed() {
+            return retryFailed;
+        }
+
+        public void setRetryFailed(int retryFailed) {
+            this.retryFailed = Math.max(0, retryFailed);
+        }
+    }
+
     public static class BuildSettings {
         private boolean incremental = true;
         private boolean parallel = true;

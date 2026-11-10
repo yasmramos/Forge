@@ -474,6 +474,18 @@ public class ForgeCLI {
                 + " (run with --debug for a stack trace).");
             return 1;
         }
+        if (result != null) {
+            io.github.yasmramos.forge.core.ForgeEngine.TestResult tests = result.getTestResult();
+            if (tests != null && tests.isSelective() && tests.getSkippedTests() > 0) {
+                System.out.println("Selective execution: ran " + tests.getTotalTests()
+                    + " test class(es), skipped " + tests.getSkippedTests()
+                    + " unaffected (AGENT.md section 21).");
+            }
+            if (tests != null && !tests.getFlaky().isEmpty()) {
+                System.out.println("Flaky (passed on retry): " + String.join(", ", tests.getFlaky())
+                    + " - investigate the nondeterminism (AGENT.md section 21).");
+            }
+        }
         return 0;
     }
 

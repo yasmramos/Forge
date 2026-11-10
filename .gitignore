@@ -826,6 +826,9 @@
 /out/
 **/target/
 .forge/cache/
+# Derived test-selection state (AGENT.md section 21): regenerated from a
+# green run, never source. Like the task cache, it is per-checkout data.
+.forge/test-state.toml
 # Multi-module workspace: holds module artifacts built in this checkout.
 # Anchored with **/ so it also covers module projects under examples/.
 **/.forge/workspace/

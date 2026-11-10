@@ -80,6 +80,12 @@ main     = "com.example.Main"
 args     = ["--verbose"]
 jvm_args = ["-Xmx2g"]
 
+# Test execution (AGENT.md section 21). Both behaviours are opt-in; the defaults
+# below (false / 0) reproduce the classic "run every test, a failure is final".
+[test]
+selective    = false   # run only the tests a change can affect (source graph)
+retry_failed = 0       # extra attempts for a failing class (0 = failure is final)
+
 # Publishing metadata for `forge publish` (AGENT.md section 6).
 # Maven Central requires license, developers, url and scm; forge publish fails
 # with FORGE-PUB-0001 naming the missing keys instead of letting the repository

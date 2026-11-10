@@ -8,7 +8,7 @@ test and extend the repository. Read both before changing anything.
 
 ```bash
 mvn -q package -DskipTests        # produces target/forge-1.0.0-SNAPSHOT.jar
-mvn test                          # full suite (398 tests as of section 13 phase 1)
+mvn test                          # full suite (419 tests as of section 21 selective tests)
 ./bin/forge build                 # run the CLI from the repo (needs the jar above)
 ```
 
@@ -55,6 +55,7 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
 | Vulnerability audit (`forge audit`) | `cli/command/AuditCommand.java`, `core/audit/OssIndexClient.java` |
 | Minimal JSON reader (audit) | `core/audit/Json.java` |
 | IDE export (`forge ide`, phase 1) | `cli/command/IdeCommand.java`, `core/ide/` |
+| Selective tests + flaky retry (21) | `core/test/SelectiveTests.java`, `core/test/TestExecutor.java`, `core/test/JUnitRunner.java` |
 
 ## Non-obvious invariants
 
@@ -115,6 +116,17 @@ cd examples/library && rm -rf target && ../../bin/forge build && ../../bin/forge
   scope lists only libraries *not already* on the compile scope, so no jar is
   emitted twice. Generators are pure (`core/ide/IdeGenerators`) and the command
   is a thin writer, so the models are unit-tested without a filesystem.
+- **Selective tests are opt-in and never under-run silently** (section 21).
+  `[test] selective = true` runs only the tests a change can affect, derived
+  from the same `SourceDependencies` Merkle graph the compiler uses for cache
+  invalidation, so the selection and the cache agree by construction. It is
+  conservative by design: no baseline, a corrupt state file, or any resource
+  change all fall back to running every test, and state is written only after a
+  fully green run so a failure is never remembered as a pass. State lives in
+  `.forge/test-state.toml` with project-relative POSIX paths and content hashes
+  (portable, section 17; content-based, never time-based, section 3). Flaky
+  retry (`[test] retry_failed`) re-runs a failing class and *reports* the class
+  as flaky, never silently as a pass.
 - **Error codes are public API.** Add new ones to `cli/error/ErrorCode.java`
   with what/why/how/docs; never reuse or renumber a shipped code.
 
@@ -124,6 +136,7 @@ Sections 22 (resources), 23 (annotation processors), 8/8bis (variants), the
 `forge config` command, the `[toolchain].language` → `-source`/`-target`
 wiring, `forge import` (section 14), the local build scan `forge build --scan`
 (section 19, single-project builds), the vulnerability audit `forge audit`
-(section 18) and IDE integration phase 1 `forge ide` (section 13: IntelliJ,
-Eclipse and VS Code models) are implemented and committed. Section 10's command
-table is complete.
+(section 18), IDE integration phase 1 `forge ide` (section 13: IntelliJ,
+Eclipse and VS Code models) and selective test execution + flaky retry
+(section 21, opt-in via `[test]`) are implemented and committed. Section 10's
+command table is complete.

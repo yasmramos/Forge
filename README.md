@@ -137,6 +137,7 @@ Configuration files use TOML format with the following sections:
 | `[build]` | Build behavior options (see below) |
 | `[compile]` | Compiler options: `encoding`, `debug`, `args`, `processors` |
 | `[exec]` | Run configuration: `main`, `args`, `jvm_args` |
+| `[test]` | Test execution: `selective`, `retry_failed` (see below) |
 | `[publish]` | Release metadata and target repository for `forge publish` (see below) |
 
 Supported `[build]` keys (snake_case):
@@ -152,6 +153,13 @@ Supported `[build]` keys (snake_case):
 | `resource_filtering` | boolean | `false` | Opt-in `${...}` substitution in resources; off by default so binary files are never corrupted |
 | `audit_oss_index` | string | unset | Base URL of the OSS Index service for `forge audit`; also settable via `FORGE_OSS_INDEX` |
 | `audit_fail_on` | string | `high` | Lowest severity that makes `forge audit` exit non-zero: `none`, `low`, `medium`, `high`, `critical` |
+
+Supported `[test]` keys (AGENT.md section 21; both opt-in):
+
+| Key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `selective` | boolean | `false` | Run only the tests a change can affect, derived from the source dependency graph |
+| `retry_failed` | number | `0` | Extra attempts for a failing test class before it is reported as failed |
 
 Resources declared under `[source.main].resources` (or the conventional
 `src/main/resources`) are copied into the compiled-classes directory and thus
@@ -453,6 +461,35 @@ The timestamp follows the same `SOURCE_DATE_EPOCH` chain as the rest of the
 build (AGENT.md section 17), so two identical builds produce byte-identical
 scans. Build scans currently cover single-project builds; multi-module roots
 print a notice and skip the report.
+
+### Selective Test Execution and Flaky Retry
+
+`forge test` (and the test phase of `forge build`) runs every test by default.
+Two opt-in behaviours live under `[test]` (AGENT.md section 21):
+
+```toml
+[test]
+selective = true     # run only the tests a change can affect
+retry_failed = 2     # re-run a failing class up to 2 extra times
+```
+
+With `selective`, Forge decides which tests to run from the same source
+dependency graph the compiler uses for cache invalidation: a test re-runs when
+its own effective hash — content plus every source it transitively depends on,
+main and test alike — differs from the last green run. Change one main class and
+only the tests that touch it re-run; everything else is skipped and reported.
+
+Selection is deliberately conservative, because a wrong skip is worse than a
+slow run. It falls back to running **every** test when there is no baseline
+(first run), when the state file is missing or corrupt, or when any resource
+changed (the source graph cannot see resource usage). State is written only
+after a fully green run, so a failure is never remembered as a pass. It lives in
+`.forge/test-state.toml` as project-relative paths and content hashes — portable
+across checkouts and machines, and invalidated by content, never by time.
+
+With `retry_failed`, a failing test class is re-run; a class that then passes is
+reported as **flaky**, never silently as a pass, so the nondeterminism stays
+visible.
 
 ### Vulnerability Audit
 

@@ -70,6 +70,16 @@ public final class TestCommand {
         if (result.getError() != null) {
             throw result.getError();
         }
+        ForgeEngine.TestResult tests = result.getTestResult();
+        if (tests != null && tests.isSelective() && tests.getSkippedTests() > 0) {
+            out.println("Selective execution: ran " + tests.getTotalTests()
+                + " test class(es), skipped " + tests.getSkippedTests()
+                + " unaffected (AGENT.md section 21).");
+        }
+        if (tests != null && !tests.getFlaky().isEmpty()) {
+            out.println("Flaky (passed on retry): " + String.join(", ", tests.getFlaky())
+                + " - investigate the nondeterminism (AGENT.md section 21).");
+        }
         if (!result.isSuccess()) {
             out.println("Tests FAILED. See the report above for which test broke.");
             return 1;

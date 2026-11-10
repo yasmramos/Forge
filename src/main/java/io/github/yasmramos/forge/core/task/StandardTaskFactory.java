@@ -177,9 +177,20 @@ public class StandardTaskFactory {
             }
             context.put(TEST + ".total", result.getTotal());
             context.put(TEST + ".passed", result.getPassed());
+            if (result.isSelected()) {
+                context.put(TEST + ".skipped", result.getSkipped());
+            }
+            if (!result.getFlaky().isEmpty()) {
+                context.put(TEST + ".flaky", String.join(",", result.getFlaky()));
+            }
             return TaskResult.success(result.getTotal() == 0
-                ? "No test sources found"
-                : "Ran " + result.getTotal() + " test class(es), all passed");
+                ? (result.isSelected() && result.getSkipped() > 0
+                    ? "No test class affected by the change (section 21)"
+                    : "No test sources found")
+                : "Ran " + result.getTotal() + " test class(es), all passed"
+                    + (result.isSelected() && result.getSkipped() > 0
+                        ? " (" + result.getSkipped() + " skipped, unaffected)"
+                        : ""));
         });
         return task.environment(environment);
     }

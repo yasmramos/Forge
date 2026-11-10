@@ -36,8 +36,12 @@ import java.util.regex.Pattern;
  * names matching a type declared elsewhere in the module. The approximation
  * deliberately over-approximates (a mention in a comment or string counts), so a
  * stale entry is never served at the cost of an occasional extra recompile.</p>
+ *
+ * <p>Public so that other consumers of the same graph (e.g. selective test
+ * execution, AGENT.md section 21) reuse one implementation instead of a second,
+ * subtly different approximation.</p>
  */
-final class SourceDependencies {
+public final class SourceDependencies {
 
     private static final Pattern PACKAGE =
         Pattern.compile("^\\s*package\\s+([\\w.]+)\\s*;", Pattern.MULTILINE);
@@ -57,7 +61,7 @@ final class SourceDependencies {
      * @param sourceFiles all sources of the module
      * @return file to hash; files with no dependency still get their content hash
      */
-    static Map<Path, String> effectiveHashes(List<Path> sourceFiles) {
+    public static Map<Path, String> effectiveHashes(List<Path> sourceFiles) {
         Map<Path, String> fqnByFile = new LinkedHashMap<>();
         Map<Path, String> packageByFile = new LinkedHashMap<>();
         Map<Path, String> contentHash = new LinkedHashMap<>();
@@ -231,6 +235,17 @@ final class SourceDependencies {
     private static String baseName(Path file) {
         String name = file.getFileName().toString();
         return name.endsWith(".java") ? name.substring(0, name.length() - ".java".length()) : name;
+    }
+
+    /**
+     * Fully-qualified name of the type declared in {@code file}
+     * ({@code package.ClassName}), or the bare class name in the default
+     * package. Used to map a test source to the class JUnit must run.
+     */
+    public static String fullyQualifiedName(Path file) {
+        String simple = baseName(file);
+        String pkg = packageName(file);
+        return pkg.isEmpty() ? simple : pkg + "." + simple;
     }
 
     private static String packageName(Path file) {
